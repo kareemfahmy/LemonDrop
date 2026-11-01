@@ -42,3 +42,4 @@ next-env.d.ts
 
 # QA artifacts
 /.shots/
+/.jury/
