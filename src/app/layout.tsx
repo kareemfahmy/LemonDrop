@@ -22,6 +22,9 @@ export const viewport: Viewport = { themeColor: '#111110', colorScheme: 'light d
 // The loader plays once per session on larger screens; phones and later direct loads skip it.
 const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');try{if(sessionStorage.getItem('ld-seen')||matchMedia('(max-width: 767px)').matches)h.classList.add('seen')}catch(e){}`;
 
+// Phones and repeat visits never show the loader: mark it hidden before first paint.
+const hideLoader = `if(document.documentElement.classList.contains('seen'))document.getElementById('loader').hidden=true`;
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -47,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             <span className="curtain__clip"><span className="curtain__label" data-curtain-label /></span>
           </div>
         </div>
-        <div id="loader" role="status" aria-label="Loading LemonDrop">
+        <div id="loader" role="status" aria-label="Loading LemonDrop" suppressHydrationWarning>
           <div className="loader__mark">
             <Mark className="loader__svg" apart />
           </div>
@@ -57,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           </div>
           <div className="loader__bar" data-loader-bar />
         </div>
+        <script dangerouslySetInnerHTML={{ __html: hideLoader }} />
         <Header />
         <main id="main" tabIndex={-1}>{children}</main>
         <Footer />

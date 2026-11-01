@@ -674,6 +674,8 @@ html.header-solid .header::before { opacity: 1; }
 
   .page-head__lede, .page-head__meta { grid-column: 1 / -1; }
   .page-head__title { font-size: clamp(3.4rem, 19vw, 6rem); }
+  /* Same wrap before and after the display font arrives: no ch-based cap, no extra stretch. */
+  .page-head__title--long { font-size: clamp(2.3rem, 10.5vw, 3.2rem); max-width: none; font-stretch: 100%; }
   .wall__item:nth-child(n) { grid-column: 1 / -1; margin-top: 0; }
   .case-head__title { font-size: clamp(3.2rem, 17vw, 6rem); }
   .case-head__summary, .case-meta { grid-column: 1 / -1; }
