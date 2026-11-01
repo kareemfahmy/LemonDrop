@@ -129,8 +129,8 @@ function headerAway() {
 // Page titles: real text at first paint (it is the LCP and sits under the loader), then split into
 // lines that slide up and lock as the page intro plays.
 function titles() {
-  onPage(({ intro }) => {
-    if (prefersReducedMotion()) return;
+  onPage(({ intro, instant }) => {
+    if (prefersReducedMotion() || instant) return;
     document.querySelectorAll<HTMLElement>('[data-title]').forEach((el) => {
       const split = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'split-line' });
       gsap.set(split.lines, { yPercent: 110 });
@@ -151,9 +151,12 @@ function workPreview() {
     const y = gsap.quickTo(box, 'y', { duration: 0.6, ease: ease.soft });
     const rot = gsap.quickTo(box, 'rotation', { duration: 0.8, ease: ease.soft });
     let lastX = 0, px = 0, py = 0;
+    // Anchored over the right-hand columns so the title and client stay readable; the pointer
+    // still steers it a little and tips it as it moves.
+    const anchor = () => innerWidth - box.offsetWidth / 2 - parseFloat(getComputedStyle(document.documentElement).fontSize) * 2.5;
     const move = (e: PointerEvent) => {
       px = e.clientX; py = e.clientY;
-      x(px); y(py); rot(gsap.utils.clamp(-8, 8, (px - lastX) * 0.4)); lastX = px;
+      x(anchor() + (px / innerWidth - 0.5) * 40); y(py); rot(gsap.utils.clamp(-6, 6, (px - lastX) * 0.3)); lastX = px;
     };
     const show = (e: Event) => {
       const i = (e.currentTarget as HTMLElement).dataset.preview;

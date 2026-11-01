@@ -19,13 +19,15 @@ export { setTransition } from './transition';
 export { setLoaderFormat, setLoaderExit } from './loader';
 export { ease, isTouch, isMobile, prefersReducedMotion } from './env';
 
-export type PageFn = (page: { intro: gsap.core.Timeline; path: string }) => void | (() => void);
+// instant: the page appeared without a loader (phones, repeat visits), so its intro must not replay.
+export type PageFn = (page: { intro: gsap.core.Timeline; path: string; instant: boolean }) => void | (() => void);
 const pageFns = new Set<PageFn>();
 const cleanups: (() => void)[] = [];
 let ctx: gsap.Context | null = null;
 let intro: gsap.core.Timeline | null = null;
 let ready = false;
 let booted = false;
+let instant = false;
 
 /** Run fn on every page load (and now, if a page is ready). Returns an unsubscribe. */
 export function onPage(fn: PageFn) {
@@ -36,7 +38,7 @@ export function onPage(fn: PageFn) {
 
 function runPageFn(fn: PageFn) {
   ctx?.add(() => {
-    const c = fn({ intro: intro!, path: location.pathname });
+    const c = fn({ intro: intro!, path: location.pathname, instant });
     if (typeof c === 'function') cleanups.push(c);
   });
 }
@@ -51,7 +53,7 @@ export function syncFlags() {
 function initPage() {
   syncFlags();
   ctx = gsap.context(() => {
-    intro = initReveals(document);
+    intro = initReveals(document, instant);
     initMagnetic(document);
   });
   ready = true;
@@ -67,7 +69,9 @@ export async function boot(setup?: () => void) {
   initScroll();
   setup?.();
   stopScroll();
+  instant = document.documentElement.classList.contains('seen');
   initPage();
+  instant = false;
   await runLoader();
   startScroll();
   intro?.play();

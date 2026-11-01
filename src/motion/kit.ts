@@ -4,7 +4,7 @@
 // a lean toward the pointer so the mark is never frozen. Also drives the footer mark (lean only).
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { onPage, prefersReducedMotion } from '@/engine';
+import { isMobile, onPage, prefersReducedMotion } from '@/engine';
 import { idle } from './idle';
 import { FILL_BOX } from '@/components/KitDrawing';
 
@@ -55,7 +55,7 @@ function draw(r: Rig, k: number, breathe: number, lean: { x: number; y: number }
     const x = ex * e + lean.x * DEPTH[p];
     const y = ey * e + lean.y * DEPTH[p];
     r.parts[p].setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
-    if (p === 'drop') r.shapes.drop.setAttribute('transform', `rotate(${(x * ROLL).toFixed(2)} 360 188.5)`);
+    if (p === 'drop') r.shapes.drop.setAttribute('transform', `rotate(${(ex * explode(k) * ROLL).toFixed(2)} 360 188.5)`);
     if (lit) {
       const v = 1 - explode(k) * (1 - w); // the fill rises inside the outline
       const { y: by, h } = FILL_BOX[p];
@@ -83,15 +83,31 @@ export function startKit() {
       const breathe = reduced ? 0 : (0.5 + 0.5 * Math.sin(idle.t * 0.9)) * 0.07;
       draw(r, k, breathe, reduced ? { x: 0, y: 0 } : { x: idle.x * 2, y: idle.y * 2 });
     };
-    // Chapter labels for the stage: lets CSS emphasise the active chapter copy.
+    // k follows the real chapter positions: chapter i is "on" when its copy reaches the reading
+    // line (the top of the screen on desktop, just under the sticky mark on phones).
     const chapterEls = [...section.querySelectorAll<HTMLElement>('[data-chapter]')];
+    let stops: number[] = [];
+    const measure = () => {
+      const line = isMobile() ? innerHeight * 0.3 : 0;
+      const top = (el: HTMLElement) => el.getBoundingClientRect().top + scrollY;
+      stops = [top(section), ...chapterEls.map((c) => top(c) - line)];
+    };
+    const chapterAt = (y: number) => {
+      if (y <= stops[0]) return 0;
+      for (let i = 0; i < stops.length - 1; i++) {
+        if (y < stops[i + 1]) return i + (y - stops[i]) / (stops[i + 1] - stops[i]);
+      }
+      return stops.length - 1;
+    };
+    measure();
     const st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
       end: 'bottom bottom',
       invalidateOnRefresh: true,
+      onRefresh: measure,
       onUpdate: (self) => {
-        const raw = self.progress * 4;
+        const raw = chapterAt(self.scroll());
         k = reduced ? Math.round(raw) : raw;
         const active = Math.round(raw);
         chapterEls.forEach((c, i) => c.classList.toggle('is-active', i + 1 === active));

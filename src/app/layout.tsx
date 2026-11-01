@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: '#111110', colorScheme: 'light dark' };
 
 // Runs before first paint: hidden-until-revealed styles only apply when JS and motion are on.
-// The loader plays once per session; later direct loads skip it.
-const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');try{if(sessionStorage.getItem('ld-seen'))h.classList.add('seen')}catch(e){}`;
+// The loader plays once per session on larger screens; phones and later direct loads skip it.
+const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');try{if(sessionStorage.getItem('ld-seen')||matchMedia('(max-width: 767px)').matches)h.classList.add('seen')}catch(e){}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',

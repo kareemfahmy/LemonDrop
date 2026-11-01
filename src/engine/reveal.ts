@@ -70,9 +70,11 @@ function blockTween(el: HTMLElement, paused: boolean) {
 }
 
 /** Wire every reveal inside `root`. Returns the intro timeline (paused) for the page entrance. */
-export function initReveals(root: ParentNode = document) {
+export function initReveals(root: ParentNode = document, instant = false) {
   const intro = gsap.timeline({ paused: true });
   if (prefersReducedMotion()) return intro;
+  // No loader covered the first paint: intro content is already visible, leave it be.
+  if (instant) root.querySelectorAll<HTMLElement>('[data-intro]').forEach((el) => { el.removeAttribute('data-intro'); el.removeAttribute('data-split'); el.removeAttribute('data-reveal'); });
 
   root.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
     const isIntro = el.hasAttribute('data-intro');

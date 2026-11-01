@@ -58,7 +58,7 @@ export function KitDrawing({
         {dims && (
           <g data-dim className="kit__dim">
             <path d="M0 -34V-18M148 -34V-18M0 -26H148" />
-            <text x="0" y="-48"><tspan className="kit__key">A</tspan> Block, 148 × 377</text>
+            <text x="0" y="-48"><tspan className="kit__key">A</tspan><tspan> Block, 148 × 377</tspan></text>
           </g>
         )}
       </g>
@@ -67,7 +67,7 @@ export function KitDrawing({
         {dims && (
           <g data-dim className="kit__dim">
             <path d="M148 395V411M229 395V411M148 403H229" />
-            <text x="148" y="440"><tspan className="kit__key">B</tspan> Step, 81 × 127</text>
+            <text x="148" y="440"><tspan className="kit__key">B</tspan><tspan> Step, 81 × 127</tspan></text>
           </g>
         )}
       </g>
@@ -78,7 +78,7 @@ export function KitDrawing({
         </g>
         {dims && (
           <g data-dim className="kit__dim">
-            <text x="300" y="-48"><tspan className="kit__key">C</tspan> Drop, r 188.5</text>
+            <text x="300" y="-48"><tspan className="kit__key">C</tspan><tspan> Drop, r 188.5</tspan></text>
           </g>
         )}
       </g>
