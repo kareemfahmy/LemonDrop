@@ -110,7 +110,7 @@ function hero() {
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } })
         .to(video, { yPercent: 14 }, 0)
         .to(root.querySelector('[data-hero-veil]'), { opacity: 1 }, 0)
-        .to(root.querySelector('[data-hero-body]'), { yPercent: 18, autoAlpha: 0, duration: 0.7 }, 0);
+        .to(root.querySelector('[data-hero-body]'), { yPercent: 18, opacity: 0, duration: 0.7 }, 0);
     }
     return () => { alive = false; toggle?.removeEventListener('click', onClick); video.pause(); };
   });
