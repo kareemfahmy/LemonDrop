@@ -17,11 +17,11 @@ export default function WorkPage() {
         <p className="page-head__lede">Stores, products, brands and tools. Different briefs, the same method: take the idea apart, then build every part properly.</p>
       </section>
       <section className="wall grid" data-tone="light" aria-label="All projects">
-        {projects.map((p) => (
-          <article key={p.slug} className="wall__item" data-reveal="up">
+        {projects.map((p, i) => (
+          <article key={p.slug} className="wall__item">
             <Link className="card" href={`/work/${p.slug}/`} data-label={p.title}>
-              <div className="card__media"><KitCover project={p} label={false} /></div>
-              <div className="card__body">
+              <div className="card__media" data-reveal="appear" data-appear={i}><KitCover project={p} label={false} /></div>
+              <div className="card__body" data-reveal="fade" data-delay="0.3">
                 <h2 className="card__title">{p.title}</h2>
                 <span className="card__year tabular">{p.year}</span>
                 <p className="card__summary">{p.client}. {p.summary}</p>

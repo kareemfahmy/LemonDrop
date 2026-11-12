@@ -5,6 +5,8 @@
 //                                     and short statements only.
 //   data-split-with                   on an inline child (an icon, a shape): rises with the text
 //   data-reveal="up|fade|clip|scale"  block reveal
+//   data-reveal="appear"              media reveal: the frame wipes open while its content settles
+//                                     back; data-appear="<index>" gives each item its own timing
 //   data-intro                        play with the page intro instead of on scroll
 //   data-delay="0.2"                  extra delay (seconds)
 //   data-parallax="0.15"              scrubbed vertical drift (fraction of element height)
@@ -69,8 +71,28 @@ function splitTween(el: HTMLElement, isIntro: boolean) {
   return () => { s.requested = true; s.tween?.play(); };
 }
 
-function blockTween(el: HTMLElement, paused: boolean) {
+// Same move, different clocks: items that enter together never land as one block.
+const appearTiming = [
+  { delay: 0, duration: 1.3 },
+  { delay: 0.24, duration: 1.6 },
+  { delay: 0.1, duration: 1.2 },
+  { delay: 0.36, duration: 1.45 },
+] as const;
+
+function appearTween(el: HTMLElement, paused: boolean) {
+  const t = appearTiming[(parseInt(el.dataset.appear || '0', 10) || 0) % appearTiming.length];
+  const at = t.delay + parseFloat(el.dataset.delay || '0');
+  const inner = el.firstElementChild;
+  gsap.set(el, { visibility: 'visible' });
+  const tl = gsap.timeline({ paused, scrollTrigger: paused ? undefined : { trigger: el, start: 'top 92%', once: true } });
+  tl.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: t.duration, ease: ease.out, clearProps: 'clipPath' }, at);
+  if (inner) tl.fromTo(inner, { scale: 1.3 }, { scale: 1, duration: t.duration + 0.3, ease: ease.out, clearProps: 'scale,transform' }, at);
+  return tl;
+}
+
+function blockTween(el: HTMLElement, paused: boolean): gsap.core.Animation {
   const kind = el.dataset.reveal || 'up';
+  if (kind === 'appear') return appearTween(el, paused);
   const delay = parseFloat(el.dataset.delay || '0');
   const from: gsap.TweenVars =
     kind === 'fade' ? { autoAlpha: 0 }
@@ -104,6 +126,9 @@ export function initReveals(root: ParentNode = document, instant = false) {
     if (isIntro) intro.add(play, 0);
   });
   root.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+    // Not rendered at this size (display: none): nothing to reveal. A scroll trigger on a box with
+    // no position fires and removes itself mid-setup, which breaks the triggers created after it.
+    if (!el.getClientRects().length) { gsap.set(el, { visibility: 'visible' }); return; }
     const isIntro = el.hasAttribute('data-intro');
     const t = blockTween(el, isIntro);
     if (isIntro) intro.add(() => t.play(), 0);

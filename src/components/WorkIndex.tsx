@@ -3,7 +3,7 @@ import type { Project } from '@/data/site';
 import { KitCover } from './KitCover';
 
 // Index list. Fine pointers get a D-shaped preview that follows the pointer (setup.ts);
-// touch gets an inline cover in each row.
+// touch gets an inline cover in each row, appearing on its own clock.
 export function WorkIndex({ items, headingLevel = 'h3' }: { items: Project[]; headingLevel?: 'h2' | 'h3' }) {
   const H = headingLevel;
   return (
@@ -13,7 +13,7 @@ export function WorkIndex({ items, headingLevel = 'h3' }: { items: Project[]; he
           <li key={p.slug}>
             <Link className="row" href={`/work/${p.slug}/`} data-preview={i} data-label={p.title}>
               <span className="row__marker" aria-hidden="true" />
-              <span className="row__thumb" aria-hidden="true"><KitCover project={p} label={false} /></span>
+              <span className="row__thumb" aria-hidden="true" data-reveal="appear" data-appear={i}><KitCover project={p} label={false} /></span>
               <H className="row__title">{p.title}</H>
               <span className="row__client">{p.client}</span>
               <span className="row__sector">{p.sector}</span>

@@ -466,6 +466,25 @@ html:not(.js) .hero__toggle { display: none; }
 .work__count { font-size: var(--t-s); color: var(--muted); }
 .work__more { padding: calc(var(--u) * 4) var(--gutter) 0; }
 
+/* Plates: one portrait visual per project, hung at different heights */
+.plates {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start;
+  padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 8);
+}
+.plate { grid-column: span 3; }
+.plate:nth-child(4n + 2) { margin-top: calc(var(--u) * 7); }
+.plate:nth-child(4n + 3) { margin-top: calc(var(--u) * 2.5); }
+.plate:nth-child(4n + 4) { margin-top: calc(var(--u) * 10); }
+.plate__link { display: block; }
+.plate__media { display: block; aspect-ratio: 4 / 5; overflow: clip; border-radius: 0; transition: border-radius 0.7s var(--e-out); }
+.plate__media svg { width: 100%; height: 100%; transition: scale 0.9s var(--e-out); }
+.plate__cap { display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.7rem; font-size: var(--t-xs); color: var(--muted); }
+@media (hover: hover) {
+  .plate__link:hover .plate__media { border-radius: 0 50vmax 50vmax 0; }
+  .plate__link:hover .plate__media svg { scale: 1.05; }
+  .plate__link:hover .plate__cap { color: var(--fg); }
+}
+
 .index { border-top: 1px solid var(--line); }
 .index li { border-bottom: 1px solid var(--line); }
 .row {
@@ -672,6 +691,9 @@ html:not(.js) .hero__toggle { display: none; }
    Tablet and phone: composed for the hand
    ========================================================================== */
 @media (max-width: 1023px) {
+  .plate { grid-column: span 6; margin-bottom: calc(var(--u) * 5); }
+  .plate:nth-child(n) { margin-top: 0; }
+  .plate:nth-child(2n) { margin-top: calc(var(--u) * 6); }
   .caps__head { grid-column: 1 / 13; position: static; margin-bottom: calc(var(--u) * 3); }
   .caps__list { grid-column: 1 / 13; }
   .footer__title { grid-column: 1 / 13; }
@@ -708,6 +730,7 @@ html:not(.js) .hero__toggle { display: none; }
   .statement__text { grid-column: 1 / -1; grid-row: 2; text-indent: 0; }
 
   .work__head { flex-direction: column; align-items: start; }
+  .plates { display: none; } /* phones: each row carries its own cover */
   .row { grid-template-columns: 5.5rem minmax(0, 1fr); row-gap: 0.2rem; padding-block: calc(var(--u) * 2.2); }
   .row__thumb { display: block; grid-column: 1; grid-row: 1 / span 3; width: 5.5rem; aspect-ratio: 4 / 3; border-radius: var(--d); overflow: clip; align-self: start; }
   .row__thumb svg { width: 100%; height: 100%; }
