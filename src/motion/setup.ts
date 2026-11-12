@@ -24,7 +24,7 @@ export function setupMotion() {
 
 // Loader: the parts arrive one by one and lock into the mark as fonts and assets load. The counter
 // hook receives the real progress, so it also drives the assembly. Exit: the assembled mark flies to
-// the exact spot of the hero mark (same colours, same ground), so the loader becomes the hero.
+// the header logo and becomes it, while the ink ground clears to show the page underneath.
 function loader() {
   let parts: Record<string, SVGGElement> | null = null;
   setLoaderFormat((p) => {
@@ -41,22 +41,28 @@ function loader() {
   });
   setLoaderExit((root, late) => {
     const mark = root.querySelector<HTMLElement>('.loader__mark')!;
-    const target = document.querySelector<SVGElement>('[data-loader-target]');
+    const target = document.querySelector<SVGElement>('[data-header] .header__mark');
     const tl = gsap.timeline();
     if (late) return tl.to(root, { autoAlpha: 0, duration: 0.35, ease: ease.soft });
     tl.to(root.querySelectorAll('[data-loader-out]'), { yPercent: 110, duration: 0.45, ease: ease.inOut, stagger: 0.04 });
     tl.to(root.querySelector('[data-loader-bar]'), { scaleX: 0, transformOrigin: 'right center', duration: 0.45, ease: ease.inOut }, 0);
-    if (target) {
+    if (target && target.getBoundingClientRect().width > 0) {
       const from = mark.getBoundingClientRect();
       const to = target.getBoundingClientRect();
+      const colour = getComputedStyle(target).color; // the logo follows the page tone
+      gsap.set(target, { autoAlpha: 0 }); // the real logo waits for the flying one
       tl.to(mark, {
         x: to.left - from.left,
         y: to.top - from.top,
         scale: to.width / from.width,
         transformOrigin: '0 0',
-        duration: 0.75,
+        duration: 0.85,
         ease: ease.inOut,
       }, 0.05);
+      tl.to(root, { backgroundColor: 'rgba(17, 17, 16, 0)', duration: 0.5, ease: ease.soft }, 0.3);
+      tl.to(root.querySelector('.loader__svg'), { color: colour, duration: 0.5, ease: ease.soft }, 0.3);
+      tl.to(root.querySelector('[data-part="drop"] path'), { fill: colour, duration: 0.3, ease: ease.soft }, 0.6);
+      tl.set(target, { clearProps: 'opacity,visibility' });
       tl.set(root, { autoAlpha: 0 });
     } else {
       tl.to(mark, { yPercent: -30, autoAlpha: 0, duration: 0.5, ease: ease.inOut }, 0.05);
