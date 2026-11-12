@@ -23,7 +23,7 @@ export default function StudioPage() {
       </section>
 
       <section className="method grid" data-tone="light" aria-labelledby="method">
-        <h2 id="method" className="method__h display" data-split="lines">Three parts, one room</h2>
+        <h2 id="method" className="method__h display" data-split="chars" data-scrub>Three parts, one room</h2>
         {studio.method.map((m) => (
           <div key={m.part} className="method__item" data-reveal="up">
             <div className="method__fig">
@@ -42,7 +42,7 @@ export default function StudioPage() {
       </section>
 
       <section className="services grid" data-tone="dark" aria-labelledby="services">
-        <h2 id="services" className="services__h display" data-split="lines">What you can hire us for</h2>
+        <h2 id="services" className="services__h display" data-split="chars" data-scrub>What you can hire us for</h2>
         <ul className="services__grid">
           {studio.services.map((s) => (
             <li key={s.title}>
@@ -55,13 +55,13 @@ export default function StudioPage() {
 
       <section className="founder grid" data-tone="dark" aria-labelledby="founder">
         <p className="founder__label">Who you work with</p>
-        <h2 id="founder" className="founder__name display" data-split="lines">{studio.founder.name}</h2>
+        <h2 id="founder" className="founder__name display" data-split="chars" data-scrub>{studio.founder.name}</h2>
         <p className="founder__role">{studio.founder.role}</p>
         <p className="founder__bio">{studio.founder.bio}</p>
       </section>
 
       <section className="steps grid" data-tone="light" aria-labelledby="steps">
-        <h2 id="steps" className="steps__h display" data-split="lines">How a project runs</h2>
+        <h2 id="steps" className="steps__h display" data-split="chars" data-scrub>How a project runs</h2>
         <ol className="steps__list">
           {studio.steps.map((s) => (
             <li key={s.title}>

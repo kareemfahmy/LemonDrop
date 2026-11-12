@@ -12,14 +12,14 @@ export default function Home() {
 
       <section className="statement grid" data-tone="light" aria-label="Why one studio">
         <p className="statement__aside">Why one studio</p>
-        <p className="statement__text" data-split="lines">
-          {statement}<span className="statement__drop" aria-hidden="true" />
+        <p className="statement__text" data-split="chars" data-scrub>
+          {statement}<span className="statement__drop" data-split-with aria-hidden="true" />
         </p>
       </section>
 
       <section className="work" data-tone="light" aria-labelledby="work-title">
         <div className="work__head">
-          <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>
+          <h2 id="work-title" className="work__title display" data-split="chars" data-scrub>Selected work</h2>
           <p className="work__count">Four projects, each built from the same three parts</p>
         </div>
         <WorkIndex items={projects} />
@@ -28,7 +28,7 @@ export default function Home() {
 
       <section className="caps grid" data-tone="light" aria-labelledby="caps-title">
         <div className="caps__head">
-          <h2 id="caps-title" className="caps__title display" data-split="lines">What we make</h2>
+          <h2 id="caps-title" className="caps__title display" data-split="chars" data-scrub>What we make</h2>
         </div>
         <ul className="caps__list">
           {capabilities.map((c) => (
