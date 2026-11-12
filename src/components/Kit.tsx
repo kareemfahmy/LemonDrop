@@ -1,7 +1,7 @@
-// Home hero + signature: a sticky stage holds the mark; the hero and four chapters scroll beside it.
+// Home signature (follows the video hero): a sticky stage holds the mark; an intro and four chapters scroll beside it.
 // The kit driver (src/motion/kit.ts) maps scroll progress to how far the parts come apart, which part
 // is lit, and the dimension labels.
-import { chapters, hero } from '@/data/site';
+import { chapters, kitIntro } from '@/data/site';
 import { KitDrawing } from './KitDrawing';
 
 export function Kit() {
@@ -14,13 +14,12 @@ export function Kit() {
       </div>
 
       <div className="kit__hero">
-        <h1 id="kit-title" className="kit__title" data-title>
-          {hero.title}
-        </h1>
-        <p className="kit__intro" data-reveal="up" data-intro data-delay="0.2">{hero.intro}</p>
-        <ul className="kit__meta" data-reveal="fade" data-intro data-delay="0.35">
-          {hero.meta.map((m) => <li key={m}>{m}</li>)}
-          <li className="kit__cue"><span className="kit__cue-mark" aria-hidden="true" />{hero.cue}</li>
+        <h2 id="kit-title" className="kit__title" data-split="lines">
+          {kitIntro.title}
+        </h2>
+        <p className="kit__intro" data-reveal="up" data-delay="0.15">{kitIntro.text}</p>
+        <ul className="kit__meta">
+          <li className="kit__cue"><span className="kit__cue-mark" aria-hidden="true" />{kitIntro.cue}</li>
         </ul>
       </div>
 

@@ -1,3 +1,4 @@
+import { Hero } from '@/components/Hero';
 import { Kit } from '@/components/Kit';
 import { ArrowLink } from '@/components/Links';
 import { WorkIndex } from '@/components/WorkIndex';
@@ -6,6 +7,7 @@ import { capabilities, projects, statement } from '@/data/site';
 export default function Home() {
   return (
     <>
+      <Hero />
       <Kit />
 
       <section className="statement grid" data-tone="light" aria-label="Why one studio">

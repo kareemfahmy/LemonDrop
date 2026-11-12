@@ -15,6 +15,7 @@ export function setupMotion() {
   startKit();
   loader();
   transition();
+  hero();
   tone();
   headerAway();
   titles();
@@ -40,7 +41,7 @@ function loader() {
   });
   setLoaderExit((root, late) => {
     const mark = root.querySelector<HTMLElement>('.loader__mark')!;
-    const target = document.querySelector<SVGRectElement>('[data-kit] [data-bounds]');
+    const target = document.querySelector<SVGElement>('[data-loader-target]');
     const tl = gsap.timeline();
     if (late) return tl.to(root, { autoAlpha: 0, duration: 0.35, ease: ease.soft });
     tl.to(root.querySelectorAll('[data-loader-out]'), { yPercent: 110, duration: 0.45, ease: ease.inOut, stagger: 0.04 });
@@ -62,6 +63,49 @@ function loader() {
       tl.to(root, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.6, ease: ease.inOut }, 0.15);
     }
     return tl;
+  });
+}
+
+// Home hero: footage under the headline. It fades up with the page intro (so the loader hands over
+// to flat ink first), plays only while the hero is on screen, and can be paused. Scrolling away
+// drifts the footage and closes an ink veil over it, so the hero runs into the kit below.
+function hero() {
+  onPage(({ intro, instant }) => {
+    const root = document.querySelector<HTMLElement>('[data-hero]');
+    const video = root?.querySelector<HTMLVideoElement>('[data-hero-video]');
+    if (!root || !video) return;
+    const media = root.querySelector<HTMLElement>('[data-hero-media]')!;
+    const toggle = root.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+    const label = root.querySelector<HTMLElement>('[data-hero-toggle-label]');
+    const reduced = prefersReducedMotion();
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+    let wanted = !reduced && !saveData; // the visitor's choice; off by default when they asked for less
+    let inView = true;
+    let alive = true;
+    let ready = false; // set once fonts are in, so the footage never competes with them
+    const sync = () => {
+      if (!alive) return;
+      if (wanted && inView && ready) { video.muted = true; video.play().catch(() => {}); } else video.pause();
+      toggle?.setAttribute('aria-pressed', String(!wanted));
+      if (label) label.textContent = wanted ? 'Pause video' : 'Play video';
+    };
+    const onClick = () => { wanted = !wanted; sync(); };
+    toggle?.addEventListener('click', onClick);
+    sync();
+    document.fonts.ready.then(() => { ready = true; sync(); });
+    ScrollTrigger.create({ trigger: root, start: 'top bottom', end: 'bottom top', onToggle: (self) => { inView = self.isActive; sync(); } });
+
+    if (!reduced) {
+      if (!instant) {
+        gsap.set(media, { autoAlpha: 0, scale: 1.06 });
+        intro.add(gsap.to(media, { autoAlpha: 1, scale: 1, duration: 1.8, ease: ease.out }), 0);
+      }
+      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } })
+        .to(video, { yPercent: 14 }, 0)
+        .to(root.querySelector('[data-hero-veil]'), { opacity: 1 }, 0)
+        .to(root.querySelector('[data-hero-body]'), { yPercent: 18, autoAlpha: 0, duration: 0.7 }, 0);
+    }
+    return () => { alive = false; toggle?.removeEventListener('click', onClick); video.pause(); };
   });
 }
 

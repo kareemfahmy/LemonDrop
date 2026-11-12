@@ -52,6 +52,16 @@ export const hero = {
   intro:
     'LemonDrop is a digital studio. We plan, design and engineer websites, stores, apps and the systems behind them.',
   meta: ['Digital solutions studio', 'Cairo, working worldwide'],
+  cue: 'Scroll',
+  // PLACEHOLDER loop, generated (the three parts out of focus). Replace both files with real
+  // footage: see DESIGN.md, "Hero footage".
+  video: { src: '/hero/hero-placeholder.mp4', poster: '/hero/hero-placeholder.jpg' },
+};
+
+// First screen of the kit: the assembled mark, before the scroll takes it apart.
+export const kitIntro = {
+  title: 'Every project is built like our mark.',
+  text: 'A block, a step and a drop. Each part is one discipline, and nothing ships until all three lock together.',
   cue: 'Scroll to take it apart',
 };
 
