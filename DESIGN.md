@@ -227,3 +227,45 @@ The concept breathes where the mark is on screen: the home hero and chapters (pa
 - Pass 1: logo hover added (the mark comes apart a little and locks back), inline email link tap target raised to 24 px.
 - Pass 1: page-head gutter bug fixed; phone grid no longer creates phantom columns; 404 recomposed so the title and the scattered parts share the first screen.
 - Jury pass (critic 7.25): phones skip the loader (no counter to wait on, first paint is the real page, intro does not replay); larger screens play it once per session. Kit chapters now map to their measured positions, so on phones each chapter's copy follows directly under the sticky mark (removed about 900 px of empty black). The drop no longer tilts at rest. Work preview anchored over the right-hand columns so titles and clients stay readable. Logo hover separation made legible at 22 px. Statement paragraph hangs from its own line. Page heads without meta put the lede under the title. Caption grey darkened to #4D4D49. Phone 404 and dimension labels fit at 390 px (key letters only).
+
+## Upgrade pass (branch `fable-upgrade`)
+
+Technique reference: hobro.digital, read from frames of a screen recording (the site sits behind a bot check). Used for motion technique only: masked text scrubbed to scroll, visuals that appear on separate clocks, an in-place character scramble. No layout, copy, assets or code were taken. Its particle field, image collage, clients list and italic serif accent were left out on purpose; the serif would add a second curve vocabulary to a system built on one.
+
+This pass supersedes the earlier sections where they disagree:
+
+| Area | Before | Now |
+|---|---|---|
+| Home, first screen | The kit: mark on the right, h1 on the left | A video hero: footage under a centred h1 (`--t-hero-xl`), pause control bottom right. The kit follows as the second section, driver and drawing untouched; its first screen has its own short intro ("Every project is built like our mark."). |
+| Loader exit | The mark flies to the hero mark | The mark shrinks into the header logo on every page, taking the logo's colour for the page tone while the ink ground clears. |
+| Text reveals | Play once on enter | Headlines and the home statement are scrubbed to scroll (`data-scrub` on `data-split`). Paragraphs, the hero h1 and the kit chapter titles still play once. |
+| Selected work (home) | Index only | Four portrait plates above the index, each on its own delay and duration (`data-reveal="appear"`). Phones hide the plates and run the same reveal on the inline row covers. |
+| Footer | Headline, small button, a second screen of the assembled mark | One D nearly the width of the page with "Start a project" inside it; floods with lemon like the small button. The label assembles from the three parts (scramble). About one screen tall. |
+
+Still held: yellow is only ever the drop (the scramble's drop glyph and the footer flood are both the drop); square corners and one curve; parts move on one axis with no bounce; no fake screenshots; no platform names in headlines; no WebGL; one easing vocabulary (scrubbed tweens use `none`, the scrub lag supplies the landing).
+
+Centred type in the hero breaks the three-hang-line rule on purpose: it is the one poster moment, and the footer mirrors it at the other end of the page.
+
+### Hero footage (placeholder in place)
+
+`public/hero/hero-placeholder.mp4` and `.jpg` are generated: the three parts out of focus under a slow light. Replace both and update `hero.video` in `src/data/site.ts`.
+
+- 16:9, 1920 × 1080 or larger, 24 to 30 fps, no audio, 8 to 15 s, loopable (first and last frame match), locked off or very slow movement.
+- Dark and low in contrast: a centred off-white headline sits on it. Nothing bright behind the middle third. No faces, no text.
+- Framed so the right-hand 40% still reads alone: phones crop to that side (`object-position: 78% 50%`).
+- Deliver one high-bitrate master (H.264 or ProRes). Web encodes: MP4 (H.264) at 1080p under 2.5 MB, a 720p version for phones, and a poster frame.
+- The shade over the footage is `.hero__shade` in `globals.css`; lighten it if the footage is already dark.
+
+### Project imagery (placeholders in place)
+
+Every project visual is still the generated `KitCover`. Per project, supply:
+
+- Portrait 4:5 at 1920 × 2400 for the home plates.
+- Landscape 4:3 at 2400 × 1800 for the /work wall, the case page cover, the hover preview and the phone row cover.
+- sRGB. PNG for interface shots, JPG at quality 90 or higher for photography. Subject inside the central 80%: the hover state rounds the right edge into a D.
+- Optional loop per project: MP4 (H.264), 1600 px wide, 6 to 10 s, no audio, under 3 MB, same aspect ratio as its slot.
+
+### Verification
+
+- The four kit chapters were screenshotted in the old and new builds under reduced motion: pixel-identical on desktop (1440 × 900); on a 390 px phone the drawing and copy match, and the only difference is the intro text above chapter 1, which changed on purpose.
+- Reduced motion: no smooth scroll, no scrub, no scramble, no autoplay (the pause control becomes "Play video"); all content visible.
