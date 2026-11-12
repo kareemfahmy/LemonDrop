@@ -20,6 +20,7 @@ export function setupMotion() {
   headerAway();
   titles();
   workPreview();
+  scramble();
 }
 
 // Loader: the parts arrive one by one and lock into the mark as fonts and assets load. The counter
@@ -226,5 +227,37 @@ function workPreview() {
       off();
       gsap.set(box, { autoAlpha: 0 });
     };
+  });
+}
+
+// Scramble: a label assembles from the parts. Each letter holds its own slot (no layout shift) and
+// shows as a block, a step or a drop until it settles, in a random order. Plays once when the
+// label scrolls in and again on hover. The real text stays in the DOM; the link carries the name.
+function scramble() {
+  const SHAPES = ['block', 'step', 'drop'];
+  onPage(() => {
+    if (prefersReducedMotion()) return;
+    const offs: (() => void)[] = [];
+    document.querySelectorAll<HTMLElement>('[data-scramble]').forEach((el) => {
+      const split = SplitText.create(el, { type: 'words,chars', charsClass: 'scr', aria: 'none' });
+      const chars = split.chars as HTMLElement[];
+      const order = gsap.utils.shuffle(chars.map((_, i) => i));
+      const state = { p: 0 };
+      const draw = () => chars.forEach((c, i) => {
+        const settle = 0.18 + (order[i] / chars.length) * 0.78;
+        if (state.p >= settle) delete c.dataset.s;
+        else c.dataset.s = SHAPES[(i + Math.floor(state.p * 16)) % 3];
+      });
+      draw();
+      const play = (duration: number) => gsap.fromTo(state, { p: 0 }, { p: 1, duration, ease: 'none', onUpdate: draw, overwrite: true });
+      ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => play(1.5) });
+      const host = el.closest('a') ?? el;
+      if (!isTouch()) {
+        const again = () => { if (state.p === 1) play(0.8); };
+        host.addEventListener('pointerenter', again);
+        offs.push(() => host.removeEventListener('pointerenter', again));
+      }
+    });
+    return () => offs.forEach((f) => f());
   });
 }

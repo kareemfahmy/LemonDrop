@@ -540,8 +540,8 @@ html:not(.js) .hero__toggle { display: none; }
 .footer { position: relative; z-index: var(--z-content); padding: calc(var(--u) * 14) var(--gutter) var(--gutter); overflow: clip; }
 .footer__top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: calc(var(--u) * 4); align-items: end; }
 .footer__title {
-  grid-column: 1 / 9; font-family: var(--f-display); font-weight: 780; font-stretch: 112%;
-  font-size: var(--t-xl); line-height: 0.9; letter-spacing: -0.045em; margin-left: -0.05em; max-width: 13ch;
+  grid-column: 1 / 8; font-family: var(--f-display); font-weight: 780; font-stretch: 112%;
+  font-size: var(--t-l); line-height: 0.95; letter-spacing: -0.035em; margin-left: -0.04em; max-width: 14ch;
 }
 .footer__action { grid-column: 9 / 13; display: flex; flex-direction: column; align-items: start; gap: calc(var(--u) * 1.6); }
 .footer__email { font-size: var(--t-m); background: linear-gradient(currentColor 0 0) left bottom / 100% 1px no-repeat; transition: background-size 0.4s var(--e-out); }
@@ -549,9 +549,40 @@ html:not(.js) .hero__toggle { display: none; }
 .footer__email:focus-visible { background-image: linear-gradient(var(--lemon) 0 0); background-size: 100% 0.45em; }
 .footer__time { font-size: var(--t-s); color: var(--muted); }
 .footer__time time { color: var(--fg); }
-.footer__mark { margin: calc(var(--u) * 10) auto calc(var(--u) * 4); width: min(100%, 78rem); }
-.footer__svg { width: 100%; height: auto; overflow: visible; }
-.footer__svg .kit__outline { stroke: none; }
+/* The big D: the primary action at page scale. Same behaviour as .dbtn, forty times the size. */
+.bigd {
+  --h: clamp(9.5rem, 23vw, 26rem);
+  position: relative; isolation: isolate; overflow: clip;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--gutter);
+  height: var(--h); margin-block: calc(var(--u) * 7) calc(var(--u) * 6);
+  padding: 0 calc(var(--h) * 0.3) 0 calc(var(--gutter) * 1.4);
+  border: 1.5px solid var(--fg); border-radius: var(--d);
+  color: var(--fg); transition: color 0.45s var(--e-soft), scale 0.3s var(--e-soft);
+}
+.bigd__fill {
+  position: absolute; inset: -2px; z-index: -1; background: var(--lemon); border-radius: var(--d);
+  translate: -101% 0; transition: translate 0.8s var(--e-out);
+}
+.bigd__label {
+  font-family: var(--f-display); font-weight: 780; font-stretch: 112%;
+  font-size: clamp(2.5rem, 10.2vw, 13.5rem); line-height: 0.92; letter-spacing: -0.045em; white-space: nowrap;
+}
+.bigd__arrow { font-size: clamp(2rem, 5.2vw, 7rem); line-height: 1; transition: translate 0.6s var(--e-out); }
+.bigd:active { scale: 0.99; }
+@media (hover: hover) {
+  .bigd:hover { color: var(--ink); }
+  .bigd:hover .bigd__fill { translate: 0 0; }
+  .bigd:hover .bigd__arrow { translate: 0.18em 0; }
+}
+.bigd:focus-visible { color: var(--ink); outline-offset: 6px; outline-color: var(--fg); }
+.bigd:focus-visible .bigd__fill { translate: 0 0; }
+/* Scramble: until a letter settles it shows as one of the three parts, inside its own slot. */
+.scr { position: relative; display: inline-block; }
+.scr[data-s] { color: transparent; }
+.scr[data-s]::before { content: ''; position: absolute; left: 12%; bottom: 0.2em; width: 50%; height: 0.72em; background: var(--fg); }
+.bigd:hover .scr[data-s]::before, .bigd:focus-visible .scr[data-s]::before { background: var(--ink); }
+.scr[data-s='step']::before { height: 0.26em; }
+.scr[data-s='drop']::before { width: 62%; background: var(--lemon); border-radius: var(--d); box-shadow: inset 0 0 0 1px var(--ink); }
 .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem var(--gutter); font-size: var(--t-xs); color: var(--muted); padding-top: var(--u); border-top: 1px solid var(--line); }
 .footer__links { display: flex; flex-wrap: wrap; gap: 0 1.4rem; }
 .footer__links a { display: inline-block; padding-block: 0.35rem; transition: color 0.3s; }
@@ -742,7 +773,9 @@ html:not(.js) .hero__toggle { display: none; }
 
   .caps__list li { grid-template-columns: 1fr; gap: 0.2rem; }
 
-  .footer__mark { margin-top: calc(var(--u) * 8); }
+  .bigd { --h: 13.5rem; padding: 0 3.5rem 0 1.1rem; }
+  .bigd__label { font-size: clamp(2.9rem, 15.5vw, 4.4rem); white-space: normal; max-width: 5.2em; }
+  .bigd__arrow { display: none; }
 
   .page-head__lede, .page-head__meta { grid-column: 1 / -1; }
   .page-head__title { font-size: clamp(3.4rem, 19vw, 6rem); }
