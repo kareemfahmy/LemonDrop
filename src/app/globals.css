@@ -526,13 +526,45 @@ html:not(.js) .hero__toggle { display: none; }
 @media (hover: none), (pointer: coarse) { .preview { display: none; } }
 
 .caps { padding-block: calc(var(--u) * 6) calc(var(--u) * 12); }
-.caps__head { grid-column: 1 / 5; align-self: start; position: sticky; top: 6rem; }
+.caps__head { display: flex; justify-content: space-between; align-items: end; gap: var(--gutter); padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 5); }
 .caps__title { font-size: var(--t-xl); }
-.caps__list { grid-column: 6 / 13; border-top: 1px solid var(--line); }
-.caps__list li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--gutter); padding-block: calc(var(--u) * 2); border-bottom: 1px solid var(--line); align-items: baseline; }
-.caps__name { font-family: var(--f-display); font-weight: 680; font-stretch: 100%; font-size: var(--t-m); letter-spacing: -0.02em; line-height: 1.15; }
-.caps__line { color: var(--muted); font-size: var(--t-s); }
-.caps__more { margin-top: calc(var(--u) * 3); }
+.caps__note { font-size: var(--t-s); color: var(--muted); }
+.caps__list { border-top: 1px solid var(--line); }
+.caps__list li { border-bottom: 1px solid var(--line); }
+/* Service rows: each one is an action. The active row floods as a D, the others step back. */
+.cap {
+  position: relative; isolation: isolate; overflow: clip;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: center;
+  min-height: clamp(5.25rem, 8.4vw, 9.5rem); padding: calc(var(--u) * 1.5) var(--gutter);
+  transition: opacity 0.45s var(--e-soft);
+}
+.cap__fill {
+  position: absolute; inset: -1px 0; z-index: -1; background: var(--lemon); border-radius: var(--d);
+  translate: -101% 0; transition: translate 0.75s var(--e-out);
+}
+.cap__name {
+  grid-column: 1 / 9; font-family: var(--f-display); font-weight: 760; font-stretch: 104%;
+  font-size: clamp(1.7rem, 0.5rem + 3.5vw, 4.6rem); line-height: 1; letter-spacing: -0.04em;
+  transition: translate 0.6s var(--e-out);
+}
+.cap__line { grid-column: 9 / 12; font-size: var(--t-s); color: var(--muted); transition: color 0.3s; }
+.cap__go {
+  grid-column: 12 / 13; justify-self: end; white-space: nowrap; font-size: var(--t-s); font-weight: 500;
+  opacity: 0; translate: -0.75rem 0; transition: opacity 0.3s, translate 0.5s var(--e-out);
+}
+.cap.is-on .cap__fill, .cap:focus-visible .cap__fill { translate: 0 0; }
+.cap.is-on .cap__name, .cap:focus-visible .cap__name { translate: 1.5rem 0; }
+.cap.is-on .cap__line, .cap:focus-visible .cap__line { color: var(--ink); }
+.cap.is-on .cap__go, .cap:focus-visible .cap__go { opacity: 1; translate: 0 0; }
+.cap:focus-visible { outline-offset: -4px; }
+@media (hover: hover) {
+  .cap:hover .cap__fill { translate: 0 0; }
+  .cap:hover .cap__name { translate: 1.5rem 0; }
+  .cap:hover .cap__line { color: var(--ink); }
+  .cap:hover .cap__go { opacity: 1; translate: 0 0; }
+  .caps__list:has(.cap:hover) .cap:not(:hover) { opacity: 0.32; }
+}
+.caps__more { padding: calc(var(--u) * 4) var(--gutter) 0; }
 
 /* ==========================================================================
    Footer finale
@@ -725,8 +757,9 @@ html:not(.js) .hero__toggle { display: none; }
   .plate { grid-column: span 6; margin-bottom: calc(var(--u) * 5); }
   .plate:nth-child(n) { margin-top: 0; }
   .plate:nth-child(2n) { margin-top: calc(var(--u) * 6); }
-  .caps__head { grid-column: 1 / 13; position: static; margin-bottom: calc(var(--u) * 3); }
-  .caps__list { grid-column: 1 / 13; }
+  .cap__name { grid-column: 1 / 8; }
+  .cap__line { grid-column: 8 / 13; }
+  .cap__go { display: none; }
   .footer__title { grid-column: 1 / 13; }
   .footer__action { grid-column: 1 / 13; }
   .method__item { grid-column: span 6; }
@@ -771,7 +804,12 @@ html:not(.js) .hero__toggle { display: none; }
   .row__year { display: none; }
   .row__marker { display: none; }
 
-  .caps__list li { grid-template-columns: 1fr; gap: 0.2rem; }
+  .caps__head { flex-direction: column; align-items: start; }
+  .cap { grid-template-columns: minmax(0, 1fr); row-gap: 0.35rem; padding-block: calc(var(--u) * 2.6); padding-right: 3.25rem; }
+  .cap__name, .cap__line { grid-column: 1; }
+  .cap.is-on .cap__name { translate: 0.6rem 0; }
+  .cap.is-on .cap__line { translate: 0.6rem 0; }
+  .cap__line { transition: color 0.3s, translate 0.6s var(--e-out); }
 
   .bigd { --h: 13.5rem; padding: 0 3.5rem 0 1.1rem; }
   .bigd__label { font-size: clamp(2.9rem, 15.5vw, 4.4rem); white-space: normal; max-width: 5.2em; }

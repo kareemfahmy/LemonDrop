@@ -20,6 +20,7 @@ export function setupMotion() {
   headerAway();
   titles();
   workPreview();
+  services();
   scramble();
 }
 
@@ -227,6 +228,17 @@ function workPreview() {
       off();
       gsap.set(box, { autoAlpha: 0 });
     };
+  });
+}
+
+// Service rows: with a pointer they answer to hover and focus (CSS). Touch has no hover, so the row
+// crossing the reading line is the active one and the list answers to the scroll instead.
+function services() {
+  onPage(() => {
+    if (!isTouch()) return;
+    document.querySelectorAll<HTMLElement>('[data-caps] .cap').forEach((row) => {
+      ScrollTrigger.create({ trigger: row, start: 'top 56%', end: 'bottom 56%', toggleClass: { targets: row, className: 'is-on' } });
+    });
   });
 }
 

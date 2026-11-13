@@ -115,13 +115,14 @@ export const chapters: {
 export const statement =
   'Most digital projects break in the gaps: strategy that never reaches the designer, designs nobody can build, code nobody can update. We do all three in one studio, so the idea you approved is the idea that ships.';
 
+// What we make. `need` is the matching chip on the contact page: each row links there with it selected.
 export const capabilities = [
-  { title: 'Websites and platforms', line: 'Marketing sites, editorial sites, member areas.' },
-  { title: 'Online stores', line: 'Catalogue, checkout and the operations behind them.' },
-  { title: 'Product and app interfaces', line: 'Dashboards, tools and flows people use daily.' },
-  { title: 'Brand systems for screens', line: 'Identity that survives contact with a real interface.' },
-  { title: 'Design systems', line: 'Components and rules your team can keep extending.' },
-  { title: 'Care and growth', line: 'Updates, testing and new features after launch.' },
+  { title: 'Websites and platforms', line: 'Marketing sites, editorial sites, member areas.', need: 'A website' },
+  { title: 'Online stores', line: 'Catalogue, checkout and the operations behind them.', need: 'An online store' },
+  { title: 'Product and app interfaces', line: 'Dashboards, tools and flows people use daily.', need: 'An app or product interface' },
+  { title: 'Brand systems for screens', line: 'Identity that survives contact with a real interface.', need: 'A brand for screens' },
+  { title: 'Design systems', line: 'Components and rules your team can keep extending.', need: 'A design system' },
+  { title: 'Care and growth', line: 'Updates, testing and new features after launch.', need: 'Help with something live' },
 ];
 
 export const projects: Project[] = [
@@ -269,6 +270,6 @@ export const studio = {
 export const contact = {
   title: 'Tell us what you want to build.',
   lead: 'Pick what applies, add a sentence, and we will write the email for you. We reply within one working day, Cairo time.',
-  needs: ['A website', 'An online store', 'An app or product interface', 'A brand for screens', 'Help with something live', 'Not sure yet'],
+  needs: ['A website', 'An online store', 'An app or product interface', 'A brand for screens', 'A design system', 'Help with something live', 'Not sure yet'],
   timelines: ['As soon as possible', 'In the next three months', 'Later this year', 'Just exploring'],
 };

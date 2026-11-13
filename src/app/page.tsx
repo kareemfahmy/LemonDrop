@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Hero } from '@/components/Hero';
 import { Kit } from '@/components/Kit';
 import { ArrowLink } from '@/components/Links';
@@ -28,19 +29,24 @@ export default function Home() {
         <p className="work__more"><ArrowLink href="/work/">See every project</ArrowLink></p>
       </section>
 
-      <section className="caps grid" data-tone="light" aria-labelledby="caps-title">
+      <section className="caps" data-tone="light" aria-labelledby="caps-title">
         <div className="caps__head">
           <h2 id="caps-title" className="caps__title display" data-split="chars" data-scrub>What we make</h2>
+          <p className="caps__note">Pick one and your brief starts with it filled in.</p>
         </div>
-        <ul className="caps__list">
+        <ul className="caps__list" data-caps>
           {capabilities.map((c) => (
             <li key={c.title}>
-              <h3 className="caps__name">{c.title}</h3>
-              <p className="caps__line">{c.line}</p>
+              <Link className="cap" href={`/contact/?need=${encodeURIComponent(c.need)}`} data-label="Start a project">
+                <span className="cap__fill" aria-hidden="true" />
+                <h3 className="cap__name">{c.title}</h3>
+                <span className="cap__line">{c.line}</span>
+                <span className="cap__go" aria-hidden="true">Start a brief <span className="cap__arrow">→</span></span>
+              </Link>
             </li>
           ))}
-          <li className="caps__more"><ArrowLink href="/studio/">How the studio works</ArrowLink></li>
         </ul>
+        <p className="caps__more"><ArrowLink href="/studio/">How the studio works</ArrowLink></p>
       </section>
     </>
   );

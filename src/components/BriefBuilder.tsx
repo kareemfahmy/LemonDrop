@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { contact, site } from '@/data/site';
 import { DButton } from './Links';
 
@@ -12,6 +12,15 @@ export function BriefBuilder() {
   const [when, setWhen] = useState<string>('');
   const [name, setName] = useState('');
   const [note, setNote] = useState('');
+
+  // Arriving from a service row on the home page: start with that need selected.
+  useEffect(() => {
+    const preselect = () => {
+      const need = new URLSearchParams(location.search).get('need');
+      if (need && contact.needs.includes(need)) setNeeds([need]);
+    };
+    preselect();
+  }, []);
 
   const sentence = useMemo(() => {
     const what = needs.length ? list(needs.map((n) => n.charAt(0).toLowerCase() + n.slice(1))) : 'something';
