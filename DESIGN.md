@@ -241,6 +241,8 @@ This pass supersedes the earlier sections where they disagree:
 | Text reveals | Play once on enter | Headlines and the home statement are scrubbed to scroll (`data-scrub` on `data-split`). Paragraphs, the hero h1 and the kit chapter titles still play once. |
 | Selected work (home) | Index only | Four portrait plates above the index, each on its own delay and duration (`data-reveal="appear"`). Phones hide the plates and run the same reveal on the inline row covers. |
 | Footer | Headline, small button, a second screen of the assembled mark | One D nearly the width of the page with "Start a project" inside it; floods with lemon like the small button. The label assembles from the three parts (scramble). About one screen tall. |
+| Footer on /contact | Same as every page | The big button would point at the page it is on, so there it asks "Not ready to brief us yet?" and offers "See the work". |
+| What we make (home) | Hairline list beside a sticky heading | Six large rows that act: the active row floods as a lemon D, its name steps forward, the others step back (hover and focus with a pointer; on touch, the row at the reading line). Each row links to the contact page with that need preselected (`?need=`). |
 
 Still held: yellow is only ever the drop (the scramble's drop glyph and the footer flood are both the drop); square corners and one curve; parts move on one axis with no bounce; no fake screenshots; no platform names in headlines; no WebGL; one easing vocabulary (scrubbed tweens use `none`, the scrub lag supplies the landing).
 
