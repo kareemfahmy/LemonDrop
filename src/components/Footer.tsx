@@ -36,7 +36,7 @@ export function Footer() {
           {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
           {site.socials.map((s) => <li key={s.href}><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
         </ul>
-        <p className="footer__colophon">Set in Archivo and Host Grotesk. The mark is three parts.</p>
+        <p className="footer__colophon">Set in Inter. The mark is three parts.</p>
       </div>
     </footer>
   );

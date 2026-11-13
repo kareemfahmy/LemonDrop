@@ -1,7 +1,5 @@
-import { Archivo, Host_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 
-// Display: Archivo variable with the width axis (expanded and heavy, like the mark's stem).
-export const display = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-display', display: 'swap' });
-
-// Text and UI.
-export const text = Host_Grotesk({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-text', display: 'swap' });
+// One family for everything. The optical-size axis gives large type the Display cut (tighter,
+// finer joins) and small type the Text cut, from the same file.
+export const sans = Inter({ subsets: ['latin'], axes: ['opsz'], variable: '--font-sans', display: 'swap' });
