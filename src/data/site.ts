@@ -112,8 +112,12 @@ export const chapters: {
   },
 ];
 
-export const statement =
-  'Most digital projects break in the gaps: strategy that never reaches the designer, designs nobody can build, code nobody can update. We do all three in one studio, so the idea you approved is the idea that ships.';
+// Why one studio: the problem, then the answer. The figure beside it shows the three parts held
+// apart by handovers, and closes the gaps as the answer scrolls in.
+export const statement = {
+  problem: 'Most digital projects break in the gaps: strategy that never reaches the designer, designs nobody can build, code nobody can update.',
+  answer: 'We do all three in one studio, so the idea you approved is the idea that ships.',
+};
 
 // What we make. `need` is the matching chip on the contact page: each row links there with it selected.
 export const capabilities = [

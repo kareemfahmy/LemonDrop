@@ -5,6 +5,7 @@ import { SplitText } from 'gsap/SplitText';
 import { ease, isTouch, onPage, onScroll, prefersReducedMotion, setLoaderExit, setLoaderFormat, setTransition } from '@/engine';
 import { startIdle } from './idle';
 import { startKit } from './kit';
+import { GAP_APART } from '@/components/GapFigure';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -19,6 +20,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
+  gaps();
   workPreview();
   services();
   scramble();
@@ -228,6 +230,43 @@ function workPreview() {
       off();
       gsap.set(box, { autoAlpha: 0 });
     };
+  });
+}
+
+// "Why one studio": the figure starts as three teams held apart by handovers. As the answer
+// sentence scrolls in, the gaps close, the drop rolls home and fills, and the problem sentence
+// steps back. Scrubbed, so scrolling up opens the gaps again.
+function gaps() {
+  onPage(() => {
+    const svg = document.querySelector<SVGSVGElement>('[data-gap]');
+    const answer = document.querySelector<HTMLElement>('[data-gap-answer]');
+    const problem = document.querySelector<HTMLElement>('[data-gap-problem]');
+    if (!svg || !answer || prefersReducedMotion()) return;
+    const fig = svg.parentElement!;
+    const part = (n: string) => svg.querySelector<SVGGElement>(`[data-gap-part="${n}"]`);
+    const notes = svg.querySelectorAll('[data-gap-note], .gap__label');
+    const fill = svg.querySelector('[data-gap-fill]');
+    gsap.set(part('block'), { x: GAP_APART.block });
+    gsap.set(part('step'), { x: GAP_APART.step });
+    const roll = svg.querySelector('[data-gap-roll]');
+    gsap.set(part('drop'), { x: GAP_APART.drop });
+    gsap.set(roll, { rotation: GAP_APART.drop * 0.26, svgOrigin: '360 188.5' });
+    gsap.set(notes, { opacity: 1 });
+    gsap.set(fill, { attr: { y: 377, height: 0 } });
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: answer, start: 'clamp(top 86%)', end: 'clamp(bottom 56%)', scrub: 0.3,
+        onUpdate: (self) => fig.classList.toggle('is-locked', self.progress > 0.98),
+      },
+    })
+      .to(notes, { opacity: 0, duration: 0.25 }, 0)
+      .to(part('block'), { x: 0, duration: 0.6 }, 0.1)
+      .to(part('step'), { x: 0, duration: 0.6 }, 0.16)
+      .to(part('drop'), { x: 0, duration: 0.6 }, 0.22)
+      .to(roll, { rotation: 0, duration: 0.6 }, 0.22)
+      .to(fill, { attr: { y: 0, height: 377 }, duration: 0.3 }, 0.7);
+    if (problem) ScrollTrigger.create({ trigger: answer, start: 'top 62%', toggleClass: { targets: problem, className: 'is-past' } });
   });
 }
 

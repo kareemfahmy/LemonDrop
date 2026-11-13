@@ -449,19 +449,37 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Home: statement, work index, capabilities
    ========================================================================== */
-.statement { padding-block: calc(var(--u) * 12) calc(var(--u) * 12); }
+.statement { padding-block: calc(var(--u) * 9) calc(var(--u) * 6); row-gap: calc(var(--u) * 4); align-items: center; }
+.statement__aside { grid-column: 1 / 13; font-size: var(--t-s); color: var(--muted); }
+.statement__fig { grid-column: 1 / 6; }
+.statement__copy { grid-column: 6 / 13; display: grid; row-gap: 0.9em; font-size: var(--t-l); }
 .statement__text {
-  grid-column: 4 / 13; font-family: var(--f-display); font-weight: 500;
-  font-size: var(--t-l); line-height: 1.08; letter-spacing: -0.02em;
+  font-family: var(--f-display); font-weight: 500;
+  font-size: inherit; line-height: 1.08; letter-spacing: -0.02em; transition: color 0.7s var(--e-soft);
 }
+/* The problem steps back once the answer is on screen. */
+.statement__text.is-past { color: rgb(17 17 16 / 0.38); }
 .statement__drop {
   display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.15em; vertical-align: -0.08em;
   border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1px var(--ink);
 }
-.statement__aside { grid-column: 1 / 4; grid-row: 1; padding-top: 0.6em; font-size: var(--t-s); color: var(--muted); }
-.statement__text { grid-row: 1; }
+/* Gap figure: three teams, two handovers, then one studio. */
+.gap { width: 100%; height: auto; max-height: 62svh; overflow: visible; }
+.gap__solid { fill: var(--fg); }
+.gap__drop { fill: var(--lemon); }
+.gap__outline { fill: none; stroke: var(--fg); stroke-width: 1.4px; vector-effect: non-scaling-stroke; }
+.gap__label, .gap__note { opacity: 0; } /* shown by the motion code while the parts are apart */
+.gap__label, .gap__note text { font-family: var(--f-body); font-size: 24px; fill: var(--muted); letter-spacing: 0.005em; }
+.gap__note path { fill: none; stroke: var(--muted); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+.gap__nudge { transition: translate 0.6s var(--e-out); }
+/* Once assembled, the figure answers the pointer the way the logo does: it comes apart a little. */
+@media (hover: hover) {
+  .statement__fig.is-locked:hover .gap__nudge--block { translate: -34px 0; }
+  .statement__fig.is-locked:hover .gap__nudge--step { translate: 14px 36px; }
+  .statement__fig.is-locked:hover .gap__nudge--drop { translate: 46px -16px; }
+}
 
-.work { padding-block: calc(var(--u) * 10) calc(var(--u) * 16); }
+.work { padding-block: calc(var(--u) * 7) calc(var(--u) * 14); }
 .work__head { display: flex; justify-content: space-between; align-items: end; gap: var(--gutter); padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 5); }
 .work__title { font-size: var(--t-xl); }
 .work__count { font-size: var(--t-s); color: var(--muted); }
@@ -790,9 +808,10 @@ html:not(.js) .hero__toggle { display: none; }
   .kit__chapter { grid-column: 1 / -1; justify-content: flex-start; min-height: 70svh; padding-block: 14svh 2svh; }
   .kit__h2 { font-size: clamp(2.6rem, 13vw, 4rem); }
 
-  .statement { padding-block: calc(var(--u) * 14); }
-  .statement__aside { grid-column: 1 / -1; grid-row: 1; padding: 0 0 1rem; }
-  .statement__text { grid-column: 1 / -1; grid-row: 2; text-indent: 0; }
+  .statement { padding-block: calc(var(--u) * 12) calc(var(--u) * 8); row-gap: calc(var(--u) * 4); }
+  .statement__fig { padding-inline: 8%; }
+  .gap { max-height: 34svh; }
+  .gap__label, .gap__note text { font-size: 34px; }
 
   .work__head { flex-direction: column; align-items: start; }
   .plates { display: none; } /* phones: each row carries its own cover */
