@@ -24,6 +24,7 @@ export function setupMotion() {
   workPreview();
   services();
   scramble();
+  bench();
 }
 
 // Loader: the parts arrive one by one and lock into the mark as fonts and assets load. The counter
@@ -359,5 +360,122 @@ function scramble() {
       }
     });
     return () => offs.forEach((f) => f());
+  });
+}
+
+// The bench (footer): the mark as three loose parts. They slide in scattered; the visitor drags
+// each one to its outline, where it locks. All three locked = built, and the big button floods.
+// A button does it for them, or takes it apart again. Drag and throw come from GSAP's Draggable
+// and InertiaPlugin, loaded only when the bench is about to be seen.
+function bench() {
+  const UNITS = { block: [0, 0, 148, 377], step: [148, 250, 81, 127], drop: [247, 0, 274.5, 377] } as const;
+  type Name = keyof typeof UNITS;
+  const NAMES = Object.keys(UNITS) as Name[];
+  onPage(() => {
+    const root = document.querySelector<HTMLElement>('[data-bench]');
+    const table = root?.querySelector<HTMLElement>('[data-bench-table]');
+    const button = root?.querySelector<HTMLButtonElement>('[data-bench-btn]');
+    if (!root || !table || prefersReducedMotion()) return;
+    const footer = root.closest<HTMLElement>('.footer');
+    const el = (kind: 'part' | 'ghost', n: Name) => table.querySelector<HTMLElement>(`[data-bench-${kind}="${n}"]`)!;
+    const home = {} as Record<Name, { x: number; y: number }>;
+    const away = {} as Record<Name, { x: number; y: number; r: number }>;
+    const locked: Record<Name, boolean> = { block: false, step: false, drop: false };
+    let alive = true;
+    let entered = false;
+    let drags: { kill: () => void }[] = [];
+
+    root.classList.add('is-ready'); // it has no size until it is shown
+    const layout = () => {
+      const W = table.clientWidth;
+      const H = table.clientHeight;
+      const s = Math.min((H * 0.5) / 377, (W * (W < 640 ? 0.42 : 0.3)) / 522);
+      const ox = (W - 522 * s) / 2;
+      const oy = (H - 377 * s) / 2;
+      NAMES.forEach((n) => {
+        const [x, y, w, h] = UNITS[n];
+        gsap.set([el('part', n), el('ghost', n)], { width: w * s, height: h * s });
+        home[n] = { x: ox + x * s, y: oy + y * s };
+        gsap.set(el('ghost', n), { x: home[n].x, y: home[n].y });
+      });
+      const narrow = W < 640;
+      away.block = { x: W * 0.05, y: H * (narrow ? 0.05 : 0.12), r: -9 };
+      away.step = { x: W * (narrow ? 0.1 : 0.26), y: H - 127 * s - H * 0.07, r: 13 };
+      away.drop = { x: W - 274.5 * s - W * 0.06, y: narrow ? H - 377 * s - H * 0.05 : H * 0.22, r: 24 };
+    };
+    const sync = () => {
+      const built = NAMES.every((n) => locked[n]);
+      root.classList.toggle('is-built', built);
+      footer?.classList.toggle('is-built', built);
+    };
+    const send = (n: Name, toHome: boolean, delay = 0) => {
+      locked[n] = toHome;
+      const to = toHome ? { ...home[n], r: 0 } : away[n];
+      return gsap.to(el('part', n), { x: to.x, y: to.y, rotation: to.r, duration: toHome ? 0.7 : 0.9, delay, ease: ease.out, overwrite: true, onComplete: sync });
+    };
+    // Where a released part came to rest: on its outline (lock), near it (pull it in), or anywhere else.
+    const near = (n: Name) => Math.hypot(Number(gsap.getProperty(el('part', n), 'x')) - home[n].x, Number(gsap.getProperty(el('part', n), 'y')) - home[n].y) < table.clientHeight * 0.17;
+    const settle = (n: Name) => {
+      if (near(n)) send(n, true);
+      else { locked[n] = false; sync(); }
+    };
+    const arm = async () => {
+      const [{ Draggable }, { InertiaPlugin }] = await Promise.all([import('gsap/Draggable'), import('gsap/InertiaPlugin')]);
+      if (!alive) return;
+      gsap.registerPlugin(Draggable, InertiaPlugin);
+      drags.forEach((d) => d.kill());
+      drags = NAMES.map((n) => Draggable.create(el('part', n), {
+        type: 'x,y',
+        bounds: table,
+        inertia: true,
+        edgeResistance: 0.75,
+        onPress() { locked[n] = false; sync(); },
+        // Let go over the outline and it locks, however fast it was moving; otherwise it is thrown.
+        onDragEnd() { if (near(n)) { this.tween?.kill(); send(n, true); } else if (!this.tween) settle(n); },
+        onThrowComplete() { settle(n); },
+      })[0]);
+    };
+
+    layout();
+    NAMES.forEach((n) => gsap.set(el('part', n), { x: away[n].x, y: away[n].y, rotation: away[n].r, autoAlpha: 0 }));
+    const enter = ScrollTrigger.create({
+      trigger: table,
+      start: 'top 88%',
+      once: true,
+      onEnter: () => {
+        entered = true;
+        arm();
+        const H = table.clientHeight;
+        const W = table.clientWidth;
+        gsap.fromTo(el('part', 'block'), { y: H + 40, autoAlpha: 1 }, { y: away.block.y, duration: 1.1, ease: ease.out });
+        gsap.fromTo(el('part', 'step'), { y: H + 40, autoAlpha: 1 }, { y: away.step.y, duration: 1.1, delay: 0.12, ease: ease.out });
+        gsap.fromTo(el('part', 'drop'), { x: W + 40, rotation: away.drop.r + 70, autoAlpha: 1 }, { x: away.drop.x, rotation: away.drop.r, duration: 1.2, delay: 0.24, ease: ease.out });
+      },
+    });
+    // A resize moves the outlines: put every part back where its state says it belongs.
+    let width = table.clientWidth;
+    const onRefresh = () => {
+      if (table.clientWidth === width) return;
+      width = table.clientWidth;
+      layout();
+      NAMES.forEach((n) => { const to = locked[n] ? { ...home[n], r: 0 } : away[n]; gsap.set(el('part', n), { x: to.x, y: to.y, rotation: to.r }); });
+      if (entered) arm();
+    };
+    ScrollTrigger.addEventListener('refresh', onRefresh);
+    const onClick = () => {
+      const build = !NAMES.every((n) => locked[n]);
+      NAMES.forEach((n, i) => { if (!build || !locked[n]) send(n, build, i * 0.09); });
+      if (!build) sync();
+    };
+    button?.addEventListener('click', onClick);
+    return () => {
+      alive = false;
+      enter.kill();
+      ScrollTrigger.removeEventListener('refresh', onRefresh);
+      button?.removeEventListener('click', onClick);
+      drags.forEach((d) => d.kill());
+      root.classList.remove('is-ready', 'is-built');
+      footer?.classList.remove('is-built');
+    };
   });
 }

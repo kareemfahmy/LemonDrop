@@ -8,6 +8,7 @@ import { CairoTime } from './CairoTime';
 // the same shape as the small button, that floods with lemon from its square end on hover or
 // focus. Its label assembles from the three parts when it scrolls in (setup.ts, scramble).
 // The action follows the page: on the contact page it offers the work, not the page you are on.
+// Under the button sits the bench: the three parts, loose, for the visitor to assemble.
 export function Footer() {
   const year = 2026;
   const path = usePathname();
@@ -29,6 +30,28 @@ export function Footer() {
         <span key={cta.label} className="bigd__label" aria-hidden="true" data-scramble>{cta.label}</span>
         <span className="bigd__arrow" aria-hidden="true">→</span>
       </Link>
+      {/* The bench: the mark in three loose parts, to put together by hand (setup.ts, bench). A toy,
+          so it is hidden from assistive tech and absent without JS or under reduced motion. */}
+      <div className="bench" data-bench>
+        <div className="bench__head">
+          <p className="bench__hint">
+            <span className="bench__open">Your turn. Put the mark together.</span>
+            <span className="bench__built">Built properly. That is the whole job.</span>
+          </p>
+          <button type="button" className="bench__btn" data-bench-btn>
+            <span className="bench__open">Do it for me</span>
+            <span className="bench__built">Take it apart</span>
+          </button>
+        </div>
+        <div className="bench__table" data-bench-table aria-hidden="true">
+          <span className="bench__ghost" data-bench-ghost="block" />
+          <span className="bench__ghost" data-bench-ghost="step" />
+          <span className="bench__ghost bench__ghost--drop" data-bench-ghost="drop" />
+          <span className="bench__part" data-bench-part="block" />
+          <span className="bench__part" data-bench-part="step" />
+          <span className="bench__part bench__part--drop" data-bench-part="drop" />
+        </div>
+      </div>
       <div className="footer__bottom">
         <p>© {year} {site.name}</p>
         <ul className="footer__links">

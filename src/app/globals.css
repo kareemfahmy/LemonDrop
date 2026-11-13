@@ -631,6 +631,36 @@ html:not(.js) .hero__toggle { display: none; }
 .bigd:hover .scr[data-s]::before, .bigd:focus-visible .scr[data-s]::before { background: var(--ink); }
 .scr[data-s='step']::before { height: 0.26em; }
 .scr[data-s='drop']::before { width: 62%; background: var(--lemon); border-radius: var(--d); box-shadow: inset 0 0 0 1px var(--ink); }
+/* The bench: three loose parts and the outline of where they go. Shown once the motion code has
+   laid it out (.is-ready); built = all three locked in place. */
+.bench { display: none; margin-bottom: calc(var(--u) * 5); }
+.bench.is-ready { display: block; }
+.bench__head { display: flex; justify-content: space-between; align-items: center; gap: var(--gutter); margin-bottom: calc(var(--u) * 2); }
+.bench__hint { font-size: var(--t-m); line-height: 1.25; letter-spacing: -0.012em; }
+.bench__built, .bench.is-built .bench__open { display: none; }
+.bench.is-built .bench__built { display: inline; }
+.bench__btn {
+  flex: none; min-height: 44px; padding: 0.55rem 1.3rem 0.55rem 1rem; border: 1px solid var(--line); border-radius: var(--d);
+  font-size: var(--t-s); color: var(--fg); transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+}
+@media (hover: hover) { .bench__btn:hover { border-color: var(--fg); background: var(--fg); color: var(--bg); } }
+.bench__table {
+  position: relative; overflow: clip; height: clamp(18rem, 44svh, 28rem);
+  border-block: 1px solid var(--line); touch-action: pan-y;
+}
+.bench__part, .bench__ghost { position: absolute; left: 0; top: 0; }
+.bench__ghost { border: 1px dashed rgb(239 239 236 / 0.34); transition: opacity 0.5s var(--e-soft); }
+.bench__ghost--drop, .bench__part--drop { border-radius: var(--d); }
+.bench.is-built .bench__ghost { opacity: 0; }
+.bench__part { visibility: hidden; background: var(--paper); cursor: grab; touch-action: none; user-select: none; }
+.bench__part--drop { background: var(--lemon); }
+.bench__part:active { cursor: grabbing; }
+/* The reward: with the mark assembled, the big button floods as if hovered. */
+.footer.is-built .bigd { color: var(--ink); }
+.footer.is-built .bigd__fill { translate: 0 0; }
+.footer.is-built .scr[data-s]::before { background: var(--ink); }
+.footer.is-built .scr[data-s='drop']::before { background: var(--lemon); }
+
 .footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem var(--gutter); font-size: var(--t-xs); color: var(--muted); padding-top: var(--u); border-top: 1px solid var(--line); }
 .footer__links { display: flex; flex-wrap: wrap; gap: 0 1.4rem; }
 .footer__links a { display: inline-block; padding-block: 0.35rem; transition: color 0.3s; }
@@ -827,6 +857,8 @@ html:not(.js) .hero__toggle { display: none; }
   .cap__go { display: none; }
 
   .bigd { --h: 13.5rem; padding: 0 3.5rem 0 1.1rem; }
+  .bench__head { flex-direction: column; align-items: start; gap: 0.75rem; }
+  .bench__table { height: 24rem; }
   .bigd__label { font-size: clamp(2.9rem, 15.5vw, 4.4rem); white-space: normal; max-width: 5.2em; }
   .bigd__arrow { display: none; }
 
