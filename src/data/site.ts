@@ -267,6 +267,13 @@ export const studio = {
   ],
 };
 
+// The footer's big button. On the contact page the visitor is already starting a project, so the
+// button offers the work instead of pointing at the page they are on.
+export const footerCta = {
+  default: { ask: 'Have an idea that needs taking apart?', label: 'Start a project', href: '/contact/' },
+  contact: { ask: 'Not ready to brief us yet?', label: 'See the work', href: '/work/' },
+};
+
 export const contact = {
   title: 'Tell us what you want to build.',
   lead: 'Pick what applies, add a sentence, and we will write the email for you. We reply within one working day, Cairo time.',
