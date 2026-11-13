@@ -242,7 +242,12 @@ This pass supersedes the earlier sections where they disagree:
 | Selected work (home) | Index only | Four portrait plates above the index, each on its own delay and duration (`data-reveal="appear"`). Phones hide the plates and run the same reveal on the inline row covers. |
 | Footer | Headline, small button, a second screen of the assembled mark | One D nearly the width of the page with "Start a project" inside it; floods with lemon like the small button. The label assembles from the three parts (scramble). About one screen tall. |
 | Footer on /contact | Same as every page | The big button would point at the page it is on, so there it asks "Not ready to brief us yet?" and offers "See the work". |
-| What we make (home) | Hairline list beside a sticky heading | Six large rows that act: the active row floods as a lemon D, its name steps forward, the others step back (hover and focus with a pointer; on touch, the row at the reading line). Each row links to the contact page with that need preselected (`?need=`). |
+| What we make (home) | Hairline list beside a sticky heading | Six large rows driven by a lemon drop: it rolls to the row being read (the one at the middle of the screen, or under the cursor), one full turn per row, and that row comes to full strength. Each row links to the contact page with that need preselected (`?need=`). An earlier version flooded the hovered row; it was dropped as too generic. |
+| Type | Archivo (expanded, 780) for display, Host Grotesk for text | Inter for everything. The optical-size axis gives large type the Display cut. Headlines at 600: the mark is the heavy thing on the page, not the type. |
+| Why one studio (home) | One paragraph in a wide margin | Problem and answer as two sentences beside a figure: the three parts stand apart with the handovers drawn as dimension gaps; as the answer scrolls in the gaps close, the drop rolls home and fills. Shorter section, closer to Selected work. |
+| Footer, under the button | Nothing | The bench: the mark in three loose parts to drag onto a dashed outline. Built = all three locked; the big button floods as the reward. A button assembles or scatters it. |
+
+The earlier Type table and the width-axis notes in the motion section no longer apply.
 
 Still held: yellow is only ever the drop (the scramble's drop glyph and the footer flood are both the drop); square corners and one curve; parts move on one axis with no bounce; no fake screenshots; no platform names in headlines; no WebGL; one easing vocabulary (scrubbed tweens use `none`, the scrub lag supplies the landing).
 
