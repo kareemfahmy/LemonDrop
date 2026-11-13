@@ -270,14 +270,63 @@ function gaps() {
   });
 }
 
-// Service rows: with a pointer they answer to hover and focus (CSS). Touch has no hover, so the row
-// crossing the reading line is the active one and the list answers to the scroll instead.
+// Service rows: the drop is the pointer. It rolls down the list to the row at the middle of the
+// screen as you scroll, or to the row under the cursor, and that row comes forward. One driver:
+// a target position, an eased position, and the roll derived from the distance travelled.
 function services() {
   onPage(() => {
-    if (!isTouch()) return;
-    document.querySelectorAll<HTMLElement>('[data-caps] .cap').forEach((row) => {
-      ScrollTrigger.create({ trigger: row, start: 'top 56%', end: 'bottom 56%', toggleClass: { targets: row, className: 'is-on' } });
-    });
+    const wrap = document.querySelector<HTMLElement>('[data-caps]');
+    const drop = wrap?.querySelector<HTMLElement>('[data-caps-drop]');
+    if (!wrap || !drop || prefersReducedMotion()) return;
+    const rows = [...wrap.querySelectorAll<HTMLElement>('.cap')];
+    if (!rows.length) return;
+    wrap.classList.add('is-driven');
+    let top = 0;
+    let centres: number[] = [];
+    const measure = () => {
+      top = wrap.getBoundingClientRect().top + scrollY;
+      centres = rows.map((r) => { const b = r.getBoundingClientRect(); return b.top + scrollY - top + b.height / 2; });
+    };
+    measure();
+    let hover = -1;
+    let active = -1;
+    let y = centres[0];
+    let visible = false;
+    const setY = gsap.quickSetter(drop, 'y', 'px');
+    const setR = gsap.quickSetter(drop, 'rotation', 'deg');
+    gsap.set(drop, { yPercent: -50 });
+    // Position as a row count (2.5 = halfway between the third and fourth rows).
+    const turns = (at: number) => {
+      for (let i = 0; i < centres.length - 1; i++) {
+        if (at <= centres[i + 1]) return i + (at - centres[i]) / (centres[i + 1] - centres[i]);
+      }
+      return centres.length - 1;
+    };
+    const nearest = (line: number) => centres.reduce((best, c, i) => (Math.abs(c - line) < Math.abs(centres[best] - line) ? i : best), 0);
+    const draw = (instant = false) => {
+      const target = hover >= 0 ? hover : nearest(scrollY + innerHeight * 0.5 - top);
+      const to = centres[target];
+      y = instant ? to : y + (to - y) * (1 - Math.pow(0.88, gsap.ticker.deltaRatio()));
+      setY(y);
+      setR(turns(y) * 360); // one full turn per row, so it always comes to rest upright
+      if (target !== active) { active = target; rows.forEach((r, i) => r.classList.toggle('is-on', i === active)); }
+    };
+    draw(true);
+    const tick = () => { if (visible) draw(); };
+    gsap.ticker.add(tick);
+    const st = ScrollTrigger.create({ trigger: wrap, start: 'top bottom', end: 'bottom top', onRefresh: () => { measure(); draw(true); }, onToggle: (self) => { visible = self.isActive; } });
+    const offs: (() => void)[] = [];
+    if (!isTouch()) {
+      rows.forEach((r, i) => {
+        const enter = () => { hover = i; };
+        r.addEventListener('pointerenter', enter);
+        offs.push(() => r.removeEventListener('pointerenter', enter));
+      });
+      const leave = () => { hover = -1; };
+      wrap.addEventListener('pointerleave', leave);
+      offs.push(() => wrap.removeEventListener('pointerleave', leave));
+    }
+    return () => { gsap.ticker.remove(tick); st.kill(); offs.forEach((f) => f()); wrap.classList.remove('is-driven'); rows.forEach((r) => r.classList.remove('is-on')); };
   });
 }
 
