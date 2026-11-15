@@ -1,8 +1,5 @@
 // Declarative motion through data attributes. Authoring happens in markup:
 //   data-split="lines|words|chars"   masked text reveal (SplitText), on scroll or on intro
-//   data-scrub="0.3"                  with data-split: tie the reveal to scroll position instead of
-//                                     playing it once (value = catch-up lag in seconds). Headlines
-//                                     and short statements only.
 //   data-split-with                   on an inline child (an icon, a shape): rises with the text
 //   data-reveal="up|fade|clip|scale"  block reveal
 //   data-reveal="appear"              media reveal: the frame wipes open while its content settles
@@ -14,23 +11,20 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { ease, isMobile, prefersReducedMotion } from './env';
+import { ease, prefersReducedMotion } from './env';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const durations = { lines: 1.2, words: 1.1, chars: 0.9 } as const;
 const staggers = { lines: 0.08, words: 0.035, chars: 0.018 } as const;
-// Scrubbed reveals: each unit rises over 1 "second" of a timeline that scroll plays back.
-const scrubStaggers = { lines: 0.4, words: 0.12, chars: 0.03 } as const;
 
 // autoSplit re-splits after font load / resize. A text that already revealed must stay revealed,
 // so the state lives outside onSplit.
+// Every text reveal on the site is the same move: it rises once from behind its line mask when it
+// comes into view, and stays. Nothing is tied to scroll position.
 function splitTween(el: HTMLElement, isIntro: boolean) {
-  let type = (el.dataset.split || 'lines') as keyof typeof durations;
+  const type = (el.dataset.split || 'lines') as keyof typeof durations;
   const delay = parseFloat(el.dataset.delay || '0');
-  const scrub = !isIntro && el.hasAttribute('data-scrub') ? parseFloat(el.dataset.scrub || '') || 0.3 : 0;
-  // Long text on a phone: hundreds of animated characters cost more than they show. Use words.
-  if (scrub && type === 'chars' && isMobile() && (el.textContent || '').length > 40) type = 'words';
   const s = { tween: undefined as gsap.core.Tween | undefined, done: false, requested: false };
   SplitText.create(el, {
     type: type === 'lines' ? 'lines' : `lines,${type}`,
@@ -39,24 +33,13 @@ function splitTween(el: HTMLElement, isIntro: boolean) {
     linesClass: 'split-line',
     onSplit(self) {
       gsap.set(el, { visibility: 'visible' });
-      const units = type === 'lines' ? self.lines : type === 'words' ? self.words : self.chars;
-      if (scrub) {
-        // Rises with the scroll and sinks back with it; no "done" state to keep.
-        const targets = [...units, ...el.querySelectorAll<HTMLElement>('[data-split-with]')];
-        // An inline shape is shorter than its line box, so it needs further to travel to clear the mask.
-        s.tween = gsap.fromTo(targets, { yPercent: (_, t: HTMLElement) => (t.hasAttribute('data-split-with') ? 180 : 100) }, {
-          yPercent: 0,
-          duration: 1,
-          stagger: scrubStaggers[type],
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'clamp(top 92%)', end: 'clamp(bottom 58%)', scrub },
-        });
-        return s.tween;
-      }
       if (s.done) return;
+      const units = type === 'lines' ? self.lines : type === 'words' ? self.words : self.chars;
+      // An inline shape rides with the last line. It is shorter than the line box, so it travels further.
+      const extras = [...el.querySelectorAll<HTMLElement>('[data-split-with]')];
       // Slide and lock: straight up, no rotation.
-      s.tween = gsap.from(units, {
-        yPercent: 110,
+      s.tween = gsap.from([...units, ...extras], {
+        yPercent: (_, t: HTMLElement) => (t.hasAttribute('data-split-with') ? 190 : 110),
         duration: durations[type],
         stagger: staggers[type],
         ease: ease.out,

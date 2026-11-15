@@ -17,8 +17,8 @@ export default function Home() {
         <p className="statement__aside">Why one studio</p>
         <div className="statement__fig"><GapFigure /></div>
         <div className="statement__copy">
-          <p className="statement__text" data-split="chars" data-scrub data-gap-problem>{statement.problem}</p>
-          <p className="statement__text" data-split="chars" data-scrub data-gap-answer>
+          <p className="statement__text" data-split="lines" data-gap-problem>{statement.problem}</p>
+          <p className="statement__text" data-split="lines" data-gap-answer>
             {statement.answer}<span className="statement__drop" data-split-with aria-hidden="true" />
           </p>
         </div>
@@ -26,7 +26,7 @@ export default function Home() {
 
       <section className="work" data-tone="light" aria-labelledby="work-title">
         <div className="work__head">
-          <h2 id="work-title" className="work__title display" data-split="chars" data-scrub>Selected work</h2>
+          <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>
           <p className="work__count">Four projects, each built from the same three parts</p>
         </div>
         <WorkPlates items={projects} />
@@ -36,7 +36,7 @@ export default function Home() {
 
       <section className="caps" data-tone="light" aria-labelledby="caps-title">
         <div className="caps__head">
-          <h2 id="caps-title" className="caps__title display" data-split="chars" data-scrub>What we make</h2>
+          <h2 id="caps-title" className="caps__title display" data-split="lines">What we make</h2>
           <p className="caps__note">Follow the drop. Pick one and your brief starts with it filled in.</p>
         </div>
         <div className="caps__rows" data-caps>
