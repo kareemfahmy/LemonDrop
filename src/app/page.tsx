@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Hero } from '@/components/Hero';
 import { Kit } from '@/components/Kit';
 import { ArrowLink } from '@/components/Links';
-import { WorkIndex } from '@/components/WorkIndex';
 import { WorkPlates } from '@/components/WorkPlates';
 import { capabilities, projects, statement } from '@/data/site';
 
@@ -26,7 +25,6 @@ export default function Home() {
           <p className="work__count">Four projects, each built from the same three parts</p>
         </div>
         <WorkPlates items={projects} />
-        <WorkIndex items={projects} />
         <p className="work__more"><ArrowLink href="/work/">See every project</ArrowLink></p>
       </section>
 

@@ -19,7 +19,6 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
-  workPreview();
   services();
   scramble();
   bench();
@@ -189,46 +188,6 @@ function titles() {
       gsap.set(split.lines, { yPercent: 110 });
       intro.add(gsap.to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.08, ease: ease.out }), 0);
     });
-  });
-}
-
-// Work index: a D-shaped preview of the project's cover follows the pointer (fine pointers only;
-// touch shows inline covers instead).
-function workPreview() {
-  onPage(() => {
-    const list = document.querySelector<HTMLElement>('[data-index]');
-    const box = document.querySelector<HTMLElement>('[data-preview-box]');
-    if (!list || !box || isTouch() || prefersReducedMotion()) return;
-    const covers = [...box.querySelectorAll<HTMLElement>('[data-cover]')];
-    const x = gsap.quickTo(box, 'x', { duration: 0.6, ease: ease.soft });
-    const y = gsap.quickTo(box, 'y', { duration: 0.6, ease: ease.soft });
-    const rot = gsap.quickTo(box, 'rotation', { duration: 0.8, ease: ease.soft });
-    let lastX = 0, px = 0, py = 0;
-    // Anchored over the right-hand columns so the title and client stay readable; the pointer
-    // still steers it a little and tips it as it moves.
-    const anchor = () => innerWidth - box.offsetWidth / 2 - parseFloat(getComputedStyle(document.documentElement).fontSize) * 2.5;
-    const move = (e: PointerEvent) => {
-      px = e.clientX; py = e.clientY;
-      x(anchor() + (px / innerWidth - 0.5) * 40); y(py); rot(gsap.utils.clamp(-6, 6, (px - lastX) * 0.3)); lastX = px;
-    };
-    const show = (e: Event) => {
-      const i = (e.currentTarget as HTMLElement).dataset.preview;
-      covers.forEach((c) => c.classList.toggle('is-on', c.dataset.cover === i));
-      gsap.to(box, { autoAlpha: 1, scale: 1, duration: 0.5, ease: ease.out, overwrite: 'auto' });
-    };
-    const hide = () => gsap.to(box, { autoAlpha: 0, scale: 0.8, duration: 0.35, ease: ease.out, overwrite: 'auto' });
-    const rows = [...list.querySelectorAll<HTMLElement>('[data-preview]')];
-    rows.forEach((a) => a.addEventListener('pointerenter', show));
-    list.addEventListener('pointerleave', hide);
-    addEventListener('pointermove', move);
-    const off = onScroll(() => { if (!list.contains(document.elementFromPoint(px, py))) hide(); });
-    return () => {
-      rows.forEach((a) => a.removeEventListener('pointerenter', show));
-      list.removeEventListener('pointerleave', hide);
-      removeEventListener('pointermove', move);
-      off();
-      gsap.set(box, { autoAlpha: 0 });
-    };
   });
 }
 
