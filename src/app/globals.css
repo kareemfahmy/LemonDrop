@@ -526,25 +526,28 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Footer finale
    ========================================================================== */
-.footer { position: relative; z-index: var(--z-content); padding: calc(var(--u) * 14) var(--gutter) var(--gutter); overflow: clip; }
-.footer__top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: calc(var(--u) * 4); align-items: end; }
-.footer__title {
-  grid-column: 1 / 8; font-family: var(--f-display); text-transform: uppercase; font-weight: var(--w-display);
-  font-size: var(--t-l); line-height: 0.95; letter-spacing: -0.03em; margin-left: -0.04em; max-width: 14ch;
+.footer { position: relative; z-index: var(--z-content); padding: calc(var(--u) * 8) var(--gutter) var(--gutter); overflow: clip; }
+.footer__main {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: calc(var(--u) * 5);
+  align-items: stretch; margin-bottom: calc(var(--u) * 5);
 }
-.footer__action { grid-column: 9 / 13; display: flex; flex-direction: column; align-items: start; gap: calc(var(--u) * 1.6); }
+.footer__lead { grid-column: 1 / 8; display: flex; flex-direction: column; justify-content: space-between; gap: calc(var(--u) * 3.5); }
+.footer__title {
+  font-family: var(--f-display); text-transform: uppercase; font-weight: var(--w-display);
+  font-size: var(--t-l); line-height: 0.92; letter-spacing: -0.03em; margin-left: -0.03em; max-width: 13em;
+}
+.footer__action { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem var(--gutter); }
 .footer__email { font-size: var(--t-m); background: linear-gradient(currentColor 0 0) left bottom / 100% 1px no-repeat; transition: background-size 0.4s var(--e-out); }
 @media (hover: hover) { .footer__email:hover { background-image: linear-gradient(var(--lemon) 0 0); background-size: 100% 0.45em; color: var(--paper); } }
 .footer__email:focus-visible { background-image: linear-gradient(var(--lemon) 0 0); background-size: 100% 0.45em; }
 .footer__time { font-size: var(--t-s); color: var(--muted); }
 .footer__time time { color: var(--fg); }
-/* The big D: the primary action at page scale. Same behaviour as .dbtn, forty times the size. */
+/* The D button: the primary action, the same shape and behaviour as .dbtn at headline scale. */
 .bigd {
-  --h: clamp(9.5rem, 23vw, 26rem);
+  --h: clamp(6.5rem, 9.8vw, 10.5rem);
   position: relative; isolation: isolate; overflow: clip;
   display: flex; align-items: center; justify-content: space-between; gap: var(--gutter);
-  height: var(--h); margin-block: calc(var(--u) * 7) calc(var(--u) * 6);
-  padding: 0 calc(var(--h) * 0.3) 0 calc(var(--gutter) * 1.4);
+  height: var(--h); padding: 0 calc(var(--h) * 0.36) 0 calc(var(--gutter) * 1.1);
   border: 1.5px solid var(--fg); border-radius: var(--d);
   color: var(--fg); transition: color 0.45s var(--e-soft), scale 0.3s var(--e-soft);
 }
@@ -554,9 +557,9 @@ html:not(.js) .hero__toggle { display: none; }
 }
 .bigd__label {
   font-family: var(--f-display); text-transform: uppercase; font-weight: var(--w-display);
-  font-size: clamp(2.5rem, 10.2vw, 13.5rem); line-height: 0.92; letter-spacing: -0.038em; white-space: nowrap;
+  font-size: clamp(1.9rem, 4.1vw, 4.6rem); line-height: 0.9; letter-spacing: -0.036em; white-space: nowrap;
 }
-.bigd__arrow { font-size: clamp(2rem, 5.2vw, 7rem); line-height: 1; transition: translate 0.6s var(--e-out); }
+.bigd__arrow { font-size: clamp(1.6rem, 2.7vw, 3.2rem); line-height: 1; transition: translate 0.6s var(--e-out); }
 .bigd:active { scale: 0.99; }
 @media (hover: hover) {
   .bigd:hover { color: var(--ink); }
@@ -574,10 +577,10 @@ html:not(.js) .hero__toggle { display: none; }
 .scr[data-s='drop']::before { width: 62%; background: var(--lemon); border-radius: var(--d); box-shadow: inset 0 0 0 1px var(--ink); }
 /* The bench: three loose parts and the outline of where they go. Shown once the motion code has
    laid it out (.is-ready); built = all three locked in place. */
-.bench { display: none; margin-bottom: calc(var(--u) * 5); }
-.bench.is-ready { display: block; }
-.bench__head { display: flex; justify-content: space-between; align-items: center; gap: var(--gutter); margin-bottom: calc(var(--u) * 2); }
-.bench__hint { font-size: var(--t-m); line-height: 1.25; letter-spacing: -0.012em; }
+.bench { grid-column: 8 / 13; display: none; flex-direction: column; }
+.bench.is-ready { display: flex; }
+.bench__head { display: flex; justify-content: space-between; align-items: center; gap: var(--gutter); margin-bottom: calc(var(--u) * 1.5); }
+.bench__hint { font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.035em; font-size: 0.75rem; }
 .bench__built, .bench.is-built .bench__open { display: none; }
 .bench.is-built .bench__built { display: inline; }
 .bench__btn {
@@ -586,7 +589,7 @@ html:not(.js) .hero__toggle { display: none; }
 }
 @media (hover: hover) { .bench__btn:hover { border-color: var(--fg); background: var(--fg); color: var(--bg); } }
 .bench__table {
-  position: relative; overflow: clip; height: clamp(18rem, 44svh, 28rem);
+  position: relative; overflow: clip; flex: 1; min-height: clamp(13rem, 30svh, 19rem);
   border-block: 1px solid var(--line); touch-action: pan-y;
 }
 .bench__part, .bench__ghost { position: absolute; left: 0; top: 0; }
@@ -763,8 +766,8 @@ html:not(.js) .hero__toggle { display: none; }
   .cap__name { grid-column: 1 / 8; }
   .cap__line { grid-column: 8 / 13; }
   .cap__go { display: none; }
-  .footer__title { grid-column: 1 / 13; }
-  .footer__action { grid-column: 1 / 13; }
+  .footer__lead, .bench { grid-column: 1 / 13; }
+  .bench__table { min-height: 16rem; }
   .method__item { grid-column: span 6; }
   .services__h { grid-column: 1 / 13; }
   .services__grid { grid-column: 1 / 13; }
@@ -802,11 +805,10 @@ html:not(.js) .hero__toggle { display: none; }
   .cap__name, .cap__line { grid-column: 1; }
   .cap__go { display: none; }
 
-  .bigd { --h: 13.5rem; padding: 0 3.5rem 0 1.1rem; }
-  .bench__head { flex-direction: column; align-items: start; gap: 0.75rem; }
-  .bench__table { height: 24rem; }
-  .bigd__label { font-size: clamp(2.9rem, 15.5vw, 4.4rem); white-space: normal; max-width: 5.2em; }
+  .bigd { --h: 7.5rem; padding: 0 2.6rem 0 1.1rem; }
+  .bigd__label { font-size: clamp(2.1rem, 11vw, 3rem); white-space: normal; max-width: 6.2em; }
   .bigd__arrow { display: none; }
+  .bench__table { min-height: 15rem; }
 
   .page-head__lede, .page-head__meta { grid-column: 1 / -1; }
   .page-head__title { font-size: clamp(3.4rem, 19vw, 6rem); }

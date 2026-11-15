@@ -298,7 +298,7 @@ function bench() {
     const layout = () => {
       const W = table.clientWidth;
       const H = table.clientHeight;
-      const s = Math.min((H * 0.5) / 377, (W * (W < 640 ? 0.42 : 0.3)) / 522);
+      const s = Math.min((H * 0.5) / 377, (W * 0.37) / 522);
       const ox = (W - 522 * s) / 2;
       const oy = (H - 377 * s) / 2;
       NAMES.forEach((n) => {
@@ -307,10 +307,10 @@ function bench() {
         home[n] = { x: ox + x * s, y: oy + y * s };
         gsap.set(el('ghost', n), { x: home[n].x, y: home[n].y });
       });
-      const narrow = W < 640;
-      away.block = { x: W * 0.05, y: H * (narrow ? 0.05 : 0.12), r: -9 };
-      away.step = { x: W * (narrow ? 0.1 : 0.26), y: H - 127 * s - H * 0.07, r: 13 };
-      away.drop = { x: W - 274.5 * s - W * 0.06, y: narrow ? H - 377 * s - H * 0.05 : H * 0.22, r: 24 };
+      // Loose positions: block top left, step low and left of centre, drop far right. Clear of the outline.
+      away.block = { x: W * 0.05, y: H * 0.1, r: -9 };
+      away.step = { x: Math.max(W * 0.05, ox - 81 * s - W * 0.06), y: H - 127 * s - H * 0.06, r: 13 };
+      away.drop = { x: W - 274.5 * s - W * 0.04, y: H * 0.2, r: 16 };
     };
     const sync = () => {
       const built = NAMES.every((n) => locked[n]);

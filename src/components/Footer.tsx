@@ -4,52 +4,54 @@ import { usePathname } from 'next/navigation';
 import { footerCta, nav, site } from '@/data/site';
 import { CairoTime } from './CairoTime';
 
-// Footer finale: the primary action at the scale of the page. One D (square left, round right),
-// the same shape as the small button, that floods with lemon from its square end on hover or
-// focus. Its label assembles from the three parts when it scrolls in (setup.ts, scramble).
-// The action follows the page: on the contact page it offers the work, not the page you are on.
-// Under the button sits the bench: the three parts, loose, for the visitor to assemble.
+// Footer: one compact section with two halves. Left, the primary action as a D (square left, round
+// right) that floods with lemon on hover or focus, its label assembling from the three parts when
+// it scrolls in. Right, the bench: the same three parts, loose, for the visitor to put together;
+// building the mark floods the button. The action follows the page: on the contact page it offers
+// the work, not the page you are on.
 export function Footer() {
   const year = 2026;
   const path = usePathname();
   const cta = path.startsWith('/contact') ? footerCta.contact : footerCta.default;
   return (
     <footer className="footer" data-tone="dark">
-      <div className="footer__top">
-        {/* Keyed: the engine splits these into lines and characters, so a new text needs a new node. */}
-        <h2 key={cta.ask} className="footer__title" data-split="lines">{cta.ask}</h2>
-        <div className="footer__action">
-          <a className="footer__email" href={`mailto:${site.email}`}>{site.email}</a>
-          <p className="footer__time">
-            It is <CairoTime /> in {site.city}. We reply within one working day.
-          </p>
+      <div className="footer__main">
+        <div className="footer__lead">
+          {/* Keyed: the engine splits these into lines and characters, so a new text needs a new node. */}
+          <h2 key={cta.ask} className="footer__title" data-split="lines">{cta.ask}</h2>
+          <Link className="bigd" href={cta.href} aria-label={cta.label} data-label={cta.label}>
+            <span className="bigd__fill" aria-hidden="true" />
+            <span key={cta.label} className="bigd__label" aria-hidden="true" data-scramble>{cta.label}</span>
+            <span className="bigd__arrow" aria-hidden="true">→</span>
+          </Link>
+          <div className="footer__action">
+            <a className="footer__email" href={`mailto:${site.email}`}>{site.email}</a>
+            <p className="footer__time">
+              It is <CairoTime /> in {site.city}. We reply within one working day.
+            </p>
+          </div>
         </div>
-      </div>
-      <Link className="bigd" href={cta.href} aria-label={cta.label} data-label={cta.label}>
-        <span className="bigd__fill" aria-hidden="true" />
-        <span key={cta.label} className="bigd__label" aria-hidden="true" data-scramble>{cta.label}</span>
-        <span className="bigd__arrow" aria-hidden="true">→</span>
-      </Link>
-      {/* The bench: the mark in three loose parts, to put together by hand (setup.ts, bench). A toy,
-          so it is hidden from assistive tech and absent without JS or under reduced motion. */}
-      <div className="bench" data-bench>
-        <div className="bench__head">
-          <p className="bench__hint">
-            <span className="bench__open">Your turn. Put the mark together.</span>
-            <span className="bench__built">Built properly. That is the whole job.</span>
-          </p>
-          <button type="button" className="bench__btn" data-bench-btn>
-            <span className="bench__open">Do it for me</span>
-            <span className="bench__built">Take it apart</span>
-          </button>
-        </div>
-        <div className="bench__table" data-bench-table aria-hidden="true">
-          <span className="bench__ghost" data-bench-ghost="block" />
-          <span className="bench__ghost" data-bench-ghost="step" />
-          <span className="bench__ghost bench__ghost--drop" data-bench-ghost="drop" />
-          <span className="bench__part" data-bench-part="block" />
-          <span className="bench__part" data-bench-part="step" />
-          <span className="bench__part bench__part--drop" data-bench-part="drop" />
+        {/* The bench: the mark in three loose parts, to put together by hand (setup.ts, bench). A toy,
+            so it is hidden from assistive tech and absent without JS or under reduced motion. */}
+        <div className="bench" data-bench>
+          <div className="bench__head">
+            <p className="bench__hint">
+              <span className="bench__open">Your turn. Put the mark together.</span>
+              <span className="bench__built">Built properly. That is the whole job.</span>
+            </p>
+            <button type="button" className="bench__btn" data-bench-btn>
+              <span className="bench__open">Do it for me</span>
+              <span className="bench__built">Take it apart</span>
+            </button>
+          </div>
+          <div className="bench__table" data-bench-table aria-hidden="true">
+            <span className="bench__ghost" data-bench-ghost="block" />
+            <span className="bench__ghost" data-bench-ghost="step" />
+            <span className="bench__ghost bench__ghost--drop" data-bench-ghost="drop" />
+            <span className="bench__part" data-bench-part="block" />
+            <span className="bench__part" data-bench-part="step" />
+            <span className="bench__part bench__part--drop" data-bench-part="drop" />
+          </div>
         </div>
       </div>
       <div className="footer__bottom">
