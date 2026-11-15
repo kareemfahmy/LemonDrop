@@ -115,12 +115,12 @@ export const statement = {
 
 // What we make. `need` is the matching chip on the contact page: each row links there with it selected.
 export const capabilities = [
-  { title: 'Websites and platforms', line: 'Marketing sites, editorial sites, member areas.', need: 'A website' },
-  { title: 'Online stores', line: 'Catalogue, checkout and the operations behind them.', need: 'An online store' },
-  { title: 'Product and app interfaces', line: 'Dashboards, tools and flows people use daily.', need: 'An app or product interface' },
-  { title: 'Brand systems for screens', line: 'Identity that survives contact with a real interface.', need: 'A brand for screens' },
-  { title: 'Design systems', line: 'Components and rules your team can keep extending.', need: 'A design system' },
-  { title: 'Care and growth', line: 'Updates, testing and new features after launch.', need: 'Help with something live' },
+  { title: 'Websites and Platforms', line: 'Marketing sites, editorial sites, member areas.', need: 'A website' },
+  { title: 'Online Stores', line: 'Catalogue, checkout and the operations behind them.', need: 'An online store' },
+  { title: 'Product and App Interfaces', line: 'Dashboards, tools and flows people use daily.', need: 'An app or product interface' },
+  { title: 'Brand Systems for Screens', line: 'Identity that survives contact with a real interface.', need: 'A brand for screens' },
+  { title: 'Design Systems', line: 'Components and rules your team can keep extending.', need: 'A design system' },
+  { title: 'Care and Growth', line: 'Updates, testing and new features after launch.', need: 'Help with something live' },
 ];
 
 export const projects: Project[] = [

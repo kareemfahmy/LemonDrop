@@ -493,20 +493,21 @@ html:not(.js) .hero__toggle { display: none; }
 .caps__list li { border-bottom: 1px solid var(--line); }
 /* Service rows. The drop marks your place: it rolls to the row at the middle of the screen as
    you scroll, and that row comes forward. No hover state: scroll is the only input. */
-.caps__rows { position: relative; --lane: clamp(3.2rem, 6.4vw, 7.25rem); }
+.caps__rows { position: relative; --lane: clamp(2.6rem, 4.6vw, 5.25rem); }
 .caps__drop {
   display: none; position: absolute; z-index: 1; top: 0; left: var(--gutter); pointer-events: none;
-  height: clamp(2.3rem, 4.5vw, 5rem); aspect-ratio: 274.5 / 377;
-  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1.5px var(--ink);
+  height: clamp(1.9rem, 3.1vw, 3.4rem); aspect-ratio: 274.5 / 377;
+  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1.5px var(--fg);
 }
 .caps__rows.is-driven .caps__drop { display: block; }
 .cap {
   display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: center;
-  min-height: clamp(5.25rem, 8.4vw, 9.5rem); padding: calc(var(--u) * 1.5) var(--gutter) calc(var(--u) * 1.5) calc(var(--gutter) + var(--lane));
+  min-height: clamp(4.25rem, 6vw, 6.75rem); padding: calc(var(--u) * 1.25) var(--gutter) calc(var(--u) * 1.25) calc(var(--gutter) + var(--lane));
 }
+/* The rows are content, not titles: regular weight, Title Case, well under the heading's size. */
 .cap__name {
-  grid-column: 1 / 9; font-family: var(--f-display); text-transform: uppercase; font-weight: var(--w-display);
-  font-size: clamp(1.7rem, 0.5rem + 3.5vw, 4.6rem); line-height: 1; letter-spacing: -0.034em;
+  grid-column: 1 / 9; font-family: var(--f-display); font-weight: 400;
+  font-size: clamp(1.4rem, 0.6rem + 2.2vw, 3rem); line-height: 1.05; letter-spacing: -0.026em;
   transition: color 0.5s var(--e-soft);
 }
 .cap__line { grid-column: 9 / 12; font-size: var(--t-s); color: var(--muted); transition: color 0.5s var(--e-soft); }
@@ -515,12 +516,12 @@ html:not(.js) .hero__toggle { display: none; }
   opacity: 0; translate: -0.75rem 0; transition: opacity 0.3s, translate 0.5s var(--e-out);
 }
 /* While the drop is driving, only the row it has reached is at full strength. */
-.caps__rows.is-driven .cap:not(.is-on) .cap__name { color: rgb(17 17 16 / 0.26); }
-.caps__rows.is-driven .cap:not(.is-on) .cap__line { color: rgb(17 17 16 / 0.34); }
-.cap.is-on .cap__line, .cap:focus-visible .cap__line { color: var(--ink); }
+.caps__rows.is-driven .cap:not(.is-on) .cap__name { color: color-mix(in srgb, var(--fg) 30%, transparent); }
+.caps__rows.is-driven .cap:not(.is-on) .cap__line { color: color-mix(in srgb, var(--fg) 36%, transparent); }
+.cap.is-on .cap__line, .cap:focus-visible .cap__line { color: var(--fg); }
 .cap.is-on .cap__go, .cap:focus-visible .cap__go { opacity: 1; translate: 0 0; }
 .cap:focus-visible { outline-offset: -4px; }
-.cap:focus-visible .cap__name { color: var(--ink) !important; }
+.cap:focus-visible .cap__name { color: var(--fg) !important; }
 .caps__more { padding: calc(var(--u) * 4) var(--gutter) 0; }
 
 /* ==========================================================================
