@@ -236,22 +236,20 @@ This pass supersedes the earlier sections where they disagree:
 
 | Area | Before | Now |
 |---|---|---|
-| Home, first screen | The kit: mark on the right, h1 on the left | A video hero: footage under a centred h1 (`--t-hero-xl`), pause control bottom right. The kit follows as the second section, driver and drawing untouched; its first screen has its own short intro ("Every project is built like our mark."). |
-| Loader exit | The mark flies to the hero mark | The mark shrinks into the header logo on every page, taking the logo's colour for the page tone while the ink ground clears. |
-| Text reveals | Play once on enter | Headlines and the home statement are scrubbed to scroll (`data-scrub` on `data-split`). Paragraphs, the hero h1 and the kit chapter titles still play once. |
-| Selected work (home) | Index only | Four portrait plates above the index, each on its own delay and duration (`data-reveal="appear"`). Phones hide the plates and run the same reveal on the inline row covers. |
-| Footer | Headline, small button, a second screen of the assembled mark | One D nearly the width of the page with "Start a project" inside it; floods with lemon like the small button. The label assembles from the three parts (scramble). About one screen tall. |
-| Footer on /contact | Same as every page | The big button would point at the page it is on, so there it asks "Not ready to brief us yet?" and offers "See the work". |
-| What we make (home) | Hairline list beside a sticky heading | Six large rows driven by a lemon drop: it rolls to the row being read (the one at the middle of the screen, or under the cursor), one full turn per row, and that row comes to full strength. Each row links to the contact page with that need preselected (`?need=`). An earlier version flooded the hovered row; it was dropped as too generic. |
-| Type | Archivo (expanded, 780) for display, Host Grotesk for text | Inter for everything. The optical-size axis gives large type the Display cut. Headlines at 600: the mark is the heavy thing on the page, not the type. |
-| Why one studio (home) | One paragraph in a wide margin | Problem and answer as two sentences beside a figure: the three parts stand apart with the handovers drawn as dimension gaps; as the answer scrolls in the gaps close, the drop rolls home and fills. Shorter section, closer to Selected work. |
-| Footer, under the button | Nothing | The bench: the mark in three loose parts to drag onto a dashed outline. Built = all three locked; the big button floods as the reward. A button assembles or scatters it. |
+| Home, first screen | The kit: mark on the right, h1 on the left | A video hero: footage under a centred h1 (`--t-hero-xl`), pause control bottom right. The kit follows as the second section, driver and drawing untouched; its first screen has its own short intro ("Every project is built like our mark."). The tag lists under the kit chapters are removed. |
+| Loader | Once per session; the mark flies to the hero mark | Plays on every full page load, refresh included (phones skip it; in-site navigation uses the curtain). Timed from when it starts: count at least 1.8 s, 0.3 s hold on the assembled mark, about 3.3 s in all. The mark shrinks into the header logo, taking the logo's colour for the page tone while the ink ground clears. |
+| Type | Archivo (expanded, 780) for display, Host Grotesk for text | Inter and Geist Mono, after a second reference the client supplied. Headlines: Inter 800, uppercase, tight. Body: Inter, sentence case. The small voice (labels, navigation, buttons, captions, dimensions, data): Geist Mono, 12 px, uppercase; section labels in brackets. |
+| Text reveals | Play once on enter | Still one move everywhere: text rises once from behind its line mask and stays. A scroll-scrubbed variant was tried on headlines and removed: mixing the two read as inconsistent. |
+| Why one studio (home) | One paragraph in a wide margin | A headline ("One studio. No handovers.") with the reasoning beside it. Two livelier versions were tried and dropped; the second, a figure that closed its gaps on scroll, repeated the kit above it. |
+| Selected work (home) | Text index with a hover preview | Four portrait plates, each on its own delay and duration (`data-reveal="appear"`), as the only way into the projects. The text index and its preview are removed. |
+| What we make (home) | Hairline list beside a sticky heading | Six large rows and a lemon drop that marks your place: it rolls to the row at the middle of the screen as you scroll, one full turn per row, and that row comes to full strength. Scroll is the only input (a hover version fought the scroll and was removed). Each row links to the contact page with that need preselected (`?need=`). |
+| Footer | Headline, small button, a second screen of the assembled mark | One compact section in two halves. Left: the question, the D button (floods with lemon on hover or focus; its label assembles from the three parts) and the contact line. Right: the bench, the mark as three loose parts to drag onto a dashed outline; building it floods the button. On /contact the button offers "See the work" instead of pointing at its own page. |
 
-The earlier Type table and the width-axis notes in the motion section no longer apply.
+The earlier Type table, the width-axis notes in the motion section and the "work as an index" principle no longer apply.
 
 Still held: yellow is only ever the drop (the scramble's drop glyph and the footer flood are both the drop); square corners and one curve; parts move on one axis with no bounce; no fake screenshots; no platform names in headlines; no WebGL; one easing vocabulary (scrubbed tweens use `none`, the scrub lag supplies the landing).
 
-Centred type in the hero breaks the three-hang-line rule on purpose: it is the one poster moment, and the footer mirrors it at the other end of the page.
+Centred type in the hero breaks the three-hang-line rule on purpose: it is the one poster moment.
 
 ### Hero footage (placeholder in place)
 
