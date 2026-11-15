@@ -444,8 +444,6 @@ html:not(.js) .hero__toggle { display: none; }
 }
 .kit__chapter--all .kit__h2 { font-size: var(--t-l); line-height: 0.95; max-width: 12ch; letter-spacing: -0.03em; }
 .kit__text { max-width: 36ch; }
-.kit__list { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: var(--t-xs); }
-.kit__list li { border: 1px solid var(--line); padding: 0.3rem 0.85rem 0.3rem 0.6rem; border-radius: var(--d); }
 
 /* ==========================================================================
    Home: statement, work index, capabilities

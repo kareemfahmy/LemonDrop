@@ -71,7 +71,6 @@ export const chapters: {
   label: string;
   title: string;
   text: string;
-  list: string[];
   dims: string;
 }[] = [
   {
@@ -80,7 +79,6 @@ export const chapters: {
     title: 'Strategy',
     text:
       'Every project starts as a pile of wants. We sort them into the few that matter: who it is for, what it must do on day one, and what can wait. You get a plan you can hold us to.',
-    list: ['Research and audits', 'Product definition', 'Content and structure', 'Roadmaps'],
     dims: '148 × 377',
   },
   {
@@ -89,7 +87,6 @@ export const chapters: {
     title: 'Design',
     text:
       'The part people actually feel. Interface, identity on screen, motion and words, designed together so the product looks like one thing and makes sense on the first try.',
-    list: ['Interface and experience', 'Brand systems for screens', 'Prototypes', 'Design systems'],
     dims: 'r 188.5',
   },
   {
@@ -98,7 +95,6 @@ export const chapters: {
     title: 'Engineering',
     text:
       'The joint that makes the other two hold. Fast, accessible front ends, connected to the platforms, data and tools your business already runs on. We pick technology for the job, not for the trend.',
-    list: ['Websites and web apps', 'Online stores', 'Integrations and content tools', 'Performance and accessibility'],
     dims: '81 × 127',
   },
   {
@@ -107,7 +103,6 @@ export const chapters: {
     title: 'Shipped, then looked after.',
     text:
       'The parts lock together, go live and get measured. We stay on after launch to fix, tune and add what the next stage needs.',
-    list: ['Launch', 'Analytics', 'Care plans', 'Iteration'],
     dims: '522 × 377',
   },
 ];

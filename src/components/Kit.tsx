@@ -31,9 +31,6 @@ export function Kit() {
           </p>
           <h2 className="kit__h2" data-split="lines">{c.title}</h2>
           <p className="kit__text">{c.text}</p>
-          <ul className="kit__list">
-            {c.list.map((l) => <li key={l}>{l}</li>)}
-          </ul>
         </article>
       ))}
     </section>
