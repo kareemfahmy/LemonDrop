@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { GapFigure } from '@/components/GapFigure';
 import { Hero } from '@/components/Hero';
 import { Kit } from '@/components/Kit';
 import { ArrowLink } from '@/components/Links';
@@ -13,15 +12,12 @@ export default function Home() {
       <Hero />
       <Kit />
 
-      <section className="statement grid" data-tone="light" aria-label="Why one studio">
+      <section className="statement grid" data-tone="light" aria-labelledby="statement-title">
         <p className="statement__aside">Why one studio</p>
-        <div className="statement__fig"><GapFigure /></div>
-        <div className="statement__copy">
-          <p className="statement__text" data-split="lines" data-gap-problem>{statement.problem}</p>
-          <p className="statement__text" data-split="lines" data-gap-answer>
-            {statement.answer}<span className="statement__drop" data-split-with aria-hidden="true" />
-          </p>
-        </div>
+        <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
+        <p className="statement__text" data-reveal="up" data-delay="0.15">
+          {statement.text}<span className="statement__drop" aria-hidden="true" />
+        </p>
       </section>
 
       <section className="work" data-tone="light" aria-labelledby="work-title">
