@@ -66,6 +66,13 @@
 }
 [data-tone] { background: var(--bg); color: var(--fg); }
 
+/* Registered as colours so a change of tone can ease instead of snapping (see .sheet). Browsers
+   without @property simply switch at once. */
+@property --bg { syntax: '<color>'; inherits: true; initial-value: #efefec; }
+@property --fg { syntax: '<color>'; inherits: true; initial-value: #111110; }
+@property --muted { syntax: '<color>'; inherits: true; initial-value: #4d4d49; }
+@property --line { syntax: '<color>'; inherits: true; initial-value: rgb(17 17 16 / 0.16); }
+
 /* ==========================================================================
    Engine foundation (engine.md)
    ========================================================================== */
@@ -448,10 +455,30 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Home: statement, work index, capabilities
    ========================================================================== */
-.statement { padding-block: calc(var(--u) * 9) calc(var(--u) * 6); row-gap: calc(var(--u) * 3); align-items: end; }
-.statement__aside { grid-column: 1 / 13; color: var(--muted); }
-.statement__title { grid-column: 1 / 8; font-size: var(--t-xl); line-height: 0.9; letter-spacing: -0.038em; max-width: 9em; }
+/* Stack: a full-screen statement that stays put while the next sheet slides over it. */
+.stack { position: relative; }
+.statement {
+  position: sticky; top: 0; z-index: 0; min-height: 100svh;
+  padding-block: 6.5rem calc(var(--u) * 7); row-gap: calc(var(--u) * 3);
+  grid-template-rows: auto 1fr; align-items: center;
+}
+/* Darkens as the sheet covers it (--cover is driven by scroll): the page underneath falls into shadow. */
+.statement::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: var(--ink); opacity: var(--cover, 0); }
+.statement__aside { grid-column: 1 / 13; align-self: start; color: var(--muted); }
+.statement__title {
+  grid-column: 1 / 9; font-size: clamp(2.4rem, 0.9rem + 5.6vw, 8rem); line-height: 0.88; letter-spacing: -0.04em;
+}
 .statement__text { grid-column: 9 / 13; font-size: var(--t-m); line-height: 1.32; letter-spacing: -0.012em; }
+/* The sheet: everything after the statement. The margin is the hold: that much scrolling with the
+   statement alone on screen before the sheet starts to cover it. */
+.sheet { position: relative; z-index: 1; margin-top: 35svh; }
+/* While the motion code drives it, both sections of the sheet share one tone and change together:
+   dark through the work, easing to light as the services arrive. */
+.sheet.is-driven > [data-tone] { transition: --bg 0.9s var(--e-soft), --fg 0.9s var(--e-soft), --muted 0.9s var(--e-soft), --line 0.9s var(--e-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .statement { position: relative; min-height: 0; padding-block: calc(var(--u) * 10) calc(var(--u) * 8); }
+  .sheet { margin-top: 0; }
+}
 .statement__drop {
   display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.2em; vertical-align: -0.1em;
   border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1px var(--ink);
@@ -796,7 +823,9 @@ html:not(.js) .hero__toggle { display: none; }
   .kit__chapter { grid-column: 1 / -1; justify-content: flex-start; min-height: 70svh; padding-block: 14svh 2svh; }
   .kit__h2 { font-size: clamp(2.6rem, 13vw, 4rem); }
 
-  .statement { padding-block: calc(var(--u) * 11) calc(var(--u) * 7); }
+  .statement { padding-block: 6rem calc(var(--u) * 6); grid-template-rows: auto 1fr auto; }
+  .statement__title, .statement__text { grid-column: 1 / -1; }
+  .statement__title { align-self: end; }
 
   .work__head { flex-direction: column; align-items: start; }
   .plates { column-gap: 0.75rem; }

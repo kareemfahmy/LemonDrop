@@ -19,6 +19,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
+  sheet();
   services();
   scramble();
   bench();
@@ -188,6 +189,34 @@ function titles() {
       gsap.set(split.lines, { yPercent: 110 });
       intro.add(gsap.to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.08, ease: ease.out }), 0);
     });
+  });
+}
+
+// The sheet (home): Selected work and the services slide up over the full-screen statement, which
+// falls into shadow underneath as it is covered. The sheet arrives dark; when the services heading
+// climbs past the lower part of the screen the whole sheet eases to light, and back if you return.
+// Both sections carry the tone, so the header (which reads the section under it) stays right.
+function sheet() {
+  onPage(() => {
+    const statement = document.querySelector<HTMLElement>('[data-statement]');
+    const el = document.querySelector<HTMLElement>('[data-sheet]');
+    if (!statement || !el || prefersReducedMotion()) return;
+    gsap.to(statement, { '--cover': 0.62, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top top', scrub: true } });
+
+    const parts = [...el.querySelectorAll<HTMLElement>(':scope > [data-tone]')];
+    const last = parts[parts.length - 1];
+    if (parts.length < 2) return;
+    const resting = parts.map((s) => s.dataset.tone!);
+    const html = document.documentElement;
+    const set = (tone: string) => {
+      parts.forEach((s) => { s.dataset.tone = tone; });
+      const r = el.getBoundingClientRect();
+      if (r.top <= 36 && r.bottom > 36) html.dataset.tone = tone; // the header is over the sheet right now
+    };
+    el.classList.add('is-driven');
+    set('dark');
+    const st = ScrollTrigger.create({ trigger: last, start: 'top 62%', onEnter: () => set('light'), onLeaveBack: () => set('dark') });
+    return () => { st.kill(); el.classList.remove('is-driven'); parts.forEach((s, i) => { s.dataset.tone = resting[i]; }); };
   });
 }
 
