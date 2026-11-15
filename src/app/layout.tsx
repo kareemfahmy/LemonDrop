@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import { Mark } from '@/components/Mark';
 import { Motion } from '@/components/Motion';
 import { site } from '@/data/site';
-import { sans } from './fonts';
+import { mono, sans } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={sans.variable} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: flags }} />
       </head>
