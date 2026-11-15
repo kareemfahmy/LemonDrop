@@ -528,8 +528,8 @@ html:not(.js) .hero__toggle { display: none; }
 .caps__note { font-size: var(--t-s); color: var(--muted); }
 .caps__list { border-top: 1px solid var(--line); }
 .caps__list li { border-bottom: 1px solid var(--line); }
-/* Service rows. The drop is the pointer: it rolls to whichever row is being read (the row at the
-   middle of the screen, or the one under the cursor) and that row comes forward. */
+/* Service rows. The drop marks your place: it rolls to the row at the middle of the screen as
+   you scroll, and that row comes forward. No hover state: scroll is the only input. */
 .caps__rows { position: relative; --lane: clamp(3.2rem, 6.4vw, 7.25rem); }
 .caps__drop {
   display: none; position: absolute; z-index: 1; top: 0; left: var(--gutter); pointer-events: none;
