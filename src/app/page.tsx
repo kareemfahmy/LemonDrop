@@ -12,7 +12,7 @@ export default function Home() {
           (components/Kit.tsx), drawing and driver (motion/kit.ts) are intact; import Kit and render
           <Kit /> here to bring it back. */}
 
-      <section className="statement grid" data-tone="light" aria-labelledby="statement-title">
+      <section className="statement grid" data-tone="dark" aria-labelledby="statement-title">
         <p className="statement__aside">Why one studio</p>
         <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
         <p className="statement__text" data-reveal="up" data-delay="0.15">
