@@ -19,6 +19,23 @@ export default function Home() {
         </p>
       </section>
 
+      {/* Interlude: the three disciplines as one moving line of type, each followed by its part of
+          the mark. Decorative; it slides sideways with the scroll (setup.ts, interludes). */}
+      <div className="band" data-tone="light" data-band aria-hidden="true">
+        <div className="band__track" data-band-track>
+          {[0, 1, 2, 3].map((i) => (
+            <span key={i} className="band__group">
+              <span className="band__word">Planned</span>
+              <span className="band__part band__part--block" />
+              <span className="band__word">Designed</span>
+              <span className="band__part band__part--drop" />
+              <span className="band__word">Built</span>
+              <span className="band__part band__part--step" />
+            </span>
+          ))}
+        </div>
+      </div>
+
       <section className="caps" data-tone="light" aria-labelledby="caps-title">
         <div className="caps__head">
           <p className="caps__note">Follow the drop. Pick one and your brief starts with it filled in.</p>

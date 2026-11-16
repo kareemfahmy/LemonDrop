@@ -19,6 +19,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
+  interludes();
   bigTitle();
   services();
   scramble();
@@ -189,6 +190,25 @@ function titles() {
       gsap.set(split.lines, { yPercent: 110 });
       intro.add(gsap.to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.08, ease: ease.out }), 0);
     });
+  });
+}
+
+// Interludes: the moments between the home sections. Both follow the scroll while they are on
+// screen; under reduced motion they are static.
+function interludes() {
+  onPage(() => {
+    if (prefersReducedMotion()) return;
+    // The band: the line of type slides left as the page moves down.
+    const band = document.querySelector<HTMLElement>('[data-band]');
+    const track = band?.querySelector<HTMLElement>('[data-band-track]');
+    if (band && track) {
+      gsap.fromTo(track, { x: () => -innerWidth * 0.06 }, {
+        x: () => -innerWidth * 0.9,
+        ease: 'none',
+        scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: 0.5, invalidateOnRefresh: true },
+      });
+    }
+    /*RULE*/
   });
 }
 
