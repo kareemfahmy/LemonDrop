@@ -516,8 +516,10 @@ html:not(.js) .hero__toggle { display: none; }
   font-family: var(--f-display); font-weight: var(--w-display); text-transform: uppercase;
   font-size: clamp(2.8rem, 8.2vw, 9.5rem); line-height: 1; letter-spacing: -0.04em;
 }
-/* Outlines show where tight letters overlap, so the outlined words are set a little looser. */
-.band__word { color: transparent; -webkit-text-stroke: 1.5px var(--fg); letter-spacing: 0.005em; }
+/* Outlined type: a variable font's letters are built from overlapping shapes, and a plain stroke
+   shows every seam. Painting the fill over the stroke hides them (and the inner half of the
+   stroke, hence the doubled width). */
+.band__word { color: var(--bg); -webkit-text-stroke: 3px var(--fg); paint-order: stroke fill; letter-spacing: 0.005em; }
 .band__part { flex: none; height: 0.72em; background: var(--fg); }
 .band__part--block { width: 0.28em; }
 .band__part--step { width: 0.22em; height: 0.3em; align-self: flex-end; margin-bottom: 0.14em; }
@@ -538,8 +540,10 @@ html:not(.js) .hero__toggle { display: none; }
 .wwm__we { left: 30vw; z-index: 1; }
 .wwm__make { left: 53vw; top: 0.84em; z-index: 1; }
 .wwm__what {
-  left: 14vw; top: 0.42em; z-index: 2; font-style: italic; letter-spacing: -0.02em;
-  color: transparent; -webkit-text-stroke: 1.5px #fff; mix-blend-mode: difference;
+  left: 14vw; top: 0.42em; z-index: 2; font-style: italic; letter-spacing: 0.012em;
+  /* Black fill over a white stroke: under the difference blend black changes nothing, so only
+     the outline inverts, and the fill hides the seams inside the letters. */
+  color: #000; -webkit-text-stroke: 3px #fff; paint-order: stroke fill; mix-blend-mode: difference;
 }
 .caps__list { border-top: 1px solid var(--line); }
 .caps__list li { border-bottom: 1px solid var(--line); }
@@ -854,11 +858,11 @@ html:not(.js) .hero__toggle { display: none; }
   .work__head { flex-direction: column; align-items: start; }
   .plates { column-gap: 0.75rem; }
   .plate__cap { flex-direction: column; gap: 0.1rem; }
-  .band__word { -webkit-text-stroke-width: 1px; }
+  .band__word { -webkit-text-stroke-width: 2px; }
   .caps__note { position: static; max-width: none; padding-inline: var(--gutter); margin-bottom: 1.25rem; }
   .wwm { font-size: 17vw; }
   .wwm__we { left: 26vw; }
-  .wwm__what { left: 5vw; -webkit-text-stroke-width: 1px; }
+  .wwm__what { left: 5vw; -webkit-text-stroke-width: 2px; }
   .wwm__make { left: 44vw; }
   .cap { grid-template-columns: minmax(0, 1fr); row-gap: 0.35rem; padding-block: calc(var(--u) * 2.6); }
   .cap__name, .cap__line { grid-column: 1; }
