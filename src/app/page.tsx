@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Hero } from '@/components/Hero';
-import { Kit } from '@/components/Kit';
 import { ArrowLink } from '@/components/Links';
 import { WorkPlates } from '@/components/WorkPlates';
 import { capabilities, projects, statement } from '@/data/site';
@@ -9,7 +8,9 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Kit />
+      {/* Parked: the kit (the mark taken apart over four scroll chapters). Its component
+          (components/Kit.tsx), drawing and driver (motion/kit.ts) are intact; import Kit and render
+          <Kit /> here to bring it back. */}
 
       <section className="statement grid" data-tone="light" aria-labelledby="statement-title">
         <p className="statement__aside">Why one studio</p>
