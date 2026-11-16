@@ -193,21 +193,11 @@ function titles() {
   });
 }
 
-// Interludes: the moments between the home sections. Both follow the scroll while they are on
-// screen; under reduced motion they are static.
+// Interlude: the moment between the services and the work. It follows the scroll while it is on
+// screen; under reduced motion it is static.
 function interludes() {
   onPage(() => {
     if (prefersReducedMotion()) return;
-    // The band: the line of type slides left as the page moves down.
-    const band = document.querySelector<HTMLElement>('[data-band]');
-    const track = band?.querySelector<HTMLElement>('[data-band-track]');
-    if (band && track) {
-      gsap.fromTo(track, { x: () => -innerWidth * 0.06 }, {
-        x: () => -innerWidth * 0.9,
-        ease: 'none',
-        scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: 0.5, invalidateOnRefresh: true },
-      });
-    }
     // The rule: the line draws from left to right and the drop rolls along it to the far end,
     // a whole number of turns so it arrives upright.
     const rule = document.querySelector<HTMLElement>('[data-rule]');
