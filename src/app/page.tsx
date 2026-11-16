@@ -11,10 +11,7 @@ export default function Home() {
       <Hero />
       <Kit />
 
-      {/* Stack: the statement fills the screen and holds while the sheet (work, then services) slides
-          up over it. The sheet arrives dark and turns light on the way into the services (setup.ts). */}
-      <div className="stack">
-      <section className="statement grid" data-tone="light" data-statement aria-labelledby="statement-title">
+      <section className="statement grid" data-tone="light" aria-labelledby="statement-title">
         <p className="statement__aside">Why one studio</p>
         <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
         <p className="statement__text" data-reveal="up" data-delay="0.15">
@@ -22,20 +19,16 @@ export default function Home() {
         </p>
       </section>
 
-      <div className="sheet" data-sheet>
-      <section className="work" data-tone="dark" aria-labelledby="work-title">
-        <div className="work__head">
-          <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>
-          <p className="work__count">Four projects, each built from the same three parts</p>
-        </div>
-        <WorkPlates items={projects} />
-        <p className="work__more"><ArrowLink href="/work/">See every project</ArrowLink></p>
-      </section>
-
       <section className="caps" data-tone="light" aria-labelledby="caps-title">
         <div className="caps__head">
-          <h2 id="caps-title" className="caps__title display" data-split="lines">What we make</h2>
           <p className="caps__note">Follow the drop. Pick one and your brief starts with it filled in.</p>
+          {/* Three words on three lines of their own, drifting sideways at different speeds as the
+              page scrolls (setup.ts, bigTitle). The outlined word inverts where it crosses the others. */}
+          <h2 id="caps-title" className="wwm" data-wwm aria-label="What we make">
+            <span className="wwm__we" data-wwm-word="we" aria-hidden="true">We</span>
+            <span className="wwm__what" data-wwm-word="what" aria-hidden="true">What</span>
+            <span className="wwm__make" data-wwm-word="make" aria-hidden="true">Make</span>
+          </h2>
         </div>
         <div className="caps__rows" data-caps>
           <span className="caps__drop" data-caps-drop aria-hidden="true" />
@@ -53,8 +46,15 @@ export default function Home() {
         </div>
         <p className="caps__more"><ArrowLink href="/studio/">How the studio works</ArrowLink></p>
       </section>
-      </div>
-      </div>
+
+      <section className="work" data-tone="light" aria-labelledby="work-title">
+        <div className="work__head">
+          <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>
+          <p className="work__count">Four projects, each built from the same three parts</p>
+        </div>
+        <WorkPlates items={projects} />
+        <p className="work__more"><ArrowLink href="/work/">See every project</ArrowLink></p>
+      </section>
     </>
   );
 }

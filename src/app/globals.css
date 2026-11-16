@@ -66,13 +66,6 @@
 }
 [data-tone] { background: var(--bg); color: var(--fg); }
 
-/* Registered as colours so a change of tone can ease instead of snapping (see .sheet). Browsers
-   without @property simply switch at once. */
-@property --bg { syntax: '<color>'; inherits: true; initial-value: #efefec; }
-@property --fg { syntax: '<color>'; inherits: true; initial-value: #111110; }
-@property --muted { syntax: '<color>'; inherits: true; initial-value: #4d4d49; }
-@property --line { syntax: '<color>'; inherits: true; initial-value: rgb(17 17 16 / 0.16); }
-
 /* ==========================================================================
    Engine foundation (engine.md)
    ========================================================================== */
@@ -455,36 +448,21 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Home: statement, work index, capabilities
    ========================================================================== */
-/* Stack: a full-screen statement that stays put while the next sheet slides over it. */
-.stack { position: relative; }
 .statement {
-  position: sticky; top: 0; z-index: 0; min-height: 100svh;
-  padding-block: 6.5rem calc(var(--u) * 7); row-gap: calc(var(--u) * 3);
+  min-height: 78svh; padding-block: calc(var(--u) * 8) calc(var(--u) * 9); row-gap: calc(var(--u) * 3);
   grid-template-rows: auto 1fr; align-items: center;
 }
-/* Darkens as the sheet covers it (--cover is driven by scroll): the page underneath falls into shadow. */
-.statement::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: var(--ink); opacity: var(--cover, 0); }
 .statement__aside { grid-column: 1 / 13; align-self: start; color: var(--muted); }
 .statement__title {
   grid-column: 1 / 9; font-size: clamp(2.4rem, 0.9rem + 5.6vw, 8rem); line-height: 0.88; letter-spacing: -0.04em;
 }
 .statement__text { grid-column: 9 / 13; font-size: var(--t-m); line-height: 1.32; letter-spacing: -0.012em; }
-/* The sheet: everything after the statement. The margin is the hold: that much scrolling with the
-   statement alone on screen before the sheet starts to cover it. */
-.sheet { position: relative; z-index: 1; margin-top: 35svh; }
-/* While the motion code drives it, both sections of the sheet share one tone and change together:
-   dark through the work, easing to light as the services arrive. */
-.sheet.is-driven > [data-tone] { transition: --bg 0.9s var(--e-soft), --fg 0.9s var(--e-soft), --muted 0.9s var(--e-soft), --line 0.9s var(--e-soft); }
-@media (prefers-reduced-motion: reduce) {
-  .statement { position: relative; min-height: 0; padding-block: calc(var(--u) * 10) calc(var(--u) * 8); }
-  .sheet { margin-top: 0; }
-}
 .statement__drop {
   display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.2em; vertical-align: -0.1em;
   border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1px var(--ink);
 }
 
-.work { padding-block: calc(var(--u) * 7) calc(var(--u) * 14); }
+.work { padding-block: calc(var(--u) * 10) calc(var(--u) * 14); }
 .work__head { display: flex; justify-content: space-between; align-items: end; gap: var(--gutter); padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 5); }
 .work__title { font-size: var(--t-xl); }
 .work__count { font-size: var(--t-s); color: var(--muted); }
@@ -512,10 +490,24 @@ html:not(.js) .hero__toggle { display: none; }
   .plate__link:hover .plate__cap { color: var(--fg); }
 }
 
-.caps { padding-block: calc(var(--u) * 6) calc(var(--u) * 12); }
-.caps__head { display: flex; justify-content: space-between; align-items: end; gap: var(--gutter); padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 5); }
-.caps__title { font-size: var(--t-xl); }
-.caps__note { font-size: var(--t-s); color: var(--muted); }
+.caps { padding-block: calc(var(--u) * 4) calc(var(--u) * 10); overflow-x: clip; }
+.caps__head { position: relative; margin-bottom: calc(var(--u) * 6); }
+.caps__note { position: absolute; z-index: 3; top: 0.4rem; right: var(--gutter); max-width: 24ch; color: var(--muted); }
+/* The title: three words, three baselines. "We" and "Make" are solid; "What" is an italic outline
+   that sits on top and inverts wherever it crosses them or the ground (difference blend against
+   the section colour, so it is ink on paper and paper on ink). GSAP moves each word sideways. */
+.wwm {
+  position: relative; isolation: isolate; background: var(--bg);
+  height: 1.84em; font-size: clamp(3.4rem, 13.5vw, 16rem); line-height: 1;
+  font-family: var(--f-display); font-weight: var(--w-display); text-transform: uppercase; letter-spacing: -0.045em;
+}
+.wwm__we, .wwm__what, .wwm__make { position: absolute; top: 0; left: 0; white-space: nowrap; will-change: transform; }
+.wwm__we { left: 30vw; z-index: 1; }
+.wwm__make { left: 53vw; top: 0.84em; z-index: 1; }
+.wwm__what {
+  left: 14vw; top: 0.42em; z-index: 2; font-style: italic; letter-spacing: -0.02em;
+  color: transparent; -webkit-text-stroke: 1.5px #fff; mix-blend-mode: difference;
+}
 .caps__list { border-top: 1px solid var(--line); }
 .caps__list li { border-bottom: 1px solid var(--line); }
 /* Service rows. The drop marks your place: it rolls to the row at the middle of the screen as
@@ -823,14 +815,17 @@ html:not(.js) .hero__toggle { display: none; }
   .kit__chapter { grid-column: 1 / -1; justify-content: flex-start; min-height: 70svh; padding-block: 14svh 2svh; }
   .kit__h2 { font-size: clamp(2.6rem, 13vw, 4rem); }
 
-  .statement { padding-block: 6rem calc(var(--u) * 6); grid-template-rows: auto 1fr auto; }
+  .statement { min-height: 0; padding-block: calc(var(--u) * 11) calc(var(--u) * 10); grid-template-rows: none; row-gap: calc(var(--u) * 2.5); }
   .statement__title, .statement__text { grid-column: 1 / -1; }
-  .statement__title { align-self: end; }
 
   .work__head { flex-direction: column; align-items: start; }
   .plates { column-gap: 0.75rem; }
   .plate__cap { flex-direction: column; gap: 0.1rem; }
-  .caps__head { flex-direction: column; align-items: start; }
+  .caps__note { position: static; max-width: none; padding-inline: var(--gutter); margin-bottom: 1.25rem; }
+  .wwm { font-size: 17vw; }
+  .wwm__we { left: 26vw; }
+  .wwm__what { left: 5vw; -webkit-text-stroke-width: 1px; }
+  .wwm__make { left: 44vw; }
   .cap { grid-template-columns: minmax(0, 1fr); row-gap: 0.35rem; padding-block: calc(var(--u) * 2.6); }
   .cap__name, .cap__line { grid-column: 1; }
   .cap__go { display: none; }
