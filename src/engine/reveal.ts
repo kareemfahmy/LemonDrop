@@ -2,8 +2,9 @@
 //   data-split="lines|words|chars"   masked text reveal (SplitText), on scroll or on intro
 //   data-split-with                   on an inline child (an icon, a shape): rises with the text
 //   data-reveal="up|fade|clip|scale"  block reveal
-//   data-reveal="appear"              media reveal: the frame wipes open while its content settles
-//                                     back; data-appear="<index>" gives each item its own timing
+//   data-reveal="appear"              media reveal: the frame grows from a corner while its content
+//                                     settles back; replays each time it re-enters; data-appear="<index>"
+//                                     gives each item its own corner and timing
 //   data-intro                        play with the page intro instead of on scroll
 //   data-delay="0.2"                  extra delay (seconds)
 //   data-parallax="0.15"              scrubbed vertical drift (fraction of element height)
@@ -54,22 +55,33 @@ function splitTween(el: HTMLElement, isIntro: boolean) {
   return () => { s.requested = true; s.tween?.play(); };
 }
 
-// Same move, different clocks: items that enter together never land as one block.
-const appearTiming = [
-  { delay: 0, duration: 1.3 },
-  { delay: 0.24, duration: 1.6 },
-  { delay: 0.1, duration: 1.2 },
-  { delay: 0.36, duration: 1.45 },
+// Media reveal: the frame grows from a small window in one corner to its full size while the
+// picture inside settles back from a larger scale. Each item has its own corner, delay and
+// duration, so items that enter together never land as one block. Scrolling triggers it but does
+// not drive it: it plays through once in view, resets only when the item has completely left the
+// screen, and plays again the next time it comes in.
+const appearSpec = [
+  { delay: 0, duration: 1.5, from: 'inset(0% 0% 82% 76%)', origin: '100% 0%' },
+  { delay: 0.2, duration: 1.75, from: 'inset(0% 78% 84% 0%)', origin: '0% 0%' },
+  { delay: 0.08, duration: 1.4, from: 'inset(80% 0% 0% 74%)', origin: '100% 100%' },
+  { delay: 0.32, duration: 1.6, from: 'inset(0% 80% 80% 0%)', origin: '0% 0%' },
 ] as const;
 
-function appearTween(el: HTMLElement, paused: boolean) {
-  const t = appearTiming[(parseInt(el.dataset.appear || '0', 10) || 0) % appearTiming.length];
+function appearTween(el: HTMLElement, isIntro: boolean) {
+  const t = appearSpec[(parseInt(el.dataset.appear || '0', 10) || 0) % appearSpec.length];
   const at = t.delay + parseFloat(el.dataset.delay || '0');
   const inner = el.firstElementChild;
-  gsap.set(el, { visibility: 'visible' });
-  const tl = gsap.timeline({ paused, scrollTrigger: paused ? undefined : { trigger: el, start: 'top 92%', once: true } });
-  tl.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: t.duration, ease: ease.out, clearProps: 'clipPath' }, at);
-  if (inner) tl.fromTo(inner, { scale: 1.3 }, { scale: 1, duration: t.duration + 0.3, ease: ease.out, clearProps: 'scale,transform' }, at);
+  const tl = gsap.timeline({ paused: true });
+  tl.set(el, { autoAlpha: 1 }, at);
+  tl.fromTo(el, { clipPath: t.from }, { clipPath: 'inset(0% 0% 0% 0%)', duration: t.duration, ease: ease.out }, at);
+  if (inner) tl.fromTo(inner, { scale: 1.45, transformOrigin: t.origin }, { scale: 1, duration: t.duration + 0.25, ease: ease.out }, at);
+  gsap.set(el, { autoAlpha: 0 });
+  if (isIntro) return tl;
+  let shown = false;
+  const play = () => { if (!shown) { shown = true; tl.play(0); } };
+  const reset = () => { shown = false; tl.pause(0); gsap.set(el, { autoAlpha: 0 }); };
+  ScrollTrigger.create({ trigger: el, start: 'top 94%', end: 'bottom 6%', onEnter: play, onEnterBack: play });
+  ScrollTrigger.create({ trigger: el, start: 'top bottom', end: 'bottom top', onLeave: reset, onLeaveBack: reset });
   return tl;
 }
 
