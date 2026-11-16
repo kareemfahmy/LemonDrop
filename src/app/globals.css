@@ -353,7 +353,7 @@ html.header-solid .header::before { opacity: 1; }
 }
 .hero__media { position: absolute; inset: 0; z-index: -3; }
 .hero__video { width: 100%; height: 100%; object-fit: cover; }
-/* Dims the footage for the type and lands on solid ink, so the hero runs into the kit below. */
+/* Dims the footage for the type and lands on solid ink, so the hero runs into the section below. */
 .hero__shade {
   position: absolute; inset: 0; z-index: -2; pointer-events: none;
   background: linear-gradient(to bottom, rgb(17 17 16 / 0.66) 0%, rgb(17 17 16 / 0.58) 50%, rgb(17 17 16 / 0.86) 82%, var(--ink) 100%);
@@ -463,7 +463,7 @@ html:not(.js) .hero__toggle { display: none; }
 }
 
 /* Interlude 2, the rule: a measured line between two sections, like the dimensions on the mark. */
-.rule { padding: calc(var(--u) * 5) var(--gutter) 0; }
+.rule { padding: 0 var(--gutter); }
 .rule__track { position: relative; --drop: clamp(2.4rem, 3.6vw, 3.8rem); height: calc(var(--drop) + 0.5rem); }
 .rule__track::before, .rule__track::after { content: ''; position: absolute; bottom: -0.4rem; width: 1px; height: 0.8rem; background: var(--fg); }
 .rule__track::before { left: 0; }
@@ -474,7 +474,7 @@ html:not(.js) .hero__toggle { display: none; }
   border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1.5px var(--fg); will-change: transform;
 }
 .rule__labels {
-  display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.9rem; color: var(--muted);
+  display: flex; justify-content: flex-end; gap: 1rem; margin-top: 0.9rem; color: var(--muted);
   font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.035em; font-size: 0.75rem;
 }
 .rule__labels span::before { content: '[ '; }
@@ -508,7 +508,7 @@ html:not(.js) .hero__toggle { display: none; }
   .plate__link:hover .plate__cap { color: var(--fg); }
 }
 
-.caps { padding-block: calc(var(--u) * 7) calc(var(--u) * 6); overflow-x: clip; }
+.caps { padding-block: calc(var(--u) * 7) calc(var(--u) * 1.5); overflow-x: clip; }
 .caps__head { position: relative; margin-bottom: calc(var(--u) * 6); }
 .caps__note { position: absolute; z-index: 3; top: 0.4rem; right: var(--gutter); max-width: 24ch; color: var(--muted); }
 /* The title: three words, three baselines. "We" and "Make" are solid; "What" is an italic outline
@@ -561,7 +561,7 @@ html:not(.js) .hero__toggle { display: none; }
 .cap.is-on .cap__go, .cap:focus-visible .cap__go { opacity: 1; translate: 0 0; }
 .cap:focus-visible { outline-offset: -4px; }
 .cap:focus-visible .cap__name { color: var(--fg) !important; }
-.caps__more { padding: calc(var(--u) * 4) var(--gutter) 0; }
+.caps__more { padding: calc(var(--u) * 3) var(--gutter) 0; }
 
 /* ==========================================================================
    Footer finale

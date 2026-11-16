@@ -55,7 +55,7 @@ export default function Home() {
           <span className="rule__line" data-rule-line />
           <span className="rule__drop" data-rule-drop />
         </div>
-        <p className="rule__labels"><span>What we make</span><span>Selected work</span></p>
+        <p className="rule__labels"><span>Selected work</span></p>
       </div>
 
       <section className="work" data-tone="light" aria-labelledby="work-title">

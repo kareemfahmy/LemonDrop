@@ -78,7 +78,7 @@ function loader() {
 
 // Home hero: footage under the headline. It fades up with the page intro (so the loader hands over
 // to flat ink first), plays only while the hero is on screen, and can be paused. Scrolling away
-// drifts the footage and closes an ink veil over it, so the hero runs into the kit below.
+// drifts the footage and closes an ink veil over it, so the hero runs into the section below.
 function hero() {
   onPage(({ intro, instant }) => {
     const root = document.querySelector<HTMLElement>('[data-hero]');
