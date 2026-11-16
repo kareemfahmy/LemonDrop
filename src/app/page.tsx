@@ -64,6 +64,16 @@ export default function Home() {
         <p className="caps__more"><ArrowLink href="/studio/">How the studio works</ArrowLink></p>
       </section>
 
+      {/* Interlude: a dimension line from one section to the next. It draws across as you scroll and
+          the drop rolls along it (setup.ts, interludes). Decorative. */}
+      <div className="rule" data-tone="light" data-rule aria-hidden="true">
+        <div className="rule__track" data-rule-track>
+          <span className="rule__line" data-rule-line />
+          <span className="rule__drop" data-rule-drop />
+        </div>
+        <p className="rule__labels"><span>What we make</span><span>Selected work</span></p>
+      </div>
+
       <section className="work" data-tone="light" aria-labelledby="work-title">
         <div className="work__head">
           <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>

@@ -208,7 +208,19 @@ function interludes() {
         scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: 0.5, invalidateOnRefresh: true },
       });
     }
-    /*RULE*/
+    // The rule: the line draws from left to right and the drop rolls along it to the far end,
+    // a whole number of turns so it arrives upright.
+    const rule = document.querySelector<HTMLElement>('[data-rule]');
+    const line = rule?.querySelector<HTMLElement>('[data-rule-line]');
+    const drop = rule?.querySelector<HTMLElement>('[data-rule-drop]');
+    const lane = rule?.querySelector<HTMLElement>('[data-rule-track]');
+    if (rule && line && drop && lane) {
+      const travel = () => lane.clientWidth - drop.offsetWidth - drop.offsetLeft * 2;
+      const turns = () => Math.max(1, Math.round(travel() / (Math.PI * drop.offsetHeight)));
+      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: rule, start: 'top 92%', end: 'top 30%', scrub: 0.5, invalidateOnRefresh: true } })
+        .fromTo(line, { scaleX: 0 }, { scaleX: 1 }, 0)
+        .fromTo(drop, { x: 0, rotation: 0 }, { x: travel, rotation: () => turns() * 360 }, 0);
+    }
   });
 }
 
