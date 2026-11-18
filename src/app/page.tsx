@@ -12,17 +12,18 @@ export default function Home() {
           (components/Kit.tsx), drawing and driver (motion/kit.ts) are intact; import Kit and render
           <Kit /> here to bring it back. */}
 
-      {/* Who we are. The section is taller than the screen and its content holds in place, so the
-          dark ground has room to travel: a large drop rolls in, then shrinks into the full stop at the
-          end of the paragraph (setup.ts, statementDrop). */}
+      {/* Who we are. A little taller than the screen with the content held in the middle, so the dark
+          ground has room to travel. The block rises and settles as it arrives from the hero; the
+          full stop rolls into place once the paragraph is in (setup.ts, statementMotion). */}
       <section className="statement" data-tone="dark" data-statement aria-labelledby="statement-title">
-        <div className="statement__pin grid">
-          <p className="statement__aside">{statement.label}</p>
-          <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
-          <p className="statement__text" data-reveal="up" data-delay="0.15">
-            {statement.text}<span className="statement__drop" data-statement-end aria-hidden="true" />
-          </p>
-          <span className="statement__big" data-statement-big aria-hidden="true" />
+        <div className="statement__pin">
+          <div className="statement__block" data-statement-block>
+            <p className="statement__aside">{statement.label}</p>
+            <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
+            <p className="statement__text" data-reveal="up" data-delay="0.2">
+              {statement.text}<span className="statement__drop" data-statement-end aria-hidden="true" />
+            </p>
+          </div>
         </div>
       </section>
 

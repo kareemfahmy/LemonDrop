@@ -19,7 +19,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
-  statementDrop();
+  statementMotion();
   interludes();
   bigTitle();
   services();
@@ -204,39 +204,30 @@ function titles() {
   });
 }
 
-// Who we are: while the section holds, a large drop rolls in from the right (a whole number of
-// turns, so it arrives upright) and rests; then it shrinks and flies into the full stop at the end
-// of the paragraph, which takes over from it. Scrubbed: scrolling back reverses it.
-function statementDrop() {
+// Who we are. Arriving from the hero, the centred block rises and grows into place as the section
+// scrolls up to fill the screen; while it is held it drifts up a touch, so the dark ground keeps
+// moving. Both scrubbed. The full stop rolls into place once, after the paragraph has come in.
+function statementMotion() {
   onPage(() => {
     const section = document.querySelector<HTMLElement>('[data-statement]');
-    const big = section?.querySelector<HTMLElement>('[data-statement-big]');
+    const block = section?.querySelector<HTMLElement>('[data-statement-block]');
     const end = section?.querySelector<HTMLElement>('[data-statement-end]');
-    const pin = big?.parentElement;
-    if (!section || !big || !end || !pin || prefersReducedMotion()) return;
-    // Where the full stop sits, relative to the big drop at rest (both inside the held frame).
-    const target = () => {
-      const p = pin.getBoundingClientRect();
-      const e = end.getBoundingClientRect();
-      return { x: e.left - p.left - big.offsetLeft, y: e.top - p.top - big.offsetTop, s: e.height / big.offsetHeight };
-    };
-    let t = target();
-    const from = () => innerWidth - big.offsetLeft + big.offsetWidth * 0.2;
-    gsap.set(big, { visibility: 'visible', transformOrigin: '0 0' });
-    gsap.set(end, { opacity: 0 });
-    gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: section, start: 'top 75%', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true,
-        onRefreshInit: () => { gsap.set(big, { x: 0, y: 0, scale: 1, rotation: 0 }); },
-        onRefresh: () => { t = target(); },
-      },
-    })
-      .fromTo(big, { x: from, rotation: 720 }, { x: 0, rotation: 0, duration: 0.45, ease: 'power2.out' }, 0)
-      .to(big, { x: () => t.x, y: () => t.y, scale: () => t.s, duration: 0.4, ease: 'power2.inOut' }, 0.58)
-      .set(big, { autoAlpha: 0 }, 0.98)
-      .set(end, { opacity: 1 }, 0.98)
-      .to({}, { duration: 0.02 }, 0.98);
+    if (!section || !block || prefersReducedMotion()) return;
+    gsap.fromTo(block, { y: () => innerHeight * 0.16, scale: 0.88, opacity: 0.35 }, {
+      y: 0, scale: 1, opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: section, start: 'top bottom', end: 'top top', scrub: 0.6, invalidateOnRefresh: true },
+    });
+    gsap.fromTo(block, { y: 0 }, {
+      y: () => -innerHeight * 0.05, ease: 'none', immediateRender: false,
+      scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true },
+    });
+    if (end) {
+      gsap.fromTo(end, { x: '-0.7em', rotation: -180, scale: 0.5, autoAlpha: 0 }, {
+        x: 0, rotation: 0, scale: 1, autoAlpha: 1, duration: 1.1, delay: 0.7, ease: ease.out,
+        // Measured on the section, not the full stop: the full stop moves while the section locks in place.
+        scrollTrigger: { trigger: section, start: 'top 35%', once: true },
+      });
+    }
   });
 }
 

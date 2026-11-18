@@ -447,31 +447,19 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Home: statement, work index, capabilities
    ========================================================================== */
-/* Who we are: taller than the screen; the content holds while the page travels past it. */
-.statement { position: relative; height: 175svh; }
-.statement__pin {
-  position: sticky; top: 0; height: 100svh; overflow: clip;
-  padding-block: 6.5rem calc(var(--u) * 8); row-gap: calc(var(--u) * 3);
-  grid-template-rows: auto 1fr; align-items: end;
-}
-.statement__aside { grid-column: 1 / 13; align-self: start; color: var(--muted); }
-.statement__title {
-  grid-column: 1 / 9; font-size: clamp(2.4rem, 0.9rem + 4.6vw, 7rem); line-height: 0.9; letter-spacing: -0.04em; max-width: 12em;
-}
-.statement__text { grid-column: 9 / 13; font-size: var(--t-m); line-height: 1.32; letter-spacing: -0.012em; }
-/* The large drop: rests in the open top-right of the screen; the motion code rolls it in and then
-   shrinks it into .statement__drop. Hidden without motion. */
-.statement__big {
-  position: absolute; top: 14svh; right: calc(var(--gutter) + 4vw); height: min(44svh, 30vw); aspect-ratio: 274.5 / 377;
-  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 2px var(--ink);
-  visibility: hidden; will-change: transform; pointer-events: none;
-}
+/* Who we are: a little taller than the screen, content held and centred while the page travels. */
+.statement { position: relative; height: 150svh; }
+.statement__pin { position: sticky; top: 0; height: 100svh; overflow: clip; display: grid; place-items: center; padding: 5rem var(--gutter); }
+.statement__block { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 3); text-align: center; will-change: transform; }
+.statement__aside { color: var(--muted); }
+.statement__title { font-size: clamp(2.4rem, 0.9rem + 4.6vw, 7rem); line-height: 0.9; letter-spacing: -0.04em; max-width: 13em; }
+.statement__text { font-size: var(--t-m); line-height: 1.38; letter-spacing: -0.012em; max-width: 38ch; }
 @media (prefers-reduced-motion: reduce) {
   .statement { height: auto; }
-  .statement__pin { position: relative; height: auto; min-height: 78svh; }
+  .statement__pin { position: relative; height: auto; min-height: 84svh; }
 }
 .statement__drop {
-  display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.2em; vertical-align: -0.1em;
+  display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.22em; vertical-align: -0.1em;
   border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1px var(--ink);
 }
 
@@ -847,10 +835,8 @@ html:not(.js) .hero__toggle { display: none; }
   .kit__chapter { grid-column: 1 / -1; justify-content: flex-start; min-height: 70svh; padding-block: 14svh 2svh; }
   .kit__h2 { font-size: clamp(2.6rem, 13vw, 4rem); }
 
-  .statement { height: 150svh; }
-  .statement__pin { padding-block: 5.5rem calc(var(--u) * 6); grid-template-rows: auto 1fr auto; row-gap: calc(var(--u) * 2.5); }
-  .statement__title, .statement__text { grid-column: 1 / -1; }
-  .statement__big { top: 13svh; right: var(--gutter); height: 24svh; }
+  .statement { height: 130svh; }
+  .statement__pin { padding-block: 4.5rem 2rem; }
 
   .work__head { flex-direction: column; align-items: start; }
   .plates { column-gap: 0.75rem; }
