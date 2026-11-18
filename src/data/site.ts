@@ -113,6 +113,7 @@ export const statement = {
   label: 'Who we are',
   title: 'We take ideas apart, then build every part properly.',
   text: 'LemonDrop is a small studio in Cairo working with founders and teams anywhere. Strategy, design and engineering sit in one room, so nothing gets lost in a handover and the idea you approve is the idea that ships.',
+  facts: ['One studio, three disciplines', 'Based in Cairo', 'Working worldwide'],
 };
 
 // What we make. `need` is the matching chip on the contact page: each row links there with it selected.
