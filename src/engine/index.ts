@@ -29,6 +29,10 @@ let ready = false;
 let booted = false;
 let instant = false;
 
+/** Start the page intro now (safe to call more than once). The loader exit calls this at the moment
+ *  the page is uncovered, so the intro is seen instead of playing out behind the loader. */
+export const playIntro = () => { intro?.play(); };
+
 /** Run fn on every page load (and now, if a page is ready). Returns an unsubscribe. */
 export function onPage(fn: PageFn) {
   pageFns.add(fn);

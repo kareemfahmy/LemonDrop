@@ -2,7 +2,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { ease, isTouch, onPage, onScroll, prefersReducedMotion, setLoaderExit, setLoaderFormat, setTransition } from '@/engine';
+import { ease, isTouch, onPage, onScroll, playIntro, prefersReducedMotion, setLoaderExit, setLoaderFormat, setTransition } from '@/engine';
 import { startIdle } from './idle';
 import { startKit } from './kit';
 
@@ -47,7 +47,7 @@ function loader() {
     const mark = root.querySelector<HTMLElement>('.loader__mark')!;
     const target = document.querySelector<SVGElement>('[data-header] .header__mark');
     const tl = gsap.timeline();
-    if (late) return tl.to(root, { autoAlpha: 0, duration: 0.35, ease: ease.soft });
+    if (late) return tl.to(root, { autoAlpha: 0, duration: 0.35, ease: ease.soft }).call(playIntro, [], 0.1);
     tl.to(root.querySelectorAll('[data-loader-out]'), { yPercent: 110, duration: 0.45, ease: ease.inOut, stagger: 0.04 });
     tl.to(root.querySelector('[data-loader-bar]'), { scaleX: 0, transformOrigin: 'right center', duration: 0.45, ease: ease.inOut }, 0);
     if (target && target.getBoundingClientRect().width > 0) {
@@ -64,6 +64,7 @@ function loader() {
         ease: ease.inOut,
       }, 0.05);
       tl.to(root, { backgroundColor: 'rgba(17, 17, 16, 0)', duration: 0.5, ease: ease.soft }, 0.3);
+      tl.call(playIntro, [], 0.4); // the page is uncovered from here: let the headline rise as it appears
       tl.to(root.querySelector('.loader__svg'), { color: colour, duration: 0.5, ease: ease.soft }, 0.3);
       tl.to(root.querySelector('[data-part="drop"] path'), { fill: colour, duration: 0.3, ease: ease.soft }, 0.6);
       tl.set(target, { clearProps: 'opacity,visibility' });
@@ -108,7 +109,7 @@ function hero() {
     if (!reduced) {
       if (!instant) {
         gsap.set(media, { autoAlpha: 0, scale: 1.06 });
-        intro.add(gsap.to(media, { autoAlpha: 1, scale: 1, duration: 1.8, ease: ease.out }), 0);
+        intro.add(gsap.to(media, { autoAlpha: 1, scale: 1, duration: 2.2, ease: ease.out }), 0);
       }
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } })
         .to(video, { yPercent: 14 }, 0)
@@ -186,6 +187,13 @@ function titles() {
   onPage(({ intro, instant }) => {
     if (prefersReducedMotion() || instant) return;
     document.querySelectorAll<HTMLElement>('[data-title]').forEach((el) => {
+      // data-title="chars" (the hero): letter by letter, slower, so it reads as the first moment.
+      if (el.dataset.title === 'chars') {
+        const split = SplitText.create(el, { type: 'lines,chars', mask: 'lines', linesClass: 'split-line' });
+        gsap.set(split.chars, { yPercent: 115 });
+        intro.add(gsap.to(split.chars, { yPercent: 0, duration: 1.5, stagger: 0.055, ease: ease.out }), 0);
+        return;
+      }
       const split = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'split-line' });
       gsap.set(split.lines, { yPercent: 110 });
       intro.add(gsap.to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.08, ease: ease.out }), 0);
