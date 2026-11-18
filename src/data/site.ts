@@ -48,7 +48,7 @@ export const nav = [
 ];
 
 export const hero = {
-  title: 'Complex ideas, broken into parts and built properly.',
+  title: 'LemonDrop',
   intro:
     'LemonDrop is a digital studio. We plan, design and engineer websites, stores, apps and the systems behind them.',
   meta: ['Digital solutions studio', 'Cairo, working worldwide'],

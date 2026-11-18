@@ -45,7 +45,6 @@ export function Header() {
     <header className="header" data-header>
       <Link className="header__logo" href="/" aria-label="LemonDrop, home" data-label="Home">
         <Mark className="header__mark" />
-        <span className="header__word" aria-hidden="true">LemonDrop</span>
       </Link>
       <nav className="header__nav" aria-label="Main">
         <ul>

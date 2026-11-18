@@ -26,7 +26,7 @@ export function Hero() {
       <div className="hero__veil" data-hero-veil aria-hidden="true" />
 
       <div className="hero__body" data-hero-body>
-        <h1 id="hero-title" className="hero__title" data-title>
+        <h1 id="hero-title" className="hero__title" data-title="chars">
           {hero.title}
         </h1>
         <p className="hero__intro" data-reveal="up" data-intro data-delay="0.25">{hero.intro}</p>
