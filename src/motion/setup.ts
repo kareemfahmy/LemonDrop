@@ -19,7 +19,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
-  statementMotion();
+  statementDrop();
   interludes();
   bigTitle();
   services();
@@ -114,9 +114,7 @@ function hero() {
       }
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } })
         .to(video, { yPercent: 14 }, 0)
-        // The footage closes into a D-shaped window on its way out, handing over to the drop below.
-        .fromTo(media, { clipPath: 'inset(0% 0% 0% 0% round 0vh 0vh 0vh 0vh)' }, { clipPath: 'inset(20% 33% 26% 33% round 0vh 40vh 40vh 0vh)' }, 0)
-        .to(root.querySelector('[data-hero-veil]'), { opacity: 0.55 }, 0)
+        .to(root.querySelector('[data-hero-veil]'), { opacity: 1 }, 0)
         .to(root.querySelector('[data-hero-body]'), { yPercent: 18, opacity: 0, duration: 0.7 }, 0);
     }
     return () => { alive = false; toggle?.removeEventListener('click', onClick); video.pause(); };
@@ -204,30 +202,18 @@ function titles() {
   });
 }
 
-// Who we are. Arriving from the hero, the centred block rises and grows into place as the section
-// scrolls up to fill the screen; while it is held it drifts up a touch, so the dark ground keeps
-// moving. Both scrubbed. The full stop rolls into place once, after the paragraph has come in.
-function statementMotion() {
+// Who we are: the D at the end of the paragraph. Once the paragraph has risen into view, the D
+// grows out from its flat side, then fills with lemon from the bottom up, like the parts of the
+// mark filling in the kit. Plays once.
+function statementDrop() {
   onPage(() => {
-    const section = document.querySelector<HTMLElement>('[data-statement]');
-    const block = section?.querySelector<HTMLElement>('[data-statement-block]');
-    const end = section?.querySelector<HTMLElement>('[data-statement-end]');
-    if (!section || !block || prefersReducedMotion()) return;
-    gsap.fromTo(block, { y: () => innerHeight * 0.16, scale: 0.88, opacity: 0.35 }, {
-      y: 0, scale: 1, opacity: 1, ease: 'none',
-      scrollTrigger: { trigger: section, start: 'top bottom', end: 'top top', scrub: 0.6, invalidateOnRefresh: true },
-    });
-    gsap.fromTo(block, { y: 0 }, {
-      y: () => -innerHeight * 0.05, ease: 'none', immediateRender: false,
-      scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true },
-    });
-    if (end) {
-      gsap.fromTo(end, { x: '-0.7em', rotation: -180, scale: 0.5, autoAlpha: 0 }, {
-        x: 0, rotation: 0, scale: 1, autoAlpha: 1, duration: 1.1, delay: 0.7, ease: ease.out,
-        // Measured on the section, not the full stop: the full stop moves while the section locks in place.
-        scrollTrigger: { trigger: section, start: 'top 35%', once: true },
-      });
-    }
+    const end = document.querySelector<HTMLElement>('[data-statement-end]');
+    const fill = end?.querySelector<HTMLElement>('[data-statement-fill]');
+    if (!end || !fill || prefersReducedMotion()) return;
+    const text = end.closest('p') ?? end;
+    gsap.timeline({ delay: 0.9, scrollTrigger: { trigger: text, start: 'top 85%', once: true } })
+      .fromTo(end, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.7, ease: ease.out })
+      .fromTo(fill, { scaleY: 0 }, { scaleY: 1, duration: 0.9, ease: ease.inOut }, 0.35);
   });
 }
 

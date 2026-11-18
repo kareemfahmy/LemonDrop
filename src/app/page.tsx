@@ -12,18 +12,16 @@ export default function Home() {
           (components/Kit.tsx), drawing and driver (motion/kit.ts) are intact; import Kit and render
           <Kit /> here to bring it back. */}
 
-      {/* Who we are. A little taller than the screen with the content held in the middle, so the dark
-          ground has room to travel. The block rises and settles as it arrives from the hero; the
-          full stop rolls into place once the paragraph is in (setup.ts, statementMotion). */}
-      <section className="statement" data-tone="dark" data-statement aria-labelledby="statement-title">
-        <div className="statement__pin">
-          <div className="statement__block" data-statement-block>
-            <p className="statement__aside">{statement.label}</p>
-            <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
-            <p className="statement__text" data-reveal="up" data-delay="0.2">
-              {statement.text}<span className="statement__drop" data-statement-end aria-hidden="true" />
-            </p>
-          </div>
+      {/* Who we are. Title left, paragraph right, centred as a pair. The text does the work: the
+          headline and the paragraph rise line by line once; then the D at the end of the paragraph
+          grows out from its flat side and fills with lemon (setup.ts, statementDrop). */}
+      <section className="statement" data-tone="dark" aria-labelledby="statement-title">
+        <div className="statement__inner">
+          <p className="statement__aside">{statement.label}</p>
+          <h2 id="statement-title" className="statement__title display" data-split="lines">{statement.title}</h2>
+          <p className="statement__text" data-split="lines" data-delay="0.25">
+            {statement.text}<span className="statement__drop" data-statement-end aria-hidden="true"><span className="statement__fill" data-statement-fill /></span>
+          </p>
         </div>
       </section>
 

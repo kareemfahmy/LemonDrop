@@ -447,21 +447,22 @@ html:not(.js) .hero__toggle { display: none; }
 /* ==========================================================================
    Home: statement, work index, capabilities
    ========================================================================== */
-/* Who we are: a little taller than the screen, content held and centred while the page travels. */
-.statement { position: relative; height: 150svh; }
-.statement__pin { position: sticky; top: 0; height: 100svh; overflow: clip; display: grid; place-items: center; padding: 5rem var(--gutter); }
-.statement__block { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 3); text-align: center; will-change: transform; }
-.statement__aside { color: var(--muted); }
-.statement__title { font-size: clamp(2.4rem, 0.9rem + 4.6vw, 7rem); line-height: 0.9; letter-spacing: -0.04em; max-width: 13em; }
-.statement__text { font-size: var(--t-m); line-height: 1.38; letter-spacing: -0.012em; max-width: 38ch; }
-@media (prefers-reduced-motion: reduce) {
-  .statement { height: auto; }
-  .statement__pin { position: relative; height: auto; min-height: 84svh; }
+/* Who we are: a full screen of dark ground; title and paragraph side by side, centred as a pair. */
+.statement { min-height: 100svh; display: grid; place-items: center; padding: calc(var(--u) * 10) var(--gutter); }
+.statement__inner {
+  width: min(100%, 84rem); display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  column-gap: clamp(2rem, 6vw, 7rem); row-gap: calc(var(--u) * 3); align-items: end;
 }
+.statement__aside { grid-column: 1 / -1; color: var(--muted); }
+.statement__title { font-size: clamp(2.4rem, 0.9rem + 4.4vw, 6.6rem); line-height: 0.9; letter-spacing: -0.04em; }
+.statement__text { font-size: var(--t-m); line-height: 1.38; letter-spacing: -0.012em; max-width: 34ch; padding-bottom: 0.2em; }
+/* The D at the end of the paragraph: a lemon outline with a fill that rises inside it. Shown
+   filled without motion; the motion code grows it out and fills it. */
 .statement__drop {
-  display: inline-block; width: 0.42em; height: 0.84em; margin-left: 0.22em; vertical-align: -0.1em;
-  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1px var(--ink);
+  position: relative; display: inline-block; overflow: hidden; width: 0.5em; height: 1em; margin-left: 0.22em; vertical-align: -0.16em;
+  border-radius: var(--d); box-shadow: inset 0 0 0 1.5px var(--lemon);
 }
+.statement__fill { position: absolute; inset: 0; background: var(--lemon); transform-origin: 50% 100%; }
 
 /* Interlude 2, the rule: a measured line between two sections, like the dimensions on the mark. */
 .rule { padding: 0 var(--gutter); }
@@ -835,8 +836,8 @@ html:not(.js) .hero__toggle { display: none; }
   .kit__chapter { grid-column: 1 / -1; justify-content: flex-start; min-height: 70svh; padding-block: 14svh 2svh; }
   .kit__h2 { font-size: clamp(2.6rem, 13vw, 4rem); }
 
-  .statement { height: 130svh; }
-  .statement__pin { padding-block: 4.5rem 2rem; }
+  .statement { min-height: 0; padding-block: calc(var(--u) * 14); }
+  .statement__inner { grid-template-columns: minmax(0, 1fr); }
 
   .work__head { flex-direction: column; align-items: start; }
   .plates { column-gap: 0.75rem; }
