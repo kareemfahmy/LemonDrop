@@ -19,6 +19,7 @@ export function setupMotion() {
   tone();
   headerAway();
   titles();
+  statementDrop();
   interludes();
   bigTitle();
   services();
@@ -113,7 +114,9 @@ function hero() {
       }
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } })
         .to(video, { yPercent: 14 }, 0)
-        .to(root.querySelector('[data-hero-veil]'), { opacity: 1 }, 0)
+        // The footage closes into a D-shaped window on its way out, handing over to the drop below.
+        .fromTo(media, { clipPath: 'inset(0% 0% 0% 0% round 0vh 0vh 0vh 0vh)' }, { clipPath: 'inset(20% 33% 26% 33% round 0vh 40vh 40vh 0vh)' }, 0)
+        .to(root.querySelector('[data-hero-veil]'), { opacity: 0.55 }, 0)
         .to(root.querySelector('[data-hero-body]'), { yPercent: 18, opacity: 0, duration: 0.7 }, 0);
     }
     return () => { alive = false; toggle?.removeEventListener('click', onClick); video.pause(); };
@@ -198,6 +201,42 @@ function titles() {
       gsap.set(split.lines, { yPercent: 110 });
       intro.add(gsap.to(split.lines, { yPercent: 0, duration: 1.2, stagger: 0.08, ease: ease.out }), 0);
     });
+  });
+}
+
+// Who we are: while the section holds, a large drop rolls in from the right (a whole number of
+// turns, so it arrives upright) and rests; then it shrinks and flies into the full stop at the end
+// of the paragraph, which takes over from it. Scrubbed: scrolling back reverses it.
+function statementDrop() {
+  onPage(() => {
+    const section = document.querySelector<HTMLElement>('[data-statement]');
+    const big = section?.querySelector<HTMLElement>('[data-statement-big]');
+    const end = section?.querySelector<HTMLElement>('[data-statement-end]');
+    const pin = big?.parentElement;
+    if (!section || !big || !end || !pin || prefersReducedMotion()) return;
+    // Where the full stop sits, relative to the big drop at rest (both inside the held frame).
+    const target = () => {
+      const p = pin.getBoundingClientRect();
+      const e = end.getBoundingClientRect();
+      return { x: e.left - p.left - big.offsetLeft, y: e.top - p.top - big.offsetTop, s: e.height / big.offsetHeight };
+    };
+    let t = target();
+    const from = () => innerWidth - big.offsetLeft + big.offsetWidth * 0.2;
+    gsap.set(big, { visibility: 'visible', transformOrigin: '0 0' });
+    gsap.set(end, { opacity: 0 });
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: section, start: 'top 75%', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true,
+        onRefreshInit: () => { gsap.set(big, { x: 0, y: 0, scale: 1, rotation: 0 }); },
+        onRefresh: () => { t = target(); },
+      },
+    })
+      .fromTo(big, { x: from, rotation: 720 }, { x: 0, rotation: 0, duration: 0.45, ease: 'power2.out' }, 0)
+      .to(big, { x: () => t.x, y: () => t.y, scale: () => t.s, duration: 0.4, ease: 'power2.inOut' }, 0.58)
+      .set(big, { autoAlpha: 0 }, 0.98)
+      .set(end, { opacity: 1 }, 0.98)
+      .to({}, { duration: 0.02 }, 0.98);
   });
 }
 

@@ -107,10 +107,12 @@ export const chapters: {
   },
 ];
 
-// Why one studio: one line that says it, and the reasoning beside it.
+// Who we are: the introduction after the hero. The hero says the name and what we make; this says
+// how we work and why that matters.
 export const statement = {
-  title: 'One studio. No handovers.',
-  text: 'Most digital projects break in the gaps: strategy that never reaches the designer, designs nobody can build, code nobody can update. We do all three in one room, so the idea you approved is the idea that ships.',
+  label: 'Who we are',
+  title: 'We take ideas apart, then build every part properly.',
+  text: 'LemonDrop is a small studio in Cairo working with founders and teams anywhere. Strategy, design and engineering sit in one room, so nothing gets lost in a handover and the idea you approve is the idea that ships.',
 };
 
 // What we make. `need` is the matching chip on the contact page: each row links there with it selected.
