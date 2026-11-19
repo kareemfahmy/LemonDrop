@@ -48,8 +48,7 @@ export const nav = [
 ];
 
 export const hero = {
-  label: 'LemonDrop, digital studio',
-  title: 'Ideas, taken apart and built properly.',
+  title: 'LemonDrop',
   intro:
     'We plan, design and engineer websites, stores, apps and the systems behind them.',
   meta: ['Digital solutions studio', 'Cairo, working worldwide'],

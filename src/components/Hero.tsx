@@ -44,8 +44,22 @@ export function Hero() {
 
       <div className="hero__body" data-hero-body>
         <p className="hero__intro" data-reveal="up" data-intro data-delay="1.7">{hero.intro}</p>
-        <p className="hero__label" data-reveal="fade" data-intro data-delay="1.4">{hero.label}</p>
-        <h1 id="hero-title" className="hero__title" data-title="chars">{hero.title}</h1>
+        {/* The wordmark: the L and the D are the mark's own solid shapes (the L's stem and foot joined
+            into one piece); the letters between them are set light, so the two shapes carry the name.
+            Screen readers get the plain name. Each glyph rises in its own mask (setup.ts, titles). */}
+        <h1 id="hero-title" className="hero__title" data-title="wordmark">
+          <span className="sr-only">{hero.title}</span>
+          <span className="wm" aria-hidden="true">
+            <span className="wm__g wm__g--mark">
+              <svg className="wm__shape" viewBox="0 0 229 377" focusable="false"><path d="M0 0H148V250H229V377H0Z" /></svg>
+            </span>
+            {'EMON'.split('').map((c, i) => <span key={`a${i}`} className="wm__g">{c}</span>)}
+            <span className="wm__g wm__g--mark wm__g--d">
+              <svg className="wm__shape" viewBox="0 0 274.5 377" focusable="false"><path d="M0 0H86A188.5 188.5 0 0 1 86 377H0Z" /></svg>
+            </span>
+            {'ROP'.split('').map((c, i) => <span key={`b${i}`} className="wm__g">{c}</span>)}
+          </span>
+        </h1>
       </div>
 
       <div className="hero__foot" data-reveal="fade" data-intro data-delay="1.9">
