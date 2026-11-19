@@ -20,7 +20,7 @@ export const viewport: Viewport = { themeColor: '#111110', colorScheme: 'light d
 
 // Runs before first paint: hidden-until-revealed styles only apply when JS and motion are on.
 // The loader plays on every full page load on larger screens (a refresh included); phones skip it.
-const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');if(matchMedia('(max-width: 767px)').matches)h.classList.add('seen')`;
+const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');if(matchMedia('(max-width: 767px)').matches)h.classList.add('seen');else if(location.pathname==='/'&&h.classList.contains('motion'))h.classList.add('loader-home')`;
 
 // Phones never show the loader: mark it hidden before first paint.
 const hideLoader = `if(document.documentElement.classList.contains('seen'))document.getElementById('loader').hidden=true`;

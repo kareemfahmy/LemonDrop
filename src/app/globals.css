@@ -162,7 +162,11 @@ html:not(.js) #loader, html.seen #loader, #loader[hidden] { display: none; }
 .seen:not(.is-booted) [data-intro] { visibility: visible; }
 .loader__mark { width: min(34vw, 46svh * 1.385); will-change: transform; }
 .loader__svg { width: 100%; height: auto; overflow: hidden; color: var(--paper); }
-.loader__svg [data-part='drop'] path { fill: var(--lemon); }
+/* Home, first load: the loader is see-through; the hero window behind it is the ground, with the
+   parts assembling as cut-outs onto the footage. The header waits until the window opens. */
+html.loader-window #loader { background: transparent; }
+html.loader-window .loader__mark { visibility: hidden; }
+html.loader-window .header, html.loader-home .header { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #loader [data-part] { transform: none; } }
 .loader__foot {
   position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 14px);
@@ -285,7 +289,7 @@ html:not(.js) #loader, html.seen #loader, #loader[hidden] { display: none; }
   display: flex; align-items: center; justify-content: space-between; gap: var(--gutter);
   padding: calc(var(--gutter) * 0.75) var(--gutter);
   color: var(--fg);
-  transition: translate 0.6s var(--e-out), color 0.4s var(--e-soft);
+  transition: translate 0.6s var(--e-out), color 0.4s var(--e-soft), opacity 0.6s var(--e-soft);
   mix-blend-mode: difference; --fg: #fff; --bg: #000; /* no-JS fallback: legible on any ground */
 }
 html[data-tone] .header { mix-blend-mode: normal; }

@@ -299,3 +299,7 @@ Composition: full-bleed footage under a shade that is open in the middle and ink
 Concepts considered: (A) the window, chosen: anchored in the mark's three parts and the loader that assembles them, so it cannot move to another studio. (B) a liquid drop lens following the pointer over the footage: WebGL cost on phones for a pointer-only effect. (C) the footage inside the giant word: a well-worn knockout-text trope.
 
 QA (production build): desktop LCP 0.2 s, CLS 0; throttled phone LCP 0.76 s, CLS 0.07 in the harness (no shifts reproduced unthrottled, likely the font swap on the edge-to-edge name). Loader 3.3 to 3.6 s, longer than the skill's 2.6 s cap, by the client's request. Scroll through the hero at a steady 60 fps.
+
+## Loader (current)
+
+On the home page, first load: one sequence. The loader is see-through and the hero window is its ground: the L rises and the drop rolls in as cut-outs onto the playing footage, driven by the real load progress, while the 0 to 100 counter and "Assembling the parts" run along the bottom. At 100 the counter drops away and the window opens straight into the hero. The header waits (hidden from first paint) until the window opens. On other pages, first load: the solid mark assembles on ink (both shapes in paper, no lemon) and flies into the header logo. Navigating to home from inside the site: the curtain, then the window opens (no counter). Phones skip the loader and open the window on first paint.

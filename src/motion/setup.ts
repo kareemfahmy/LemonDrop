@@ -30,19 +30,39 @@ export function setupMotion() {
 // Loader: the L rises, then the drop rolls in, and they lock into the mark as fonts and assets load. The counter
 // hook receives the real progress, so it also drives the assembly. Exit: the assembled mark flies to
 // the header logo and becomes it, while the ink ground clears to show the page underneath.
+// The assembly, p from 0 to 100: the L rises from below, then the drop rolls in from the right.
+// Drives the loader's own mark and, on the home page, the hero window's cut-outs (their inner
+// paths, so the window's own opening tweens on the outer groups are untouched).
+function assemble(p: number) {
+  const b = 1 - smooth(0, 52, p);
+  const d = 1 - smooth(42, 100, p);
+  const lt = `translate(0 ${(b * 400).toFixed(1)})`;
+  const dt = `translate(${(d * 300).toFixed(1)} 0) rotate(${(d * 300 * 0.26).toFixed(1)} 360 188.5)`;
+  document.querySelector('#loader [data-part="block"]')?.setAttribute('transform', lt);
+  document.querySelector('#loader [data-part="drop"]')?.setAttribute('transform', dt);
+  document.querySelector('[data-window-part="block"] path')?.setAttribute('transform', lt);
+  document.querySelector('[data-window-part="drop"] path')?.setAttribute('transform', dt);
+}
+// Home, first load: the loader is see-through and the hero window is its ground, so the parts
+// assemble as cut-outs onto the footage while the counter runs.
+const windowLoading = () => document.documentElement.classList.contains('loader-window');
+
 function loader() {
-  let parts: Record<string, SVGGElement> | null = null;
   setLoaderFormat((p) => {
-    parts ??= Object.fromEntries(
-      [...document.querySelectorAll<SVGGElement>('#loader [data-part]')].map((g) => [g.dataset.part!, g]),
-    );
-    const b = 1 - smooth(0, 52, p);
-    const d = 1 - smooth(42, 100, p);
-    parts.block?.setAttribute('transform', `translate(0 ${(b * 400).toFixed(1)})`);
-    parts.drop?.setAttribute('transform', `translate(${(d * 300).toFixed(1)} 0) rotate(${(d * 300 * 0.26).toFixed(1)} 360 188.5)`);
+    assemble(p);
     return String(Math.round(p)).padStart(3, '0');
   });
   setLoaderExit((root, late) => {
+    document.documentElement.classList.remove('loader-home');
+    if (windowLoading()) {
+      // The counter and note drop away, the loader lifts, and the window opens from where it stands.
+      const html = document.documentElement;
+      return gsap.timeline()
+        .to(root.querySelectorAll('[data-loader-out]'), { yPercent: 110, duration: late ? 0.25 : 0.45, ease: ease.inOut, stagger: 0.04 })
+        .to(root.querySelector('[data-loader-bar]'), { scaleX: 0, transformOrigin: 'right center', duration: 0.45, ease: ease.inOut }, 0)
+        .call(() => { html.classList.remove('loader-window', 'loader-home'); playIntro(); }, [], late ? 0.15 : 0.3)
+        .set(root, { autoAlpha: 0 });
+    }
     const mark = root.querySelector<HTMLElement>('.loader__mark')!;
     const target = document.querySelector<SVGElement>('[data-header] .header__mark');
     const tl = gsap.timeline();
@@ -65,7 +85,6 @@ function loader() {
       tl.to(root, { backgroundColor: 'rgba(17, 17, 16, 0)', duration: 0.5, ease: ease.soft }, 0.3);
       tl.call(playIntro, [], 0.4); // the page is uncovered from here: let the headline rise as it appears
       tl.to(root.querySelector('.loader__svg'), { color: colour, duration: 0.5, ease: ease.soft }, 0.3);
-      tl.to(root.querySelector('[data-part="drop"] path'), { fill: colour, duration: 0.3, ease: ease.soft }, 0.6);
       tl.set(target, { clearProps: 'opacity,visibility' });
       tl.set(root, { autoAlpha: 0 });
     } else {
@@ -107,7 +126,14 @@ function hero() {
 
     if (!reduced) {
       const win = root.querySelector<SVGSVGElement>('[data-hero-window]');
-      if (win && !instant) intro.add(windowOpen(win, media), 0);
+      const loading = !document.getElementById('loader')?.hidden && !document.documentElement.classList.contains('seen');
+      if (win && !instant && loading) {
+        // First load: the window is the loader's ground. Start with nothing assembled; the loader's
+        // progress assembles the cut-outs, then its exit plays the opening.
+        document.documentElement.classList.add('loader-window');
+        assemble(0);
+        intro.add(windowOpen(win, media, 0.1), 0);
+      } else if (win && !instant) intro.add(windowOpen(win, media), 0);
       else if (win) windowOpen(win, media); // phones skip the loader: the window opens on first paint
       else if (!instant) {
         gsap.set(media, { autoAlpha: 0, scale: 1.06 });
@@ -127,7 +153,7 @@ function hero() {
 // right) while the mark grows, until the cut-outs leave the
 // screen and the footage is open edge to edge. Returns the timeline for the page intro; the sheet
 // is removed when it ends, so nothing is masked while you scroll.
-function windowOpen(win: SVGSVGElement, media: HTMLElement) {
+function windowOpen(win: SVGSVGElement, media: HTMLElement, hold = 0.55) {
   const mark = win.querySelector<SVGGElement>('[data-window-mark]')!;
   const part = (n: string) => win.querySelector<SVGGElement>(`[data-window-part="${n}"]`)!;
   const s = Math.min((innerHeight * 0.64) / 377, (innerWidth * 0.84) / 522); // the whole mark fits, on any screen
@@ -139,19 +165,19 @@ function windowOpen(win: SVGSVGElement, media: HTMLElement) {
   gsap.set(media, { scale: 1.12 });
   const grow = { k: 1 };
   return gsap.timeline({ onComplete: () => { win.classList.remove('is-on'); } })
-    .to({}, { duration: 0.55 }) // hold: the footage, seen through the mark
+    .to({}, { duration: hold }) // hold: the footage, seen through the mark
     .to(grow, {
       k: 2.6, duration: 1.5, ease: ease.inOut,
       onUpdate: () => {
         const k = s * grow.k;
         gsap.set(mark, { attr: { transform: `translate(${(innerWidth - 522 * k) / 2} ${(innerHeight - 377 * k) / 2}) scale(${k})` } });
       },
-    }, 0.55)
-    .to(part('block'), { x: -far, duration: 1.5, ease: ease.inOut }, 0.55)
-    .to(part('drop'), { x: far, rotation: (far / 188.5) * 57.3 * 0.25, svgOrigin: '360 188.5', duration: 1.5, ease: ease.inOut }, 0.55)
+    }, hold)
+    .to(part('block'), { x: -far, duration: 1.5, ease: ease.inOut }, hold)
+    .to(part('drop'), { x: far, rotation: (far / 188.5) * 57.3 * 0.25, svgOrigin: '360 188.5', duration: 1.5, ease: ease.inOut }, hold)
     // The ink lifts while the parts are still opening, so the screen never closes to black.
-    .to(win, { opacity: 0, duration: 0.75, ease: ease.soft }, 1.0)
-    .to(media, { scale: 1, duration: 2.4, ease: ease.out }, 0.55);
+    .to(win, { opacity: 0, duration: 0.75, ease: ease.soft }, hold + 0.45)
+    .to(media, { scale: 1, duration: 2.4, ease: ease.out }, hold);
 }
 
 // Page transition: a D rolls across the screen. Ink body, lemon bowl leading, the destination's
