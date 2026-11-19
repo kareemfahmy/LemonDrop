@@ -365,11 +365,11 @@ html.header-solid .header::before { opacity: 1; }
 .hero__body { align-self: end; display: flex; flex-direction: column; gap: calc(var(--u) * 2.5); }
 .hero__intro { align-self: flex-end; max-width: 30ch; font-size: var(--t-m); line-height: 1.32; }
 /* The name, edge to edge along the bottom. */
-/* The wordmark: LEMONDROP in capitals, a step under full width. The L and D are the mark's solid
-   shapes at cap height on the baseline; the other letters are set light so the two shapes lead. */
+/* The wordmark: LEMONDROP in the display face (as in the section headlines), a step under full
+   width. The L and D are the mark's solid shapes at cap height on the baseline. */
 .hero__title {
-  font-family: var(--f-display); font-weight: 300; text-transform: uppercase;
-  font-size: 12.4vw; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; margin-left: -0.02em;
+  font-family: var(--f-display); font-weight: var(--w-display); text-transform: uppercase;
+  font-size: 12.4vw; line-height: 1; letter-spacing: -0.045em; white-space: nowrap; margin-left: -0.02em;
 }
 .wm { display: block; overflow: clip; padding-bottom: 0.06em; margin-bottom: -0.06em; }
 .wm__g { display: inline-block; }

@@ -45,7 +45,7 @@ export function Hero() {
       <div className="hero__body" data-hero-body>
         <p className="hero__intro" data-reveal="up" data-intro data-delay="1.7">{hero.intro}</p>
         {/* The wordmark: the L and the D are the mark's own solid shapes (the L's stem and foot joined
-            into one piece); the letters between them are set light, so the two shapes carry the name.
+            into one piece); the letters between them are the display face used by the section headlines.
             Screen readers get the plain name. Each glyph rises in its own mask (setup.ts, titles). */}
         <h1 id="hero-title" className="hero__title" data-title="wordmark">
           <span className="sr-only">{hero.title}</span>
