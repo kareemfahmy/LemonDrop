@@ -165,7 +165,7 @@ html:not(.js) #loader, html.seen #loader, #loader[hidden] { display: none; }
 /* Home, first load: the loader is see-through; the hero window behind it is the ground, with the
    parts assembling as cut-outs onto the footage. The header waits until the window opens. */
 html.loader-window #loader { background: transparent; }
-html.loader-window .loader__mark { visibility: hidden; }
+html.loader-window .loader__mark, html.loader-home .loader__mark { visibility: hidden; }
 html.loader-window .header, html.loader-home .header { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #loader [data-part] { transform: none; } }
 .loader__foot {

@@ -11,7 +11,9 @@ export function Engine({ setup }: { setup?: () => void }) {
   const router = useRouter();
   const pathname = usePathname();
   const mode = useRef<'idle' | 'push' | 'pop'>('idle');
-  const first = useRef(true);
+  // The path the engine last initialised. Comparing paths (not a first-run flag) keeps React's
+  // development double-run of effects from firing a second page enter while the loader runs.
+  const shown = useRef(pathname);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { boot(setup); }, []);
@@ -43,7 +45,8 @@ export function Engine({ setup }: { setup?: () => void }) {
   }, [router]);
 
   useEffect(() => {
-    if (first.current) { first.current = false; return; }
+    if (shown.current === pathname) return;
+    shown.current = pathname;
     const pop = mode.current === 'pop';
     mode.current = 'idle';
     enter({ transition: !pop, scrollTop: !pop });
