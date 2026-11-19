@@ -154,19 +154,19 @@ html.lenis, html.lenis body { height: auto; }
    Loader: the parts assemble (setup.ts drives them from real progress)
    ========================================================================== */
 #loader {
-  position: fixed; inset: 0; z-index: var(--z-loader);
-  background: var(--ink); color: var(--paper);
+  position: fixed; inset: 0; z-index: var(--z-loader); color: var(--paper);
   display: grid; place-items: center;
 }
 html:not(.js) #loader, html.seen #loader, #loader[hidden] { display: none; }
 .seen:not(.is-booted) [data-intro] { visibility: visible; }
-.loader__mark { width: min(34vw, 46svh * 1.385); will-change: transform; }
-.loader__svg { width: 100%; height: auto; overflow: hidden; color: var(--paper); }
-/* Home, first load: the loader is see-through; the hero window behind it is the ground, with the
-   parts assembling as cut-outs onto the footage. The header waits until the window opens. */
-html.loader-window #loader { background: transparent; }
-html.loader-window .loader__mark, html.loader-home .loader__mark { visibility: hidden; }
-html.loader-window .header, html.loader-home .header { opacity: 0; }
+.loader__sheet { position: absolute; inset: 0; width: 100%; height: 100%; }
+.loader__ink { fill: var(--ink); }
+.loader__glass { fill: var(--ink); opacity: 0.78; }
+#loader.has-footage .loader__glass { display: none; }
+.loader__mark { position: relative; width: min(34vw, 46svh * 1.385); will-change: transform; }
+/* The solid mark: paper fills it from the bottom up (the clip line is set by setup.ts). The D rolls
+   in from outside the box, so nothing clips it sideways. */
+.loader__svg { width: 100%; height: auto; overflow: visible; color: var(--paper); clip-path: polygon(-300% 100%, 400% 100%, 400% 100%, -300% 100%); }
 @media (prefers-reduced-motion: reduce) { #loader [data-part] { transform: none; } }
 .loader__foot {
   position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 14px);

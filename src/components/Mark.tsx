@@ -14,7 +14,7 @@ type Props = {
   className?: string;
   title?: string;
   drop?: string; // fill for the drop; the identity uses currentColor, the kit uses lemon
-  apart?: boolean; // start with the parts outside the frame (the loader assembles them)
+  apart?: boolean; // start with the drop rolled out (the loader rolls it in)
 };
 
 export function Mark({ className, title, drop = 'currentColor', apart = false }: Props) {
@@ -27,7 +27,7 @@ export function Mark({ className, title, drop = 'currentColor', apart = false }:
       aria-label={title}
       focusable="false"
     >
-      <g data-part="block" transform={apart ? 'translate(0 400)' : undefined}><path d={L_PATH} fill="currentColor" /></g>
+      <g data-part="block"><path d={L_PATH} fill="currentColor" /></g>
       <g data-part="drop" transform={apart ? 'translate(300 0) rotate(78 360 188.5)' : undefined}><path d={DROP_PATH} fill={drop} /></g>
     </svg>
   );

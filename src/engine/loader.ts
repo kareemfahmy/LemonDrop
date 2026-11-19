@@ -15,7 +15,7 @@ export const setLoaderExit = (fn: Exit) => { exit = fn; };
 
 // Timed from the moment the loader starts running, not from navigation start: however long the
 // page took to boot, the assembly is always seen in full. Change COUNT_MIN to make it faster or slower.
-const COUNT_MIN = 1.8; // seconds the count takes at least: long enough to watch the parts lock
+const COUNT_MIN = 2.2; // seconds the count takes at least: long enough to watch the parts lock
 const COUNT_MAX = 4; // seconds after which it stops waiting for assets
 const HOLD = 0.3; // seconds on the assembled mark before it leaves
 const TOO_LATE = 6; // seconds since navigation start: by then, just get out of the way

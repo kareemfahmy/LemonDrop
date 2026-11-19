@@ -27,25 +27,28 @@ export function setupMotion() {
   bench();
 }
 
-// Loader: the L rises, then the drop rolls in, and they lock into the mark as fonts and assets load. The counter
+// Loader: the mark is cut out of the ink (the page shows through), the drop rolls in, then both fill
+// with paper as fonts and assets load. The counter
 // hook receives the real progress, so it also drives the assembly. Exit: the assembled mark flies to
 // the header logo and becomes it, while the ink ground clears to show the page underneath.
-// The assembly, p from 0 to 100: the L rises from below, then the drop rolls in from the right.
-// Drives the loader's own mark and, on the home page, the hero window's cut-outs (their inner
-// paths, so the window's own opening tweens on the outer groups are untouched).
+// The assembly, p from 0 to 100. The L stands in place from the start; the drop, tipped over, rolls
+// in from the right (0 to 42). Both start as cut-outs in the ink (the page shows through) and fill
+// with paper from the bottom up (35 to 100).
 function assemble(p: number) {
-  const b = 1 - smooth(0, 52, p);
-  const d = 1 - smooth(42, 100, p);
-  const lt = `translate(0 ${(b * 400).toFixed(1)})`;
+  const root = document.getElementById('loader');
+  const box = root?.querySelector<HTMLElement>('.loader__mark');
+  if (!root || !box) return;
+  root.classList.toggle('has-footage', !!document.querySelector('[data-hero-video]'));
+  const d = 1 - smooth(0, 42, p);
+  const f = smooth(35, 100, p);
   const dt = `translate(${(d * 300).toFixed(1)} 0) rotate(${(d * 300 * 0.26).toFixed(1)} 360 188.5)`;
-  document.querySelector('#loader [data-part="block"]')?.setAttribute('transform', lt);
-  document.querySelector('#loader [data-part="drop"]')?.setAttribute('transform', dt);
-  document.querySelector('[data-window-part="block"] path')?.setAttribute('transform', lt);
-  document.querySelector('[data-window-part="drop"] path')?.setAttribute('transform', dt);
+  root.querySelector('[data-part="drop"]')?.setAttribute('transform', dt);
+  root.querySelector('[data-cut="drop"]')?.setAttribute('transform', dt);
+  const r = box.getBoundingClientRect();
+  root.querySelector('[data-loader-cut]')?.setAttribute('transform', `translate(${r.left.toFixed(1)} ${r.top.toFixed(1)}) scale(${(r.width / 522).toFixed(4)})`);
+  const y = ((1 - f) * 100).toFixed(2);
+  root.querySelector<SVGElement>('.loader__svg')!.style.clipPath = `polygon(-300% ${y}%, 400% ${y}%, 400% 100%, -300% 100%)`;
 }
-// Home, first load: the loader is see-through and the hero window is its ground, so the parts
-// assemble as cut-outs onto the footage while the counter runs.
-const windowLoading = () => document.documentElement.classList.contains('loader-window');
 
 function loader() {
   setLoaderFormat((p) => {
@@ -53,16 +56,6 @@ function loader() {
     return String(Math.round(p)).padStart(3, '0');
   });
   setLoaderExit((root, late) => {
-    document.documentElement.classList.remove('loader-home');
-    if (windowLoading()) {
-      // The counter and note drop away, the loader lifts, and the window opens from where it stands.
-      const html = document.documentElement;
-      return gsap.timeline()
-        .to(root.querySelectorAll('[data-loader-out]'), { yPercent: 110, duration: late ? 0.25 : 0.45, ease: ease.inOut, stagger: 0.04 })
-        .to(root.querySelector('[data-loader-bar]'), { scaleX: 0, transformOrigin: 'right center', duration: 0.45, ease: ease.inOut }, 0)
-        .call(() => { html.classList.remove('loader-window', 'loader-home'); playIntro(); }, [], late ? 0.15 : 0.3)
-        .set(root, { autoAlpha: 0 });
-    }
     const mark = root.querySelector<HTMLElement>('.loader__mark')!;
     const target = document.querySelector<SVGElement>('[data-header] .header__mark');
     const tl = gsap.timeline();
@@ -79,10 +72,10 @@ function loader() {
         y: to.top - from.top,
         scale: to.width / from.width,
         transformOrigin: '0 0',
-        duration: 0.85,
-        ease: ease.inOut,
+        duration: 1.05,
+        ease: 'power3.inOut', // a gentler curve than expo: the flight into the logo is seen, not snapped
       }, 0.05);
-      tl.to(root, { backgroundColor: 'rgba(17, 17, 16, 0)', duration: 0.5, ease: ease.soft }, 0.3);
+      tl.to(root.querySelector('.loader__sheet'), { opacity: 0, duration: 0.55, ease: ease.soft }, 0.05); // the ink lifts off the page as the mark leaves
       tl.call(playIntro, [], 0.4); // the page is uncovered from here: let the headline rise as it appears
       tl.to(root.querySelector('.loader__svg'), { color: colour, duration: 0.5, ease: ease.soft }, 0.3);
       tl.set(target, { clearProps: 'opacity,visibility' });
@@ -127,12 +120,10 @@ function hero() {
     if (!reduced) {
       const win = root.querySelector<SVGSVGElement>('[data-hero-window]');
       const loading = !document.getElementById('loader')?.hidden && !document.documentElement.classList.contains('seen');
-      if (win && !instant && loading) {
-        // First load: the window is the loader's ground. Start with nothing assembled; the loader's
-        // progress assembles the cut-outs, then its exit plays the opening.
-        document.documentElement.classList.add('loader-window');
-        assemble(0);
-        intro.add(windowOpen(win, media, 0.1), 0);
+      if (!instant && loading) {
+        // First load: the footage plays behind the loader and shows through its cut-out mark.
+        gsap.set(media, { scale: 1.08 });
+        intro.add(gsap.to(media, { scale: 1, duration: 2.4, ease: ease.out }), 0);
       } else if (win && !instant) intro.add(windowOpen(win, media), 0);
       else if (win) windowOpen(win, media); // phones skip the loader: the window opens on first paint
       else if (!instant) {

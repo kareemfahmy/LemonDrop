@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
-import { Mark } from '@/components/Mark';
+import { DROP_PATH, L_PATH, Mark } from '@/components/Mark';
 import { Motion } from '@/components/Motion';
 import { site } from '@/data/site';
 import { mono, sans } from './fonts';
@@ -20,7 +20,7 @@ export const viewport: Viewport = { themeColor: '#111110', colorScheme: 'light d
 
 // Runs before first paint: hidden-until-revealed styles only apply when JS and motion are on.
 // The loader plays on every full page load on larger screens (a refresh included); phones skip it.
-const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');if(matchMedia('(max-width: 767px)').matches)h.classList.add('seen');else if(location.pathname==='/'&&h.classList.contains('motion'))h.classList.add('loader-home')`;
+const flags = `var h=document.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('motion');if(matchMedia('(max-width: 767px)').matches)h.classList.add('seen')`;
 
 // Phones never show the loader: mark it hidden before first paint.
 const hideLoader = `if(document.documentElement.classList.contains('seen'))document.getElementById('loader').hidden=true`;
@@ -51,6 +51,26 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           </div>
         </div>
         <div id="loader" role="status" aria-label="Loading LemonDrop" suppressHydrationWarning>
+          {/* The ink, with the mark cut out of it: the page shows through the letters (on home, the
+              footage). Positioned over .loader__mark by setup.ts; parked off screen until then. */}
+          <svg className="loader__sheet" aria-hidden="true" focusable="false">
+            <defs>
+              <mask id="loader-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                <rect width="100%" height="100%" fill="#fff" />
+                <g id="loader-cut-shapes" data-loader-cut transform="translate(-10000 0)">
+                  <g data-cut="block"><path d={L_PATH} /></g>
+                  <g data-cut="drop"><path d={DROP_PATH} /></g>
+                </g>
+              </mask>
+              {/* The same letters as a mask of their own: on pages without footage the cut-out is tinted, so
+                  a light page reads through it as glass rather than as solid paper. */}
+              <mask id="loader-glass" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                <use href="#loader-cut-shapes" fill="#fff" />
+              </mask>
+            </defs>
+            <rect className="loader__ink" width="100%" height="100%" mask="url(#loader-cut)" />
+            <rect className="loader__glass" width="100%" height="100%" mask="url(#loader-glass)" />
+          </svg>
           <div className="loader__mark">
             <Mark className="loader__svg" apart />
           </div>
