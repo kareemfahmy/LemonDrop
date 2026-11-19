@@ -48,9 +48,10 @@ export const nav = [
 ];
 
 export const hero = {
-  title: 'LemonDrop',
+  label: 'LemonDrop, digital studio',
+  title: 'Ideas, taken apart and built properly.',
   intro:
-    'LemonDrop is a digital studio. We plan, design and engineer websites, stores, apps and the systems behind them.',
+    'We plan, design and engineer websites, stores, apps and the systems behind them.',
   meta: ['Digital solutions studio', 'Cairo, working worldwide'],
   cue: 'Scroll',
   // PLACEHOLDER loop, generated (the three parts out of focus). Replace both files with real
@@ -111,8 +112,8 @@ export const chapters: {
 // how we work and why that matters.
 export const statement = {
   label: 'Who we are',
-  title: 'We take ideas apart, then build every part properly.',
-  text: 'LemonDrop is a small studio in Cairo working with founders and teams anywhere. Strategy, design and engineering sit in one room, so nothing gets lost in a handover and the idea you approve is the idea that ships.',
+  title: 'We plan it, design it and build it, in one room.',
+  text: 'LemonDrop is a small studio in Cairo working with founders and teams anywhere. Nothing gets lost in a handover, so the idea you approve is the idea that ships.',
   facts: ['One studio, three disciplines', 'Based in Cairo', 'Working worldwide'],
 };
 

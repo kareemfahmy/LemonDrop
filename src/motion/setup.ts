@@ -224,13 +224,6 @@ function titles() {
   onPage(({ intro, instant }) => {
     if (prefersReducedMotion() || instant) return;
     document.querySelectorAll<HTMLElement>('[data-title]').forEach((el) => {
-      // data-title="wordmark" (the hero name): glyphs are already separate, including the mark shapes.
-      if (el.dataset.title === 'wordmark') {
-        const glyphs = el.querySelectorAll('.wm__g');
-        gsap.set(glyphs, { yPercent: 115 });
-        intro.add(gsap.to(glyphs, { yPercent: 0, duration: 1.5, stagger: 0.06, ease: ease.out }), el.closest('[data-hero]') ? 1.25 : 0);
-        return;
-      }
       // data-title="chars" (the hero): letter by letter, slower, so it reads as the first moment.
       if (el.dataset.title === 'chars') {
         const split = SplitText.create(el, { type: 'lines,chars', mask: 'lines', linesClass: 'split-line' });
