@@ -19,10 +19,11 @@ export function Hero() {
           playsInline
           preload="none"
           poster={hero.video.poster}
-          width={1280}
-          height={720}
+          width={hero.video.width}
+          height={hero.video.height}
           tabIndex={-1}
         >
+          <source src={hero.video.mobile} type="video/mp4" media="(max-width: 767px)" />
           <source src={hero.video.src} type="video/mp4" />
         </video>
       </div>

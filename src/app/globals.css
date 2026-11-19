@@ -355,7 +355,7 @@ html.header-solid .header::before { opacity: 1; }
 /* Dims the footage only where the type sits: open in the middle, ink at the foot. */
 .hero__shade {
   position: absolute; inset: 0; z-index: -2; pointer-events: none;
-  background: linear-gradient(to bottom, rgb(17 17 16 / 0.42) 0%, rgb(17 17 16 / 0.12) 34%, rgb(17 17 16 / 0.3) 58%, rgb(17 17 16 / 0.82) 86%, var(--ink) 100%);
+  background: linear-gradient(to bottom, rgb(17 17 16 / 0.28) 0%, rgb(17 17 16 / 0.06) 34%, rgb(17 17 16 / 0.2) 58%, rgb(17 17 16 / 0.62) 86%, rgb(17 17 16 / 0.92) 100%);
 }
 .hero__veil { position: absolute; inset: 0; z-index: -1; pointer-events: none; background: var(--ink); opacity: 0; }
 /* The window: ink with the mark cut out. Only exists while motion is on and the intro runs. */

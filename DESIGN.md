@@ -255,15 +255,14 @@ Still held: yellow is only ever the drop (the scramble's drop glyph and the foot
 
 Centred type in the hero breaks the three-hang-line rule on purpose: it is the one poster moment.
 
-### Hero footage (placeholder in place)
+### Hero footage
 
-`public/hero/hero-placeholder.mp4` and `.jpg` are generated: the three parts out of focus under a slow light. Replace both and update `hero.video` in `src/data/site.ts`.
+The studio's own footage, supplied with a commercial licence: two edits (Hero 1, Hero 2) joined into one loop. The rifle shot in Hero 1 (4.13 to 5.47 s) is cut. Hero 1 cross-fades into Hero 2 over 0.8 s, and the end of the loop is folded into its start with the same 0.8 s cross-fade, so the loop has no visible seam. Result: 10.6 s, 1652 × 994, 60 fps, no audio.
 
-- 16:9, 1920 × 1080 or larger, 24 to 30 fps, no audio, 8 to 15 s, loopable (first and last frame match), locked off or very slow movement.
-- Dark and low in contrast: a centred off-white headline sits on it. Nothing bright behind the middle third. No faces, no text.
-- Framed so the right-hand 40% still reads alone: phones crop to that side (`object-position: 78% 50%`).
-- Deliver one high-bitrate master (H.264 or ProRes). Web encodes: MP4 (H.264) at 1080p under 2.5 MB, a 720p version for phones, and a poster frame.
-- The shade over the footage is `.hero__shade` in `globals.css`; lighten it if the footage is already dark.
+- `public/hero/hero.mp4`: desktop, native resolution, H.264 CRF 18 (6.7 MB). Measured against the near-lossless master: SSIM 0.995, PSNR 50.9 dB, visually identical.
+- `public/hero/hero-mobile.mp4`: phones (max-width 767 px), 1280 px wide, CRF 19 (3.6 MB).
+- `public/hero/hero-poster.jpg`: first frame, shown before playback, under reduced motion and on data saver.
+- To replace: keep the same three file names, or update `hero.video` in `src/data/site.ts`.
 
 ### Project imagery (placeholders in place)
 

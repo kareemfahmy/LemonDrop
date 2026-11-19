@@ -53,9 +53,8 @@ export const hero = {
     'We plan, design and engineer websites, stores, apps and the systems behind them.',
   meta: ['Digital solutions studio', 'Cairo, working worldwide'],
   cue: 'Scroll',
-  // PLACEHOLDER loop, generated (the three parts out of focus). Replace both files with real
-  // footage: see DESIGN.md, "Hero footage".
-  video: { src: '/hero/hero-placeholder.mp4', poster: '/hero/hero-placeholder.jpg' },
+  // The studio's own footage (two edits joined into one seamless loop). Phones get a 1280 px encode.
+  video: { src: '/hero/hero.mp4', mobile: '/hero/hero-mobile.mp4', poster: '/hero/hero-poster.jpg', width: 1652, height: 994 },
 };
 
 // First screen of the kit: the assembled mark, before the scroll takes it apart.
