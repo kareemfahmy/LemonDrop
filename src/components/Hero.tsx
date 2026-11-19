@@ -44,8 +44,21 @@ export function Hero() {
 
       <div className="hero__body" data-hero-body>
         <p className="hero__intro" data-reveal="up" data-intro data-delay="1.7">{hero.intro}</p>
-        <h1 id="hero-title" className="hero__title" data-title="chars">
-          {hero.title}
+        {/* The wordmark: the L and the D are the mark's own shapes (the L's stem and foot joined into one
+            piece), the rest is lowercase type. Screen readers get the plain name. Each glyph rises in
+            its own mask (setup.ts, titles: data-title="wordmark"). */}
+        <h1 id="hero-title" className="hero__title" data-title="wordmark">
+          <span className="sr-only">{hero.title}</span>
+          <span className="wm" aria-hidden="true">
+            <span className="wm__g wm__g--mark">
+              <svg className="wm__L" viewBox="0 0 229 377" focusable="false"><path d="M0 0H148V250H229V377H0Z" /></svg>
+            </span>
+            {'emon'.split('').map((c, i) => <span key={`a${i}`} className="wm__g">{c}</span>)}
+            <span className="wm__g wm__g--mark wm__g--d">
+              <svg className="wm__D" viewBox="0 0 274.5 377" focusable="false"><path d="M0 0H86A188.5 188.5 0 0 1 86 377H0Z" /></svg>
+            </span>
+            {'rop'.split('').map((c, i) => <span key={`b${i}`} className="wm__g">{c}</span>)}
+          </span>
         </h1>
       </div>
 
