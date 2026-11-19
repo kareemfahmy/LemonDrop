@@ -50,8 +50,8 @@ export const nav = [
 export const hero = {
   title: 'LemonDrop',
   intro:
-    'We plan, design and engineer websites, stores, apps and the systems behind them.',
-  meta: ['Digital solutions studio', 'Cairo, working worldwide'],
+    'A creative digital studio, made in Cairo.',
+  meta: ['Strategy, design, engineering', 'Working worldwide'],
   cue: 'Scroll',
   // The studio's own footage (two edits joined into one seamless loop). Phones get a 1280 px encode.
   video: { src: '/hero/hero.mp4', mobile: '/hero/hero-mobile.mp4', poster: '/hero/hero-poster.jpg', width: 1652, height: 994 },
@@ -110,8 +110,8 @@ export const chapters: {
 // how we work and why that matters.
 export const statement = {
   label: 'Who we are',
-  title: 'We plan it, design it and build it, in one room.',
-  text: 'LemonDrop is a small studio in Cairo working with founders and teams anywhere. Nothing gets lost in a handover, so the idea you approve is the idea that ships.',
+  title: 'A small studio for big ideas, start to finish.',
+  text: 'We shape the plan, design the experience and engineer the product: websites, online stores, apps and the systems behind them, for founders and teams anywhere.',
   facts: ['One studio, three disciplines', 'Based in Cairo', 'Working worldwide'],
 };
 

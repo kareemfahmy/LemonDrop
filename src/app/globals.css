@@ -302,15 +302,14 @@ html.header-solid .header::before { opacity: 1; }
 .header__logo { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 44px; }
 .header__mark { height: 1.55rem; width: auto; overflow: visible; }
 /* Logo hover: the mark comes apart a little, then locks back. */
-.header__mark [data-part] { transition: translate 0.5s var(--e-out); }
+/* Logo hover: nothing comes apart. The D fills with lemon and the L steps back a shade. */
+.header__mark [data-part] path { transition: fill 0.45s var(--e-soft), opacity 0.45s var(--e-soft); }
 @media (hover: hover) {
-  .header__logo:hover [data-part='block'] { translate: -70px 0; }
-  .header__logo:hover [data-part='step'] { translate: 30px 90px; }
-  .header__logo:hover [data-part='drop'] { translate: 110px -40px; }
+  .header__logo:hover [data-part='drop'] path { fill: var(--lemon); }
+  .header__logo:hover [data-part='block'] path { opacity: 0.55; }
 }
-.header__logo:focus-visible [data-part='block'] { translate: -70px 0; }
-.header__logo:focus-visible [data-part='step'] { translate: 30px 90px; }
-.header__logo:focus-visible [data-part='drop'] { translate: 110px -40px; }
+.header__logo:focus-visible [data-part='drop'] path { fill: var(--lemon); }
+.header__logo:focus-visible [data-part='block'] path { opacity: 0.55; }
 .header__nav { display: flex; align-items: center; gap: calc(var(--gutter) * 1.2); font-size: var(--t-s); }
 .header__nav ul { display: flex; gap: calc(var(--gutter) * 0.9); }
 .header__menu { display: none; }
@@ -368,7 +367,7 @@ html.header-solid .header::before { opacity: 1; }
 /* The wordmark: LEMONDROP in the display face (as in the section headlines), a step under full
    width. The L and D are the mark's solid shapes at cap height on the baseline. */
 .hero__title {
-  font-family: var(--f-display); font-weight: var(--w-display); text-transform: uppercase;
+  font-family: var(--f-display); font-weight: 700; text-transform: uppercase;
   font-size: 12.4vw; line-height: 1; letter-spacing: -0.045em; white-space: nowrap; margin-left: -0.02em;
 }
 .wm { display: block; overflow: clip; padding-bottom: 0.06em; margin-bottom: -0.06em; }
@@ -661,6 +660,11 @@ html:not(.js) .hero__toggle { display: none; }
 }
 .bench__part, .bench__ghost { position: absolute; left: 0; top: 0; }
 .bench__ghost { border: 1px dashed rgb(239 239 236 / 0.34); transition: opacity 0.5s var(--e-soft); }
+.bench__ghost--l { border: 0; }
+.bench__ghost--l svg { width: 100%; height: 100%; overflow: visible; }
+.bench__ghost--l path { fill: none; stroke: rgb(239 239 236 / 0.34); stroke-width: 1px; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+/* The L part: one piece, cut to the L (stem 148 of 229 wide, foot from 250 of 377 down). */
+.bench__part--l { clip-path: polygon(0 0, 64.6% 0, 64.6% 66.3%, 100% 66.3%, 100% 100%, 0 100%); }
 .bench__ghost--drop, .bench__part--drop { border-radius: var(--d); }
 .bench.is-built .bench__ghost { opacity: 0; }
 .bench__part { visibility: hidden; background: var(--paper); cursor: grab; touch-action: none; user-select: none; }

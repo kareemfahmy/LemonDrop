@@ -1,11 +1,10 @@
 // Home hero: full-screen footage. Signature (the window): as the loader hands its mark to the
 // header, the screen is ink with the LD mark cut out of it at full height, so the footage is first
-// seen through the three parts of the mark. Then the parts come apart (block left, step down, drop
-// rolling right) and take the ink with them, opening the footage edge to edge, and the name rises
+// seen through the mark's two shapes. Then they come apart (the L left, the drop rolling right) and take the ink with them, opening the footage edge to edge, and the name rises
 // along the bottom. Wired in src/motion/setup.ts (hero). Without JS or under reduced motion there
 // is no window: the poster and the type are simply there.
 import { hero } from '@/data/site';
-import { BLOCK, DROP_PATH, STEP } from './Mark';
+import { DROP_PATH, L_PATH } from './Mark';
 
 export function Hero() {
   return (
@@ -33,8 +32,7 @@ export function Hero() {
           <mask id="hero-window-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
             <rect width="100%" height="100%" fill="#fff" />
             <g data-window-mark>
-              <g data-window-part="block"><rect x={BLOCK.x} y={BLOCK.y} width={BLOCK.w} height={BLOCK.h} /></g>
-              <g data-window-part="step"><rect x={STEP.x} y={STEP.y} width={STEP.w} height={STEP.h} /></g>
+              <g data-window-part="block"><path d={L_PATH} /></g>
               <g data-window-part="drop"><path d={DROP_PATH} /></g>
             </g>
           </mask>

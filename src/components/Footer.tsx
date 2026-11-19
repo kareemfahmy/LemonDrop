@@ -45,11 +45,11 @@ export function Footer() {
             </button>
           </div>
           <div className="bench__table" data-bench-table aria-hidden="true">
-            <span className="bench__ghost" data-bench-ghost="block" />
-            <span className="bench__ghost" data-bench-ghost="step" />
+            <span className="bench__ghost bench__ghost--l" data-bench-ghost="block">
+              <svg viewBox="0 0 229 377" preserveAspectRatio="none" focusable="false"><path d="M0.5 0.5H147.5V250.5H228.5V376.5H0.5Z" /></svg>
+            </span>
             <span className="bench__ghost bench__ghost--drop" data-bench-ghost="drop" />
-            <span className="bench__part" data-bench-part="block" />
-            <span className="bench__part" data-bench-part="step" />
+            <span className="bench__part bench__part--l" data-bench-part="block" />
             <span className="bench__part bench__part--drop" data-bench-part="drop" />
           </div>
         </div>
@@ -61,7 +61,7 @@ export function Footer() {
           {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
           {site.socials.map((s) => <li key={s.href}><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
         </ul>
-        <p className="footer__colophon">Set in Inter. The mark is three parts.</p>
+        <p className="footer__colophon">Set in Inter and Geist Mono. The mark is an L and a drop.</p>
       </div>
     </footer>
   );

@@ -27,7 +27,7 @@ export function setupMotion() {
   bench();
 }
 
-// Loader: the parts arrive one by one and lock into the mark as fonts and assets load. The counter
+// Loader: the L rises, then the drop rolls in, and they lock into the mark as fonts and assets load. The counter
 // hook receives the real progress, so it also drives the assembly. Exit: the assembled mark flies to
 // the header logo and becomes it, while the ink ground clears to show the page underneath.
 function loader() {
@@ -36,11 +36,9 @@ function loader() {
     parts ??= Object.fromEntries(
       [...document.querySelectorAll<SVGGElement>('#loader [data-part]')].map((g) => [g.dataset.part!, g]),
     );
-    const b = 1 - smooth(0, 38, p);
-    const s = 1 - smooth(30, 68, p);
-    const d = 1 - smooth(60, 100, p);
+    const b = 1 - smooth(0, 52, p);
+    const d = 1 - smooth(42, 100, p);
     parts.block?.setAttribute('transform', `translate(0 ${(b * 400).toFixed(1)})`);
-    parts.step?.setAttribute('transform', `translate(0 ${(s * 160).toFixed(1)})`);
     parts.drop?.setAttribute('transform', `translate(${(d * 300).toFixed(1)} 0) rotate(${(d * 300 * 0.26).toFixed(1)} 360 188.5)`);
     return String(Math.round(p)).padStart(3, '0');
   });
@@ -125,8 +123,8 @@ function hero() {
 }
 
 // The window (hero signature). The mark is cut out of an ink sheet, as large as the screen allows, so
-// the footage shows only through its three parts; then the parts slide apart on their own axes
-// (block left, step down, drop rolling right) while the mark grows, until the cut-outs leave the
+// the footage shows only through its two shapes; then they slide apart (the L left, the drop rolling
+// right) while the mark grows, until the cut-outs leave the
 // screen and the footage is open edge to edge. Returns the timeline for the page intro; the sheet
 // is removed when it ends, so nothing is masked while you scroll.
 function windowOpen(win: SVGSVGElement, media: HTMLElement) {
@@ -150,7 +148,6 @@ function windowOpen(win: SVGSVGElement, media: HTMLElement) {
       },
     }, 0.55)
     .to(part('block'), { x: -far, duration: 1.5, ease: ease.inOut }, 0.55)
-    .to(part('step'), { y: innerHeight / s, duration: 1.5, ease: ease.inOut }, 0.6)
     .to(part('drop'), { x: far, rotation: (far / 188.5) * 57.3 * 0.25, svgOrigin: '360 188.5', duration: 1.5, ease: ease.inOut }, 0.55)
     // The ink lifts while the parts are still opening, so the screen never closes to black.
     .to(win, { opacity: 0, duration: 0.75, ease: ease.soft }, 1.0)
@@ -247,17 +244,26 @@ function titles() {
 }
 
 // Who we are: the D at the end of the paragraph. Once the paragraph has risen into view, the D
-// grows out from its flat side, then fills with lemon from the bottom up, like the parts of the
-// mark filling in the kit. Plays once.
+// grows out from its flat side, then fills with lemon from the bottom up.
 function statementDrop() {
   onPage(() => {
     const end = document.querySelector<HTMLElement>('[data-statement-end]');
     const fill = end?.querySelector<HTMLElement>('[data-statement-fill]');
     if (!end || !fill || prefersReducedMotion()) return;
     const text = end.closest('p') ?? end;
-    gsap.timeline({ delay: 0.9, scrollTrigger: { trigger: text, start: 'top 85%', once: true } })
+    // Then it keeps a small life: every few seconds it tips forward on its flat edge, as if about to
+    // roll off the line, and settles back; its lemon drains a little and fills again as it goes.
+    const life = gsap.timeline({ paused: true, repeat: -1, repeatDelay: 2.6, defaults: { ease: 'sine.inOut' } })
+      .to(end, { rotation: 14, transformOrigin: '0% 100%', duration: 0.9 })
+      .to(fill, { scaleY: 0.55, duration: 0.9 }, 0)
+      .to(end, { rotation: 0, duration: 1.1, ease: 'back.out(2)' })
+      .to(fill, { scaleY: 1, duration: 1.1 }, '<');
+    gsap.timeline({ delay: 0.9, scrollTrigger: { trigger: text, start: 'top 85%', once: true }, onComplete: () => { life.play(); } })
       .fromTo(end, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.7, ease: ease.out })
       .fromTo(fill, { scaleY: 0 }, { scaleY: 1, duration: 0.9, ease: ease.inOut }, 0.35);
+    // Only while the section is on screen.
+    const vis = ScrollTrigger.create({ trigger: text, start: 'top bottom', end: 'bottom top', onToggle: (self) => { if (life.progress() || life.isActive() || self.isActive) life.paused(!self.isActive); } });
+    return () => { life.kill(); vis.kill(); };
   });
 }
 
@@ -384,7 +390,7 @@ function scramble() {
 // A button does it for them, or takes it apart again. Drag and throw come from GSAP's Draggable
 // and InertiaPlugin, loaded only when the bench is about to be seen.
 function bench() {
-  const UNITS = { block: [0, 0, 148, 377], step: [148, 250, 81, 127], drop: [247, 0, 274.5, 377] } as const;
+  const UNITS = { block: [0, 0, 229, 377], drop: [247, 0, 274.5, 377] } as const; // the L (one piece) and the D
   type Name = keyof typeof UNITS;
   const NAMES = Object.keys(UNITS) as Name[];
   onPage(() => {
@@ -396,7 +402,7 @@ function bench() {
     const el = (kind: 'part' | 'ghost', n: Name) => table.querySelector<HTMLElement>(`[data-bench-${kind}="${n}"]`)!;
     const home = {} as Record<Name, { x: number; y: number }>;
     const away = {} as Record<Name, { x: number; y: number; r: number }>;
-    const locked: Record<Name, boolean> = { block: false, step: false, drop: false };
+    const locked: Record<Name, boolean> = { block: false, drop: false };
     let alive = true;
     let entered = false;
     let drags: { kill: () => void }[] = [];
@@ -414,9 +420,8 @@ function bench() {
         home[n] = { x: ox + x * s, y: oy + y * s };
         gsap.set(el('ghost', n), { x: home[n].x, y: home[n].y });
       });
-      // Loose positions: block top left, step low and left of centre, drop far right. Clear of the outline.
-      away.block = { x: W * 0.05, y: H * 0.1, r: -9 };
-      away.step = { x: Math.max(W * 0.05, ox - 81 * s - W * 0.06), y: H - 127 * s - H * 0.06, r: 13 };
+      // Loose positions: the L low on the left, the D high on the right. Clear of the outline.
+      away.block = { x: W * 0.04, y: H - 377 * s - H * 0.08, r: -10 };
       away.drop = { x: W - 274.5 * s - W * 0.04, y: H * 0.2, r: 16 };
     };
     const sync = () => {
@@ -464,7 +469,6 @@ function bench() {
         const H = table.clientHeight;
         const W = table.clientWidth;
         gsap.fromTo(el('part', 'block'), { y: H + 40, autoAlpha: 1 }, { y: away.block.y, duration: 1.1, ease: ease.out });
-        gsap.fromTo(el('part', 'step'), { y: H + 40, autoAlpha: 1 }, { y: away.step.y, duration: 1.1, delay: 0.12, ease: ease.out });
         gsap.fromTo(el('part', 'drop'), { x: W + 40, rotation: away.drop.r + 70, autoAlpha: 1 }, { x: away.drop.x, rotation: away.drop.r, duration: 1.2, delay: 0.24, ease: ease.out });
       },
     });
