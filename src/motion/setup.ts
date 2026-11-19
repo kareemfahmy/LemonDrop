@@ -108,7 +108,10 @@ function hero() {
     ScrollTrigger.create({ trigger: root, start: 'top bottom', end: 'bottom top', onToggle: (self) => { inView = self.isActive; sync(); } });
 
     if (!reduced) {
-      if (!instant) {
+      const win = root.querySelector<SVGSVGElement>('[data-hero-window]');
+      if (win && !instant) intro.add(windowOpen(win, media), 0);
+      else if (win) windowOpen(win, media); // phones skip the loader: the window opens on first paint
+      else if (!instant) {
         gsap.set(media, { autoAlpha: 0, scale: 1.06 });
         intro.add(gsap.to(media, { autoAlpha: 1, scale: 1, duration: 2.2, ease: ease.out }), 0);
       }
@@ -119,6 +122,39 @@ function hero() {
     }
     return () => { alive = false; toggle?.removeEventListener('click', onClick); video.pause(); };
   });
+}
+
+// The window (hero signature). The mark is cut out of an ink sheet, as large as the screen allows, so
+// the footage shows only through its three parts; then the parts slide apart on their own axes
+// (block left, step down, drop rolling right) while the mark grows, until the cut-outs leave the
+// screen and the footage is open edge to edge. Returns the timeline for the page intro; the sheet
+// is removed when it ends, so nothing is masked while you scroll.
+function windowOpen(win: SVGSVGElement, media: HTMLElement) {
+  const mark = win.querySelector<SVGGElement>('[data-window-mark]')!;
+  const part = (n: string) => win.querySelector<SVGGElement>(`[data-window-part="${n}"]`)!;
+  const s = Math.min((innerHeight * 0.64) / 377, (innerWidth * 0.84) / 522); // the whole mark fits, on any screen
+  const x = (innerWidth - 522 * s) / 2;
+  const y = (innerHeight - 377 * s) / 2;
+  const far = innerWidth / s; // a screen's width, in mark units
+  win.classList.add('is-on');
+  gsap.set(mark, { attr: { transform: `translate(${x} ${y}) scale(${s})` } });
+  gsap.set(media, { scale: 1.12 });
+  const grow = { k: 1 };
+  return gsap.timeline({ onComplete: () => { win.classList.remove('is-on'); } })
+    .to({}, { duration: 0.55 }) // hold: the footage, seen through the mark
+    .to(grow, {
+      k: 2.6, duration: 1.5, ease: ease.inOut,
+      onUpdate: () => {
+        const k = s * grow.k;
+        gsap.set(mark, { attr: { transform: `translate(${(innerWidth - 522 * k) / 2} ${(innerHeight - 377 * k) / 2}) scale(${k})` } });
+      },
+    }, 0.55)
+    .to(part('block'), { x: -far, duration: 1.5, ease: ease.inOut }, 0.55)
+    .to(part('step'), { y: innerHeight / s, duration: 1.5, ease: ease.inOut }, 0.6)
+    .to(part('drop'), { x: far, rotation: (far / 188.5) * 57.3 * 0.25, svgOrigin: '360 188.5', duration: 1.5, ease: ease.inOut }, 0.55)
+    // The ink lifts while the parts are still opening, so the screen never closes to black.
+    .to(win, { opacity: 0, duration: 0.75, ease: ease.soft }, 1.0)
+    .to(media, { scale: 1, duration: 2.4, ease: ease.out }, 0.55);
 }
 
 // Page transition: a D rolls across the screen. Ink body, lemon bowl leading, the destination's
@@ -192,7 +228,8 @@ function titles() {
       if (el.dataset.title === 'chars') {
         const split = SplitText.create(el, { type: 'lines,chars', mask: 'lines', linesClass: 'split-line' });
         gsap.set(split.chars, { yPercent: 115 });
-        intro.add(gsap.to(split.chars, { yPercent: 0, duration: 1.5, stagger: 0.055, ease: ease.out }), 0);
+        // In the hero it waits for the window to open, then rises as the cut-outs leave.
+        intro.add(gsap.to(split.chars, { yPercent: 0, duration: 1.5, stagger: 0.055, ease: ease.out }), el.closest('[data-hero]') ? 1.25 : 0);
         return;
       }
       const split = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'split-line' });

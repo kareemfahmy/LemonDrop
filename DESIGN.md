@@ -278,3 +278,25 @@ Every project visual is still the generated `KitCover`. Per project, supply:
 
 - The four kit chapters were screenshotted in the old and new builds under reduced motion: pixel-identical on desktop (1440 × 900); on a 390 px phone the drawing and copy match, and the only difference is the intro text above chapter 1, which changed on purpose.
 - Reduced motion: no smooth scroll, no scrub, no scramble, no autoplay (the pause control becomes "Play video"); all content visible.
+
+## Hero: the window (concept card)
+
+```
+Idea:        You first see the work through our mark; then the mark comes apart and the work fills the screen.
+Metaphor:    A stencil / a cut-out. The mark is a window onto the footage, then a door.
+Signature:   As the loader hands its mark to the header, the hero is an ink sheet with the LD mark cut out
+             of it, as large as the screen allows, so the full-screen footage shows only through the three
+             parts. The parts then slide apart on their own axes (block left, step down, drop rolling right)
+             while the mark grows and the ink lifts, opening the footage edge to edge; the name rises along
+             the bottom. Recipe: SVG mask (src/components/Hero.tsx) driven by one GSAP timeline
+             (src/motion/setup.ts, windowOpen), removed when done so nothing is masked during scroll.
+Emotion:     A held breath, then the screen opens.
+Motion verb: Slide and lock, run in reverse: the parts that assemble in the loader take themselves apart.
+Screenshot:  Black screen, a giant LD cut out of it, the footage glowing through the letters.
+```
+
+Composition: full-bleed footage under a shade that is open in the middle and ink at the foot; the name LEMONDROP edge to edge along the bottom; the description above it on the right; meta, scroll cue and pause control in the bottom row. Phones skip the loader and play the window on first paint, with the mark sized to the screen width. Reduced motion and no JS: no window, poster and type shown at once.
+
+Concepts considered: (A) the window, chosen: anchored in the mark's three parts and the loader that assembles them, so it cannot move to another studio. (B) a liquid drop lens following the pointer over the footage: WebGL cost on phones for a pointer-only effect. (C) the footage inside the giant word: a well-worn knockout-text trope.
+
+QA (production build): desktop LCP 0.2 s, CLS 0; throttled phone LCP 0.76 s, CLS 0.07 in the harness (no shifts reproduced unthrottled, likely the font swap on the edge-to-edge name). Loader 3.3 to 3.6 s, longer than the skill's 2.6 s cap, by the client's request. Scroll through the hero at a steady 60 fps.
