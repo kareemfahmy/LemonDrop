@@ -31,23 +31,29 @@ export function setupMotion() {
 // with paper as fonts and assets load. The counter
 // hook receives the real progress, so it also drives the assembly. Exit: the assembled mark flies to
 // the header logo and becomes it, while the ink ground clears to show the page underneath.
-// The assembly, p from 0 to 100. The L stands in place from the start; the drop, tipped over, rolls
-// in from the right (0 to 42). Both start as cut-outs in the ink (the page shows through) and fill
-// with paper from the bottom up (35 to 100).
+// The assembly, p from 0 to 100. The two letters start off screen on opposite sides and travel in to
+// meet: the L slides in from the left edge on one axis, the D rolls in from the right edge (turning
+// as a wheel of its own radius would), and they lock together in the middle (0 to 48). They travel
+// as cut-outs in the ink (the page shows through), then fill with paper from the bottom up (40 to 100).
 function assemble(p: number) {
   const root = document.getElementById('loader');
   const box = root?.querySelector<HTMLElement>('.loader__mark');
   if (!root || !box) return;
   root.classList.toggle('has-footage', !!document.querySelector('[data-hero-video]'));
-  const d = 1 - smooth(0, 42, p);
-  const f = smooth(35, 100, p);
-  const dt = `translate(${(d * 300).toFixed(1)} 0) rotate(${(d * 300 * 0.26).toFixed(1)} 360 188.5)`;
+  const r = box.getBoundingClientRect();
+  const s = r.width / 522; // screen px per mark unit
+  const k = 1 - smooth(0, 48, p); // 1 = off screen, 0 = locked
+  const lx = -((r.left + 229 * s) / s + 40) * k; // the L's right edge starts past the left of the screen
+  const dx = ((innerWidth - r.left) / s - 247 + 40) * k; // the D's left edge starts past the right
+  const lt = `translate(${lx.toFixed(1)} 0)`;
+  const dt = `translate(${dx.toFixed(1)} 0) rotate(${(dx * 0.304).toFixed(1)} 360 188.5)`;
+  root.querySelector('[data-part="block"]')?.setAttribute('transform', lt);
+  root.querySelector('[data-cut="block"]')?.setAttribute('transform', lt);
   root.querySelector('[data-part="drop"]')?.setAttribute('transform', dt);
   root.querySelector('[data-cut="drop"]')?.setAttribute('transform', dt);
-  const r = box.getBoundingClientRect();
-  root.querySelector('[data-loader-cut]')?.setAttribute('transform', `translate(${r.left.toFixed(1)} ${r.top.toFixed(1)}) scale(${(r.width / 522).toFixed(4)})`);
-  const y = ((1 - f) * 100).toFixed(2);
-  root.querySelector<SVGElement>('.loader__svg')!.style.clipPath = `polygon(-300% ${y}%, 400% ${y}%, 400% 100%, -300% 100%)`;
+  root.querySelector('[data-loader-cut]')?.setAttribute('transform', `translate(${r.left.toFixed(1)} ${r.top.toFixed(1)}) scale(${s.toFixed(4)})`);
+  const y = ((1 - smooth(40, 100, p)) * 100).toFixed(2);
+  root.querySelector<SVGElement>('.loader__svg')!.style.clipPath = `polygon(-1000% ${y}%, 1000% ${y}%, 1000% 100%, -1000% 100%)`;
 }
 
 function loader() {

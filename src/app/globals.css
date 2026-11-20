@@ -166,7 +166,7 @@ html:not(.js) #loader, html.seen #loader, #loader[hidden] { display: none; }
 .loader__mark { position: relative; width: min(34vw, 46svh * 1.385); will-change: transform; }
 /* The solid mark: paper fills it from the bottom up (the clip line is set by setup.ts). The D rolls
    in from outside the box, so nothing clips it sideways. */
-.loader__svg { width: 100%; height: auto; overflow: visible; color: var(--paper); clip-path: polygon(-300% 100%, 400% 100%, 400% 100%, -300% 100%); }
+.loader__svg { width: 100%; height: auto; overflow: visible; color: var(--paper); clip-path: polygon(-1000% 100%, 1000% 100%, 1000% 100%, -1000% 100%); }
 @media (prefers-reduced-motion: reduce) { #loader [data-part] { transform: none; } }
 .loader__foot {
   position: absolute; left: var(--gutter); right: var(--gutter); bottom: calc(var(--gutter) + 14px);
