@@ -2,7 +2,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { ease, isTouch, onPage, onScroll, playIntro, prefersReducedMotion, setLoaderExit, setLoaderFormat, setTransition } from '@/engine';
+import { ease, onPage, onScroll, playIntro, prefersReducedMotion, setLoaderExit, setLoaderFormat, setTransition } from '@/engine';
 import { startIdle } from './idle';
 import { startKit } from './kit';
 
@@ -23,8 +23,7 @@ export function setupMotion() {
   interludes();
   bigTitle();
   services();
-  scramble();
-  bench();
+  footerField();
 }
 
 // Loader: the mark is cut out of the ink (the page shows through), the drop rolls in, then both fill
@@ -376,149 +375,96 @@ function services() {
   });
 }
 
-// Scramble: a label assembles from the parts. Each letter holds its own slot (no layout shift) and
-// shows as a block, a step or a drop until it settles, in a random order. Plays once when the
-// label scrolls in and again on hover. The real text stays in the DOM; the link carries the name.
-function scramble() {
-  const SHAPES = ['block', 'step', 'drop'];
+// The footer field: the L and the D drawn in dots, one on each side, reaching for each other as the
+// footer is revealed (the gap closes with the page lifting off). The dots shimmer at rest, scatter
+// away from the pointer and glow lemon near it. One canvas on the shared clock, drawn only while the
+// footer is on screen; a single still frame under reduced motion.
+function footerField() {
+  const L = new Path2D('M0 0H148V250H229V377H0Z');
+  const D = new Path2D('M0 0H86A188.5 188.5 0 0 1 86 377H0Z');
   onPage(() => {
-    if (prefersReducedMotion()) return;
-    const offs: (() => void)[] = [];
-    document.querySelectorAll<HTMLElement>('[data-scramble]').forEach((el) => {
-      const split = SplitText.create(el, { type: 'words,chars', charsClass: 'scr', aria: 'none' });
-      const chars = split.chars as HTMLElement[];
-      const order = gsap.utils.shuffle(chars.map((_, i) => i));
-      const state = { p: 0 };
-      const draw = () => chars.forEach((c, i) => {
-        const settle = 0.18 + (order[i] / chars.length) * 0.78;
-        if (state.p >= settle) delete c.dataset.s;
-        else c.dataset.s = SHAPES[(i + Math.floor(state.p * 16)) % 3];
-      });
-      draw();
-      const play = (duration: number) => gsap.fromTo(state, { p: 0 }, { p: 1, duration, ease: 'none', onUpdate: draw, overwrite: true });
-      ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => play(1.5) });
-      const host = el.closest('a') ?? el;
-      if (!isTouch()) {
-        const again = () => { if (state.p === 1) play(0.8); };
-        host.addEventListener('pointerenter', again);
-        offs.push(() => host.removeEventListener('pointerenter', again));
-      }
-    });
-    return () => offs.forEach((f) => f());
-  });
-}
-
-// The bench (footer): the mark as three loose parts. They slide in scattered; the visitor drags
-// each one to its outline, where it locks. All three locked = built, and the big button floods.
-// A button does it for them, or takes it apart again. Drag and throw come from GSAP's Draggable
-// and InertiaPlugin, loaded only when the bench is about to be seen.
-function bench() {
-  const UNITS = { block: [0, 0, 229, 377], drop: [247, 0, 274.5, 377] } as const; // the L (one piece) and the D
-  type Name = keyof typeof UNITS;
-  const NAMES = Object.keys(UNITS) as Name[];
-  onPage(() => {
-    const root = document.querySelector<HTMLElement>('[data-bench]');
-    const table = root?.querySelector<HTMLElement>('[data-bench-table]');
-    const button = root?.querySelector<HTMLButtonElement>('[data-bench-btn]');
-    if (!root || !table || prefersReducedMotion()) return;
-    const footer = root.closest<HTMLElement>('.footer');
-    const el = (kind: 'part' | 'ghost', n: Name) => table.querySelector<HTMLElement>(`[data-bench-${kind}="${n}"]`)!;
-    const home = {} as Record<Name, { x: number; y: number }>;
-    const away = {} as Record<Name, { x: number; y: number; r: number }>;
-    const locked: Record<Name, boolean> = { block: false, drop: false };
-    let alive = true;
-    let entered = false;
-    let drags: { kill: () => void }[] = [];
-
-    root.classList.add('is-ready'); // it has no size until it is shown
+    const field = document.querySelector<HTMLElement>('[data-field]');
+    const canvas = field?.querySelector<HTMLCanvasElement>('[data-field-canvas]');
+    const main = document.getElementById('main');
+    const ctx = canvas?.getContext('2d');
+    if (!field || !canvas || !ctx || !main) return;
+    const reduced = prefersReducedMotion();
+    const probe = document.createElement('canvas').getContext('2d')!;
+    type Dot = { part: 0 | 1; hx: number; hy: number; ph: number; dx: number; dy: number; g: number };
+    let dots: Dot[] = [];
+    let W = 0, H = 0, s = 1, step = 7, dpr = 1;
+    const ptr = { x: -1e4, y: -1e4 };
+    let time = 0;
     const layout = () => {
-      const W = table.clientWidth;
-      const H = table.clientHeight;
-      const s = Math.min((H * 0.5) / 377, (W * 0.37) / 522);
-      const ox = (W - 522 * s) / 2;
-      const oy = (H - 377 * s) / 2;
-      NAMES.forEach((n) => {
-        const [x, y, w, h] = UNITS[n];
-        gsap.set([el('part', n), el('ghost', n)], { width: w * s, height: h * s });
-        home[n] = { x: ox + x * s, y: oy + y * s };
-        gsap.set(el('ghost', n), { x: home[n].x, y: home[n].y });
+      dpr = Math.min(2, devicePixelRatio || 1);
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      s = Math.min((H * 0.84) / 377, (W * 0.3) / 274.5);
+      step = W < 640 ? 5 : 7;
+      dots = [];
+      ([[L, 229], [D, 274.5]] as [Path2D, number][]).forEach(([path, w], part) => {
+        for (let y = step / 2; y < 377 * s; y += step) {
+          for (let x = step / 2; x < w * s; x += step) {
+            if (probe.isPointInPath(path, x / s, y / s)) dots.push({ part: part as 0 | 1, hx: x, hy: y, ph: Math.random() * 6.28, dx: 0, dy: 0, g: 0 });
+          }
+        }
       });
-      // Loose positions: the L low on the left, the D high on the right. Clear of the outline.
-      away.block = { x: W * 0.04, y: H - 377 * s - H * 0.08, r: -10 };
-      away.drop = { x: W - 274.5 * s - W * 0.04, y: H * 0.2, r: 16 };
     };
-    const sync = () => {
-      const built = NAMES.every((n) => locked[n]);
-      root.classList.toggle('is-built', built);
-      footer?.classList.toggle('is-built', built);
+    // 0 = the footer is just starting to show, 1 = fully revealed.
+    const reveal = () => {
+      const fh = (field.closest('footer') as HTMLElement).offsetHeight;
+      return Math.min(1, Math.max(0, (innerHeight - main.getBoundingClientRect().bottom) / fh));
     };
-    const send = (n: Name, toHome: boolean, delay = 0) => {
-      locked[n] = toHome;
-      const to = toHome ? { ...home[n], r: 0 } : away[n];
-      return gsap.to(el('part', n), { x: to.x, y: to.y, rotation: to.r, duration: toHome ? 0.7 : 0.9, delay, ease: ease.out, overwrite: true, onComplete: sync });
+    const draw = (still = false) => {
+      const r = reduced ? 1 : reveal();
+      const ease = 1 - Math.pow(1 - r, 3);
+      const margin = W * 0.05;
+      const off = (1 - ease) * W * 0.16; // further apart until revealed
+      const top = (H - 377 * s) / 2;
+      const ox = [margin - off, W - margin - 274.5 * s + off];
+      const k = still ? 1 : 1 - Math.pow(0.86, gsap.ticker.deltaRatio());
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const base = 'rgba(239,239,236,0.58)';
+      ctx.fillStyle = base;
+      const hot: Dot[] = [];
+      for (const d of dots) {
+        const x0 = ox[d.part] + d.hx, y0 = top + d.hy;
+        let tx = 0, ty = 0, tg = 0;
+        if (!reduced) {
+          const vx = x0 - ptr.x, vy = y0 - ptr.y, dist = Math.hypot(vx, vy), R = 110;
+          if (dist < R) { const f = (1 - dist / R); tx = (vx / (dist || 1)) * f * 26; ty = (vy / (dist || 1)) * f * 26; tg = f; }
+        }
+        d.dx += (tx - d.dx) * k; d.dy += (ty - d.dy) * k; d.g += (tg - d.g) * k;
+        const rad = reduced ? 1.7 : 1.5 + 0.55 * Math.sin(time * 1.6 + d.ph);
+        if (d.g > 0.04) { hot.push(d); continue; }
+        ctx.fillRect(x0 + d.dx - rad / 2, y0 + d.dy - rad / 2, rad, rad);
+      }
+      for (const d of hot) {
+        const x0 = ox[d.part] + d.hx + d.dx, y0 = top + d.hy + d.dy;
+        const rad = 1.4 + d.g * 1.6;
+        ctx.fillStyle = `rgba(255,216,41,${(0.45 + d.g * 0.55).toFixed(3)})`;
+        ctx.fillRect(x0 - rad / 2, y0 - rad / 2, rad, rad);
+      }
     };
-    // Where a released part came to rest: on its outline (lock), near it (pull it in), or anywhere else.
-    const near = (n: Name) => Math.hypot(Number(gsap.getProperty(el('part', n), 'x')) - home[n].x, Number(gsap.getProperty(el('part', n), 'y')) - home[n].y) < table.clientHeight * 0.17;
-    const settle = (n: Name) => {
-      if (near(n)) send(n, true);
-      else { locked[n] = false; sync(); }
-    };
-    const arm = async () => {
-      const [{ Draggable }, { InertiaPlugin }] = await Promise.all([import('gsap/Draggable'), import('gsap/InertiaPlugin')]);
-      if (!alive) return;
-      gsap.registerPlugin(Draggable, InertiaPlugin);
-      drags.forEach((d) => d.kill());
-      drags = NAMES.map((n) => Draggable.create(el('part', n), {
-        type: 'x,y',
-        bounds: table,
-        inertia: true,
-        edgeResistance: 0.75,
-        onPress() { locked[n] = false; sync(); },
-        // Let go over the outline and it locks, however fast it was moving; otherwise it is thrown.
-        onDragEnd() { if (near(n)) { this.tween?.kill(); send(n, true); } else if (!this.tween) settle(n); },
-        onThrowComplete() { settle(n); },
-      })[0]);
-    };
-
     layout();
-    NAMES.forEach((n) => gsap.set(el('part', n), { x: away[n].x, y: away[n].y, rotation: away[n].r, autoAlpha: 0 }));
-    const enter = ScrollTrigger.create({
-      trigger: table,
-      start: 'top 88%',
-      once: true,
-      onEnter: () => {
-        entered = true;
-        arm();
-        const H = table.clientHeight;
-        const W = table.clientWidth;
-        gsap.fromTo(el('part', 'block'), { y: H + 40, autoAlpha: 1 }, { y: away.block.y, duration: 1.1, ease: ease.out });
-        gsap.fromTo(el('part', 'drop'), { x: W + 40, rotation: away.drop.r + 70, autoAlpha: 1 }, { x: away.drop.x, rotation: away.drop.r, duration: 1.2, delay: 0.24, ease: ease.out });
-      },
-    });
-    // A resize moves the outlines: put every part back where its state says it belongs.
-    let width = table.clientWidth;
-    const onRefresh = () => {
-      if (table.clientWidth === width) return;
-      width = table.clientWidth;
-      layout();
-      NAMES.forEach((n) => { const to = locked[n] ? { ...home[n], r: 0 } : away[n]; gsap.set(el('part', n), { x: to.x, y: to.y, rotation: to.r }); });
-      if (entered) arm();
+    const onResize = () => { layout(); draw(true); };
+    addEventListener('resize', onResize);
+    if (reduced) { draw(true); return () => removeEventListener('resize', onResize); }
+    const move = (e: PointerEvent) => { const b = canvas.getBoundingClientRect(); ptr.x = e.clientX - b.left; ptr.y = e.clientY - b.top; };
+    const out = () => { ptr.x = -1e4; ptr.y = -1e4; };
+    field.addEventListener('pointermove', move, { passive: true });
+    field.addEventListener('pointerleave', out);
+    const tick = (t: number) => {
+      if (main.getBoundingClientRect().bottom > innerHeight + 2) return; // footer not showing yet
+      time = t; draw();
     };
-    ScrollTrigger.addEventListener('refresh', onRefresh);
-    const onClick = () => {
-      const build = !NAMES.every((n) => locked[n]);
-      NAMES.forEach((n, i) => { if (!build || !locked[n]) send(n, build, i * 0.09); });
-      if (!build) sync();
-    };
-    button?.addEventListener('click', onClick);
+    gsap.ticker.add(tick);
     return () => {
-      alive = false;
-      enter.kill();
-      ScrollTrigger.removeEventListener('refresh', onRefresh);
-      button?.removeEventListener('click', onClick);
-      drags.forEach((d) => d.kill());
-      root.classList.remove('is-ready', 'is-built');
-      footer?.classList.remove('is-built');
+      gsap.ticker.remove(tick);
+      removeEventListener('resize', onResize);
+      field.removeEventListener('pointermove', move);
+      field.removeEventListener('pointerleave', out);
     };
   });
 }

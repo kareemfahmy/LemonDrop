@@ -3,66 +3,61 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { footerCta, nav, site } from '@/data/site';
 import { CairoTime } from './CairoTime';
+import { DButton } from './Links';
 
-// Footer: one compact section with two halves. Left, the primary action as a D (square left, round
-// right) that floods with lemon on hover or focus, its label assembling from the three parts when
-// it scrolls in. Right, the bench: the same three parts, loose, for the visitor to put together;
-// building the mark floods the button. The action follows the page: on the contact page it offers
-// the work, not the page you are on.
+// Footer. The page lifts off it: the footer is fixed under the content and revealed as the last
+// section scrolls away. Three columns of small type (the ask and its action with the studio's status,
+// the site map, contact), then the field: the L and the D drawn in dots, reaching for each other from
+// opposite sides as the footer is revealed; the dots scatter from the pointer and glow lemon near it
+// (setup.ts, footerField). The name closes the page, set huge and dim, cut by the bottom edge.
+// The action follows the page: on the contact page it offers the work, not the page you are on.
 export function Footer() {
   const year = 2026;
   const path = usePathname();
   const cta = path.startsWith('/contact') ? footerCta.contact : footerCta.default;
   return (
-    <footer className="footer" data-tone="dark">
-      <div className="footer__main">
+    <footer className="footer" data-tone="dark" data-footer>
+      <div className="footer__cols">
         <div className="footer__lead">
-          {/* Keyed: the engine splits these into lines and characters, so a new text needs a new node. */}
+          {/* Keyed: the engine splits these into lines, so a new text needs a new node. */}
           <h2 key={cta.ask} className="footer__title" data-split="lines">{cta.ask}</h2>
-          <Link className="bigd" href={cta.href} aria-label={cta.label} data-label={cta.label}>
-            <span className="bigd__fill" aria-hidden="true" />
-            <span key={cta.label} className="bigd__label" aria-hidden="true" data-scramble>{cta.label}</span>
-            <span className="bigd__arrow" aria-hidden="true">→</span>
-          </Link>
-          <div className="footer__action">
-            <a className="footer__email" href={`mailto:${site.email}`}>{site.email}</a>
-            <p className="footer__time">
-              It is <CairoTime /> in {site.city}. We reply within one working day.
-            </p>
-          </div>
+          <DButton href={cta.href} className="dbtn--small">{cta.label}</DButton>
+          <ul className="footer__status">
+            <li><span className="footer__dot" aria-hidden="true" />Taking on new projects</li>
+            <li><span className="footer__dot footer__dot--still" aria-hidden="true" />Replies within one working day</li>
+          </ul>
         </div>
-        {/* The bench: the mark in three loose parts, to put together by hand (setup.ts, bench). A toy,
-            so it is hidden from assistive tech and absent without JS or under reduced motion. */}
-        <div className="bench" data-bench>
-          <div className="bench__head">
-            <p className="bench__hint">
-              <span className="bench__open">Your turn. Put the mark together.</span>
-              <span className="bench__built">Built properly. That is the whole job.</span>
-            </p>
-            <button type="button" className="bench__btn" data-bench-btn>
-              <span className="bench__open">Do it for me</span>
-              <span className="bench__built">Take it apart</span>
-            </button>
-          </div>
-          <div className="bench__table" data-bench-table aria-hidden="true">
-            <span className="bench__ghost bench__ghost--l" data-bench-ghost="block">
-              <svg viewBox="0 0 229 377" preserveAspectRatio="none" focusable="false"><path d="M0.5 0.5H147.5V250.5H228.5V376.5H0.5Z" /></svg>
-            </span>
-            <span className="bench__ghost bench__ghost--drop" data-bench-ghost="drop" />
-            <span className="bench__part bench__part--l" data-bench-part="block" />
-            <span className="bench__part bench__part--drop" data-bench-part="drop" />
-          </div>
+        <nav className="footer__nav" aria-label="Footer">
+          <ul>
+            <li><Link href="/">Home</Link></li>
+            {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
+            {site.socials.map((s) => <li key={s.href}><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
+          </ul>
+        </nav>
+        <div className="footer__contact">
+          <a className="footer__email" href={`mailto:${site.email}`}>{site.email}</a>
+          <p className="footer__time">{site.city}, <CairoTime /></p>
+          <p className="footer__colophon">Set in Inter and Geist Mono.</p>
         </div>
       </div>
-      <div className="footer__bottom">
-        <p>© {year} {site.name}</p>
-        <ul className="footer__links">
-          <li><Link href="/">Home</Link></li>
-          {nav.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}
-          {site.socials.map((s) => <li key={s.href}><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
-        </ul>
-        <p className="footer__colophon">Set in Inter and Geist Mono. The mark is an L and a drop.</p>
+
+      <div className="footer__field" data-field aria-hidden="true">
+        <canvas className="footer__canvas" data-field-canvas />
+        <p className="footer__legal">© {year} {site.name}<br />Made in {site.city}.<br />Built properly.</p>
       </div>
+
+      <p className="footer__word" aria-hidden="true">
+        <span className="wm">
+          <span className="wm__g wm__g--mark">
+            <svg className="wm__shape" viewBox="0 0 229 377" focusable="false"><path d="M0 0H148V250H229V377H0Z" /></svg>
+          </span>
+          {'EMON'.split('').map((c, i) => <span key={`a${i}`} className="wm__g">{c}</span>)}
+          <span className="wm__g wm__g--mark wm__g--d">
+            <svg className="wm__shape" viewBox="0 0 274.5 377" focusable="false"><path d="M0 0H86A188.5 188.5 0 0 1 86 377H0Z" /></svg>
+          </span>
+          {'ROP'.split('').map((c, i) => <span key={`b${i}`} className="wm__g">{c}</span>)}
+        </span>
+      </p>
     </footer>
   );
 }
