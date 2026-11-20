@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { CairoTime } from '@/components/CairoTime';
 import { Hero } from '@/components/Hero';
+import { KitCover } from '@/components/KitCover';
 import { ArrowLink } from '@/components/Links';
 import { WorkPlates } from '@/components/WorkPlates';
 import { capabilities, projects, statement } from '@/data/site';
@@ -62,19 +63,22 @@ export default function Home() {
         <p className="caps__more"><ArrowLink href="/studio/">How the studio works</ArrowLink></p>
       </section>
 
-      {/* Interlude: a dimension line from one section to the next. It draws across as you scroll and
-          the drop rolls along it (setup.ts, interludes). Decorative. */}
-      <div className="rule" data-tone="light" data-rule aria-hidden="true">
-        <div className="rule__track" data-rule-track>
-          <span className="rule__line" data-rule-line />
-          <span className="rule__drop" data-rule-drop />
+      {/* The reel: a lemon screen that holds while the title runs past sideways, with the project
+          covers drifting over it at their own speeds (setup.ts, reel). It is the heading of the work. */}
+      <section className="reel" data-tone="light" data-reel aria-labelledby="work-title">
+        <div className="reel__track" data-reel-track>
+          <h2 id="work-title" className="reel__word">Selected work</h2>
+          {projects.map((p, i) => (
+            <Link key={p.slug} className={`reel__card reel__card--${i}`} href={`/work/${p.slug}/`} data-reel-card data-speed={[0.5, 1.1, 0.25, 0.8][i % 4]} data-label={p.title}>
+              <span className="reel__cover"><KitCover project={p} label={false} /></span>
+              <span className="reel__cap">{p.title}</span>
+            </Link>
+          ))}
         </div>
-        <p className="rule__labels"><span>Selected work</span></p>
-      </div>
+      </section>
 
-      <section className="work" data-tone="light" aria-labelledby="work-title">
+      <section className="work" data-tone="light" aria-label="Projects">
         <div className="work__head">
-          <h2 id="work-title" className="work__title display" data-split="lines">Selected work</h2>
           <p className="work__count">Four projects, each built from the same three parts</p>
         </div>
         <WorkPlates items={projects} />

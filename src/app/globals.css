@@ -492,23 +492,33 @@ html:not(.js) .hero__toggle { display: none; }
 }
 .statement__fill { position: absolute; inset: 0; background: var(--lemon); transform-origin: 50% 100%; }
 
-/* Interlude 2, the rule: a measured line between two sections, like the dimensions on the mark. */
-.rule { padding: 0 var(--gutter); }
-.rule__track { position: relative; --drop: clamp(2.4rem, 3.6vw, 3.8rem); height: calc(var(--drop) + 0.5rem); }
-.rule__track::before, .rule__track::after { content: ''; position: absolute; bottom: -0.4rem; width: 1px; height: 0.8rem; background: var(--fg); }
-.rule__track::before { left: 0; }
-.rule__track::after { right: 0; }
-.rule__line { position: absolute; inset: auto 0 0 0; height: 1px; background: var(--fg); transform-origin: left center; }
-.rule__drop {
-  position: absolute; left: 0.5rem; bottom: 0.5rem; height: var(--drop); aspect-ratio: 274.5 / 377;
-  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1.5px var(--fg); will-change: transform;
+/* The reel: lemon ground, one huge line of ink type held on screen and run sideways by the scroll,
+   with the project covers drifting across it. */
+.reel { --bg: var(--lemon); --fg: var(--ink); --muted: rgb(17 17 16 / 0.62); --line: rgb(17 17 16 / 0.2); position: relative; z-index: 1; height: 100svh; overflow: clip; background: var(--lemon); color: var(--ink); }
+.reel__track { position: relative; height: 100%; width: max-content; display: flex; align-items: center; padding-inline: 70vw 12vw; will-change: transform; }
+.reel__word {
+  font-family: var(--f-display); font-weight: var(--w-display); text-transform: uppercase;
+  font-size: min(42svh, 30vw); line-height: 0.85; letter-spacing: -0.05em; white-space: nowrap;
 }
-.rule__labels {
-  display: flex; justify-content: flex-end; gap: 1rem; margin-top: 0.9rem; color: var(--muted);
-  font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.035em; font-size: 0.75rem;
+.reel__card { position: absolute; z-index: 2; width: clamp(9rem, 17vw, 17rem); will-change: transform; }
+.reel__cover { display: block; aspect-ratio: 4 / 3; overflow: clip; box-shadow: 0 1.2rem 2.4rem rgb(17 17 16 / 0.18); transition: border-radius 0.6s var(--e-out); }
+.reel__cover svg { width: 100%; height: 100%; transition: scale 0.8s var(--e-out); }
+.reel__cap { display: block; margin-top: 0.5rem; font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.035em; font-size: 0.75rem; }
+.reel__card--0 { left: 74vw; top: 12%; }
+.reel__card--1 { left: 128vw; top: 58%; }
+.reel__card--2 { left: 176vw; top: 9%; }
+.reel__card--3 { left: 222vw; top: 55%; }
+@media (hover: hover) {
+  .reel__card:hover .reel__cover { border-radius: 0 50vmax 50vmax 0; }
+  .reel__card:hover .reel__cover svg { scale: 1.06; }
 }
-.rule__labels span::before { content: '[ '; }
-.rule__labels span::after { content: ' ]'; }
+.reel__card:focus-visible { outline-offset: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .reel { height: auto; padding-block: calc(var(--u) * 10); }
+  .reel__track { width: auto; padding-inline: var(--gutter); }
+  .reel__word { font-size: clamp(3rem, 13vw, 11rem); white-space: normal; }
+  .reel__card { display: none; }
+}
 
 .work { padding-block: calc(var(--u) * 7) calc(var(--u) * 7); }
 .work__head { display: flex; justify-content: space-between; align-items: end; gap: var(--gutter); padding-inline: var(--gutter); margin-bottom: calc(var(--u) * 5); }
@@ -797,6 +807,8 @@ html:not(.js) .hero__toggle { display: none; }
 }
 
 @media (max-width: 767px) {
+  .reel__word { font-size: 30svh; }
+  .reel__card { width: 8.5rem; }
   .footer { position: relative; min-height: 0; }
   .footer__lead, .footer__nav, .footer__contact { grid-column: 1 / -1; }
   .footer__field { min-height: 13rem; }
@@ -868,3 +880,5 @@ html:not(.js) .hero__toggle { display: none; }
 
 /* 404: the scattered parts keep their spec labels */
 .lost .kit__dim { opacity: 1; }
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) { .reel__word { font-size: 13vw; } }
