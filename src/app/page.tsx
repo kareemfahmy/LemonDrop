@@ -9,6 +9,8 @@ export default function Home() {
   return (
     <>
       <Hero />
+      {/* The drop: one D from the hero to the footer (setup.ts, thread). Decorative. */}
+      <div className="thread" data-thread aria-hidden="true" />
       {/* Parked: the kit (the mark taken apart over four scroll chapters). Its component
           (components/Kit.tsx), drawing and driver (motion/kit.ts) are intact; import Kit and render
           <Kit /> here to bring it back. */}

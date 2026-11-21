@@ -20,6 +20,7 @@ export function setupMotion() {
   headerAway();
   titles();
   statementDrop();
+  thread();
   interludes();
   bigTitle();
   services();
@@ -271,7 +272,7 @@ function statementDrop() {
   onPage(() => {
     const end = document.querySelector<HTMLElement>('[data-statement-end]');
     const fill = end?.querySelector<HTMLElement>('[data-statement-fill]');
-    if (!end || !fill || prefersReducedMotion()) return;
+    if (!end || !fill || prefersReducedMotion() || document.querySelector('[data-thread]')) return; // on home the thread is this D
     const text = end.closest('p') ?? end;
     // Then it keeps a small life: every few seconds it tips forward on its flat edge, as if about to
     // roll off the line, and settles back; its lemon drains a little and fills again as it goes.
@@ -515,6 +516,99 @@ function footerField() {
       removeEventListener('resize', onResize);
       field.removeEventListener('pointermove', move);
       field.removeEventListener('pointerleave', out);
+    };
+  });
+}
+
+// The thread (home): one lemon drop from the hero to the footer, and at every stop it has a job.
+//   hero      it is the D of the name (in paper, like the letters)
+//   statement it is the full stop of the paragraph, tipping now and then as if about to roll off
+//   fall      it waits at the left edge, in the middle of the screen, while the services title passes
+//   services  it marks the row being read, then falls to the separator and rolls along it drawing
+//             the line (the services driver moves an invisible marker; the thread rides on it)
+//   work      it points at each project in turn, beside its name
+//   footer    it fills the D of the name that closes the page
+// The stop is chosen from the scroll. Changing stop starts a short travel from wherever the drop is to
+// the new stop's live position (which keeps moving with the page), turning once and changing colour
+// on the way; once there it sits exactly on its slot. One element, one clock.
+function thread() {
+  onPage(({ intro, instant }) => {
+    const el = document.querySelector<HTMLElement>('[data-thread]');
+    const heroD = document.querySelector<SVGElement>('.hero__title .wm__g--d .wm__shape');
+    if (!el || !heroD || prefersReducedMotion()) return;
+    const html = document.documentElement;
+    const main = document.getElementById('main')!;
+    const stopD = document.querySelector<HTMLElement>('[data-statement-end]');
+    const rows = document.querySelector<HTMLElement>('[data-caps]');
+    const marker = document.querySelector<HTMLElement>('[data-caps-drop]');
+    const platesBox = document.querySelector<HTMLElement>('.plates');
+    const plates = [...document.querySelectorAll<HTMLElement>('.plate')];
+    const footD = document.querySelector<SVGElement>('.footer__word .wm__g--d .wm__shape');
+    type Spot = { cx: number; cy: number; h: number; rot: number; lemon: number };
+    type Stop = { key: string; spot: (t: number) => Spot };
+    const centre = (r: DOMRect, h = r.height, rot = 0, lemon = 1): Spot => ({ cx: r.left + r.width / 2, cy: r.top + r.height / 2, h, rot, lemon });
+    const pick = (): Stop => {
+      const vh = innerHeight;
+      if (footD && main.getBoundingClientRect().bottom < vh * 0.6) return { key: 'foot', spot: () => centre(footD.getBoundingClientRect()) };
+      if (platesBox && plates.length) {
+        const r = platesBox.getBoundingClientRect();
+        if (r.top < vh * 0.62) {
+          const p = Math.min(0.999, Math.max(0, (vh * 0.62 - r.top) / Math.max(1, r.height)));
+          const i = Math.floor(p * plates.length);
+          const m = plates[i].querySelector<HTMLElement>('[data-plate-mark]')!;
+          return { key: `plate${i}`, spot: () => centre(m.getBoundingClientRect()) };
+        }
+      }
+      if (rows && marker) {
+        const rt = rows.getBoundingClientRect().top;
+        if (rt < vh * 0.55) return { key: 'caps', spot: () => centre(marker.getBoundingClientRect(), marker.offsetHeight, Number(gsap.getProperty(marker, 'rotation'))) };
+        if (stopD && stopD.getBoundingClientRect().top < vh * 0.12) {
+          return { key: 'fall', spot: (t) => { const b = rows.getBoundingClientRect(); return { cx: b.left + marker.offsetLeft + marker.offsetWidth / 2, cy: vh * 0.5, h: marker.offsetHeight, rot: Math.sin(t * 0.9) * 8, lemon: 1 }; } };
+        }
+      }
+      if (stopD && stopD.getBoundingClientRect().top < vh * 0.8) {
+        return { key: 'stop', spot: (t) => { const s = centre(stopD.getBoundingClientRect()); const ph = (t % 4.5) / 4.5; s.rot = ph < 0.25 ? Math.sin((ph / 0.25) * Math.PI) * 14 : 0; return s; } };
+      }
+      return { key: 'hero', spot: () => centre(heroD.getBoundingClientRect(), heroD.getBoundingClientRect().height, 0, 0) };
+    };
+    const paper = [239, 239, 236], lemon = [255, 216, 41];
+    const mix = (a: number, b: number, t: number) => a + (b - a) * t;
+    let stop: Stop | null = null;
+    let from: Spot = { cx: 0, cy: 0, h: 0, rot: 0, lemon: 0 };
+    let now: Spot = from;
+    const travel = { b: 1 };
+    let pointed = -1;
+    const render = (t: number) => {
+      const next = pick();
+      if (!stop || next.key !== stop.key) {
+        from = { ...now };
+        if (stop) gsap.fromTo(travel, { b: 0 }, { b: 1, duration: 0.95, ease: 'power2.inOut', overwrite: true });
+        stop = next;
+      }
+      const to = stop.spot(t);
+      const e = travel.b;
+      now = e >= 1 ? to : {
+        cx: mix(from.cx, to.cx, e), cy: mix(from.cy, to.cy, e), h: mix(from.h, to.h, e),
+        rot: mix(from.rot, to.rot + 360, e), lemon: mix(from.lemon, to.lemon, e),
+      };
+      const sc = now.h / 100;
+      gsap.set(el, { x: now.cx - 36.4, y: now.cy - 50, scale: sc, rotation: now.rot, transformOrigin: '50% 50%' });
+      const c = paper.map((v, i) => Math.round(mix(v, lemon[i], now.lemon)));
+      el.style.backgroundColor = `rgb(${c.join(' ')})`;
+      el.style.boxShadow = `inset 0 0 0 ${(1.5 / Math.max(sc, 0.2)).toFixed(2)}px rgb(17 17 16 / ${(0.85 * now.lemon).toFixed(2)})`;
+      const p = stop.key.startsWith('plate') ? Number(stop.key.slice(5)) : -1;
+      if (p !== pointed) { pointed = p; plates.forEach((pl, i) => pl.classList.toggle('is-pointed', i === p)); }
+    };
+    let on = false;
+    const tick = (t: number) => { if (on) render(t); };
+    const enable = () => { if (on) return; on = true; render(gsap.ticker.time); html.classList.add('thread-on'); };
+    gsap.ticker.add(tick);
+    // It takes over the name's D once the name has risen into place.
+    if (instant) gsap.delayedCall(2.6, enable); else intro.add(enable, 3.0);
+    return () => {
+      gsap.ticker.remove(tick);
+      html.classList.remove('thread-on');
+      plates.forEach((pl) => pl.classList.remove('is-pointed'));
     };
   });
 }

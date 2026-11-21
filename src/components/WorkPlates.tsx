@@ -16,7 +16,7 @@ export function WorkPlates({ items }: { items: Project[] }) {
               <KitCover project={p} label={false} />
             </span>
             <span className="plate__cap">
-              <h3 className="plate__name">{p.title}</h3>
+              <h3 className="plate__name"><span className="plate__mark" data-plate-mark aria-hidden="true" />{p.title}</h3>
               <span className="plate__meta">{p.sector}, <span className="tabular">{p.year}</span></span>
             </span>
           </Link>

@@ -311,3 +311,9 @@ After the client's reference recording (a studio footer revealed from beneath th
 ## Services drop and separator (one journey)
 
 The drop that marks your place in What we make is the same drop that runs the separator. Past the last service it keeps going with the reading line (the middle of the screen): it falls down the left edge, easing across to the start of the separator, lands on it, then rolls to the far end, drawing the line behind it and arriving upright. One driver (setup.ts, services): a target from the scroll, an eased position, and the turn and the line derived from that position. The separator's own drop is hidden while this runs; the "How the studio works" link moved to the right, clear of the drop's path.
+
+## The thread (home)
+
+One drop travels the home page from the hero to the footer, and it has a job at every stop (setup.ts, thread):
+hero, it is the D of LEMONDROP (in paper, like the letters); who we are, the full stop of the paragraph, tipping now and then; between them and the services, it waits at the left edge in the middle of the screen while the What we make title passes; services, it marks the row being read, then falls to the separator and rolls along it drawing the line; work, it points at each project in turn, beside its name (the caption comes forward); footer, it fills the D of the closing LEMONDROP in lemon.
+The stop comes from the scroll. A change of stop starts a 0.95 s travel (power2.inOut) from where the drop is to the new stop's live position, turning once and changing colour; once there it sits exactly on its slot and moves with the page. The drops it stands in for stay in the layout as invisible slots. It takes over the hero D once the name has risen. Home only; off under reduced motion, where the original drops show.

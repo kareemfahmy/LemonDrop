@@ -870,3 +870,18 @@ html:not(.js) .hero__toggle { display: none; }
 
 /* 404: the scattered parts keep their spec labels */
 .lost .kit__dim { opacity: 1; }
+
+/* The thread: one drop that travels the home page. Fixed, sized and placed by setup.ts (thread). While
+   it runs, the drops it stands in for are hidden but keep their place, as the slots it lands in. */
+.thread {
+  position: fixed; left: 0; top: 0; z-index: 40; width: 72.8px; height: 100px; pointer-events: none;
+  border-radius: var(--d); background: var(--lemon); box-shadow: inset 0 0 0 1.5px rgb(17 17 16 / 0.85);
+  visibility: hidden; will-change: transform;
+}
+html.thread-on .thread { visibility: visible; }
+html.thread-on .hero__title .wm__g--d .wm__shape,
+html.thread-on [data-statement-end],
+html.thread-on [data-caps-drop] { visibility: hidden; }
+.plate__mark { display: inline-block; width: 0.5em; height: 1em; margin-right: 0.45em; vertical-align: -0.15em; }
+.plate { transition: opacity 0.4s var(--e-soft); }
+.plate.is-pointed .plate__cap { color: var(--fg); }
