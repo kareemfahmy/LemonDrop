@@ -20,7 +20,7 @@ export function setupMotion() {
   headerAway();
   titles();
   statementDrop();
-  reel();
+  interludes();
   bigTitle();
   services();
   footerField();
@@ -289,24 +289,24 @@ function statementDrop() {
   });
 }
 
-// The reel (home): the lemon section holds (pinned) while its track runs sideways with the scroll,
-// so the huge title passes across the screen; each project card adds its own drift on top, so the
-// covers move at different speeds over the type. Scrubbed.
-function reel() {
+// Interlude: the moment between the services and the work. It follows the scroll while it is on
+// screen; under reduced motion it is static.
+function interludes() {
   onPage(() => {
-    const section = document.querySelector<HTMLElement>('[data-reel]');
-    const track = section?.querySelector<HTMLElement>('[data-reel-track]');
-    if (!section || !track || prefersReducedMotion()) return;
-    const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-    const tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: { trigger: section, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.6, invalidateOnRefresh: true },
-    });
-    tl.fromTo(track, { x: 0 }, { x: () => -dist() }, 0);
-    section.querySelectorAll<HTMLElement>('[data-reel-card]').forEach((card) => {
-      const speed = parseFloat(card.dataset.speed || '0.5');
-      tl.fromTo(card, { x: 0, y: 0 }, { x: () => -innerWidth * 0.35 * speed, y: () => (speed - 0.6) * innerHeight * 0.12 }, 0);
-    });
+    if (prefersReducedMotion()) return;
+    // The rule: the line draws from left to right and the drop rolls along it to the far end,
+    // a whole number of turns so it arrives upright.
+    const rule = document.querySelector<HTMLElement>('[data-rule]');
+    const line = rule?.querySelector<HTMLElement>('[data-rule-line]');
+    const drop = rule?.querySelector<HTMLElement>('[data-rule-drop]');
+    const lane = rule?.querySelector<HTMLElement>('[data-rule-track]');
+    if (rule && line && drop && lane) {
+      const travel = () => lane.clientWidth - drop.offsetWidth - drop.offsetLeft * 2;
+      const turns = () => Math.max(1, Math.round(travel() / (Math.PI * drop.offsetHeight)));
+      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: rule, start: 'top 92%', end: 'top 30%', scrub: 0.5, invalidateOnRefresh: true } })
+        .fromTo(line, { scaleX: 0 }, { scaleX: 1 }, 0)
+        .fromTo(drop, { x: 0, rotation: 0 }, { x: travel, rotation: () => turns() * 360 }, 0);
+    }
   });
 }
 
