@@ -494,7 +494,9 @@ html:not(.js) .hero__toggle { display: none; }
 
 /* Interlude 2, the rule: a measured line between two sections, like the dimensions on the mark. */
 .rule { padding: 0 var(--gutter); }
-.rule__track { position: relative; --drop: clamp(2.4rem, 3.6vw, 3.8rem); height: calc(var(--drop) + 0.5rem); }
+.rule__track { position: relative; --drop: clamp(1.9rem, 3.1vw, 3.4rem); height: calc(var(--drop) + 0.5rem); }
+/* On home the services drop travels down into the line and rolls along it; the line's own drop steps aside. */
+.rule.is-driven .rule__drop { visibility: hidden; }
 .rule__track::before, .rule__track::after { content: ''; position: absolute; bottom: -0.4rem; width: 1px; height: 0.8rem; background: var(--fg); }
 .rule__track::before { left: 0; }
 .rule__track::after { right: 0; }
@@ -591,7 +593,7 @@ html:not(.js) .hero__toggle { display: none; }
 .cap.is-on .cap__go, .cap:focus-visible .cap__go { opacity: 1; translate: 0 0; }
 .cap:focus-visible { outline-offset: -4px; }
 .cap:focus-visible .cap__name { color: var(--fg) !important; }
-.caps__more { padding: calc(var(--u) * 3) var(--gutter) 0; }
+.caps__more { padding: calc(var(--u) * 3) var(--gutter) 0; text-align: right; } /* clear of the drop's path down the left */
 
 /* ==========================================================================
    Footer finale

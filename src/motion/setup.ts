@@ -300,7 +300,7 @@ function interludes() {
     const line = rule?.querySelector<HTMLElement>('[data-rule-line]');
     const drop = rule?.querySelector<HTMLElement>('[data-rule-drop]');
     const lane = rule?.querySelector<HTMLElement>('[data-rule-track]');
-    if (rule && line && drop && lane) {
+    if (rule && line && drop && lane && !document.querySelector('[data-caps]')) {
       const travel = () => lane.clientWidth - drop.offsetWidth - drop.offsetLeft * 2;
       const turns = () => Math.max(1, Math.round(travel() / (Math.PI * drop.offsetHeight)));
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: rule, start: 'top 92%', end: 'top 30%', scrub: 0.5, invalidateOnRefresh: true } })
@@ -326,10 +326,12 @@ function bigTitle() {
   });
 }
 
-// Service rows: the drop marks your place. It rolls down the list to the row at the middle of the
-// screen as you scroll, and that row comes forward. Scroll is the only input: a pointer passing
-// over the list while you scroll changes nothing. One driver: a target position, an eased
-// position, and the roll derived from the distance travelled.
+// Service rows and the separator: one drop, one journey. While the reading line (the middle of the
+// screen) is among the services, the drop rolls to the row it is on, one full turn per row, and that
+// row comes forward. Past the last service it keeps going: it drops down the left edge with the
+// reading line until it lands on the separator, then rolls along it to the far end, drawing the line
+// behind it. Scroll is the only input. One driver: a target from the scroll, an eased position, and
+// the line and the turn derived from the eased position, so every part stays in step.
 function services() {
   onPage(() => {
     const wrap = document.querySelector<HTMLElement>('[data-caps]');
@@ -337,41 +339,89 @@ function services() {
     if (!wrap || !drop || prefersReducedMotion()) return;
     const rows = [...wrap.querySelectorAll<HTMLElement>('.cap')];
     if (!rows.length) return;
+    const rule = document.querySelector<HTMLElement>('[data-rule]');
+    const lane = rule?.querySelector<HTMLElement>('[data-rule-track]');
+    const line = rule?.querySelector<HTMLElement>('[data-rule-line]');
     wrap.classList.add('is-driven');
+    rule?.classList.add('is-driven');
+    // Geometry, in px relative to the rows box (the drop's own coordinate space).
     let top = 0;
     let centres: number[] = [];
+    let land = { y: 0, x: 0, travel: 0, laneW: 0, roll: 1 };
     const measure = () => {
-      top = wrap.getBoundingClientRect().top + scrollY;
-      centres = rows.map((r) => { const b = r.getBoundingClientRect(); return b.top + scrollY - top + b.height / 2; });
+      const w = wrap.getBoundingClientRect();
+      top = w.top + scrollY;
+      centres = rows.map((r) => { const b = r.getBoundingClientRect(); return b.top - w.top + b.height / 2; });
+      if (lane) {
+        const l = lane.getBoundingClientRect();
+        const dh = drop.offsetHeight, dw = drop.offsetWidth;
+        land = {
+          y: l.bottom - w.top - 8 - dh / 2, // resting on the line, as the separator's own drop did
+          x: l.left - w.left + 8 - drop.offsetLeft,
+          travel: l.width - dw - 16,
+          laneW: l.width,
+          roll: innerHeight * 0.55, // scroll spent rolling along the line
+        };
+      }
     };
     measure();
-    let active = -1;
-    let y = centres[0];
-    let visible = false;
-    const setY = gsap.quickSetter(drop, 'y', 'px');
-    const setR = gsap.quickSetter(drop, 'rotation', 'deg');
-    gsap.set(drop, { yPercent: -50 });
-    // Position as a row count (2.5 = halfway between the third and fourth rows).
-    const turns = (at: number) => {
+    const last = () => centres[centres.length - 1];
+    const turnsAt = (at: number) => {
       for (let i = 0; i < centres.length - 1; i++) {
         if (at <= centres[i + 1]) return i + (at - centres[i]) / (centres[i + 1] - centres[i]);
       }
       return centres.length - 1;
     };
-    const nearest = (line: number) => centres.reduce((best, c, i) => (Math.abs(c - line) < Math.abs(centres[best] - line) ? i : best), 0);
+    const nearest = (at: number) => centres.reduce((best, c, i) => (Math.abs(c - at) < Math.abs(centres[best] - at) ? i : best), 0);
+    // Where the drop should be for a reading line at `s`.
+    const target = (s: number) => {
+      if (!lane || s <= last()) return { x: 0, y: centres[nearest(s)], row: nearest(s) };
+      if (s < land.y) { // falling: follows the reading line, easing over to the line's start
+        const f = (s - last()) / (land.y - last());
+        return { x: land.x * f * f, y: s, row: f < 0.25 ? rows.length - 1 : -1 };
+      }
+      const r = Math.min(1, (s - land.y) / land.roll);
+      return { x: land.x + land.travel * r, y: land.y, row: -1 };
+    };
+    const pos = { x: 0, y: centres[0] };
+    let active = -1;
+    let visible = false;
+    const setX = gsap.quickSetter(drop, 'x', 'px');
+    const setY = gsap.quickSetter(drop, 'y', 'px');
+    const setR = gsap.quickSetter(drop, 'rotation', 'deg');
+    gsap.set(drop, { yPercent: -50 });
+    if (line) gsap.set(line, { scaleX: 0 });
     const draw = (instant = false) => {
-      const target = nearest(scrollY + innerHeight * 0.5 - top);
-      const to = centres[target];
-      y = instant ? to : y + (to - y) * (1 - Math.pow(0.88, gsap.ticker.deltaRatio()));
-      setY(y);
-      setR(turns(y) * 360); // one full turn per row, so it always comes to rest upright
-      if (target !== active) { active = target; rows.forEach((r, i) => r.classList.toggle('is-on', i === active)); }
+      const t = target(scrollY + innerHeight * 0.5 - top);
+      const k = instant ? 1 : 1 - Math.pow(0.88, gsap.ticker.deltaRatio());
+      pos.x += (t.x - pos.x) * k;
+      pos.y += (t.y - pos.y) * k;
+      setX(pos.x); setY(pos.y);
+      // Turning: one full turn per row among the services, upright while falling, then rolling along
+      // the line a whole number of turns so it arrives upright.
+      const base = (centres.length - 1) * 360;
+      let rot = turnsAt(Math.min(pos.y, last())) * 360;
+      if (lane && pos.x > land.x + 0.5) {
+        const r = (pos.x - land.x) / land.travel;
+        rot = base + r * Math.max(1, Math.round(land.travel / (Math.PI * drop.offsetHeight))) * 360;
+      }
+      setR(rot);
+      if (line) line.style.transform = `scaleX(${lane && pos.x > land.x ? Math.min(1, (pos.x - land.x + drop.offsetWidth + 8) / land.laneW).toFixed(4) : 0})`;
+      if (t.row !== active) { active = t.row; rows.forEach((r, i) => r.classList.toggle('is-on', i === active)); }
     };
     draw(true);
     const tick = () => { if (visible) draw(); };
     gsap.ticker.add(tick);
-    const st = ScrollTrigger.create({ trigger: wrap, start: 'top bottom', end: 'bottom top', onRefresh: () => { measure(); draw(true); }, onToggle: (self) => { visible = self.isActive; } });
-    return () => { gsap.ticker.remove(tick); st.kill(); wrap.classList.remove('is-driven'); rows.forEach((r) => r.classList.remove('is-on')); };
+    const st = ScrollTrigger.create({
+      trigger: wrap, start: 'top bottom', endTrigger: rule ?? wrap, end: 'bottom top',
+      onRefresh: () => { measure(); draw(true); }, onToggle: (self) => { visible = self.isActive; },
+    });
+    return () => {
+      gsap.ticker.remove(tick); st.kill();
+      wrap.classList.remove('is-driven'); rule?.classList.remove('is-driven');
+      rows.forEach((r) => r.classList.remove('is-on'));
+      if (line) line.style.transform = '';
+    };
   });
 }
 
